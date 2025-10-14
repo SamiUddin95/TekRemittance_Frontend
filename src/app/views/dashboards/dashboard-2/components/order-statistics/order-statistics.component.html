@@ -1,0 +1,40 @@
+<div class="card">
+    <div class="card-header border-dashed card-tabs d-flex align-items-center">
+        <div class="flex-grow-1">
+            <h4 class="card-title">Orders Statistics</h4>
+        </div>
+        <ul ngbNav #nav="ngbNav" class="nav nav-tabs nav-justified card-header-tabs nav-bordered">
+            <li ngbNavItem class="nav-item">
+                <a ngbNavLink class="nav-link">
+                    <ng-icon name="tablerHome" class="d-md-none d-block"/>
+                    <span class="d-none d-md-block">Today</span>
+                </a>
+                <ng-template ngbNavContent></ng-template> <!--tab content goes here-->
+            </li>
+            <li ngbNavItem class="nav-item">
+                <a ngbNavLink class="nav-link">
+                    <ng-icon name="tablerUserCircle" class="d-md-none d-block"/>
+                    <span class="d-none d-md-block">Monthly</span>
+                </a>
+                <ng-template ngbNavContent></ng-template> <!--tab content goes here-->
+            </li>
+            <li ngbNavItem class="nav-item">
+                <a ngbNavLink class="nav-link">
+                    <ng-icon name="tablerSettings" class="d-md-none d-block"/>
+                    <span class="d-none d-md-block">Annual</span>
+                </a>
+                <ng-template ngbNavContent></ng-template> <!--tab content goes here-->
+            </li>
+        </ul>
+    </div>
+    <div class="card-body p-0">
+        <div class="row g-0">
+            <div class="col-xxl-8 border-end border-dashed">
+                <app-echart [getOptions]="orderStatisticsChartOptions" height="405px"/>
+            </div>
+            <div class="col-xxl-4">
+                <div [ngbNavOutlet]="nav"></div>
+            </div>
+        </div>
+    </div>
+</div>

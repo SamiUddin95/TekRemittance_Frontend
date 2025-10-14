@@ -1,0 +1,169 @@
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            @if (isLoading) {
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            } @else {
+                <app-page-title [title]="getPageTitle()" subTitle="City Management"></app-page-title>
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light text-dark">
+                        <div class="d-flex align-items-center">
+                            <ng-icon name="tablerBuilding" class="me-2 gradient-icon" size="20"></ng-icon>
+                            <h4 class="card-title mb-0 text-dark">Basic Information</h4>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <form [formGroup]="cityForm" (ngSubmit)="onSubmit()">
+                            <div class="row g-4">
+                                <!-- City Code -->
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="code" class="form-label fw-semibold">
+                                            <ng-icon name="tablerCode" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Code <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="code"
+                                            class="form-control form-control"
+                                            [class.is-invalid]="isFieldInvalid('code')"
+                                            formControlName="code"
+                                            placeholder="Enter city code"
+                                            maxlength="20">
+                                        @if (isFieldInvalid('code')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('code') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- City Name -->
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label fw-semibold">
+                                            <ng-icon name="tablerBuilding" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            City Name <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="name"
+                                            class="form-control form-control"
+                                            [class.is-invalid]="isFieldInvalid('name')"
+                                            formControlName="name"
+                                            placeholder="Enter city name"
+                                            maxlength="100">
+                                        @if (isFieldInvalid('name')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('name') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+          
+                                <!-- Country Dropdown -->
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="countryId" class="form-label fw-semibold">
+                                            <ng-icon name="tablerWorld" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Country <span class="text-danger">*</span>
+                                        </label>
+                                        <select 
+                                            id="countryId"
+                                            class="form-select form-select"
+                                            [class.is-invalid]="isFieldInvalid('countryId')"
+                                            formControlName="countryId">
+                                            <option value="">Select a country</option>
+                                            @for (country of countries; track country.id) {
+                                                <option [value]="country.id">{{ country.name }}</option>
+                                            }
+                                        </select>
+                                        @if (isFieldInvalid('countryId')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                Country is required
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Province Dropdown -->
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="provinceId" class="form-label fw-semibold">
+                                            <ng-icon name="tablerMapPin" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Province <span class="text-danger">*</span>
+                                        </label>
+                                        <select 
+                                            id="provinceId"
+                                            class="form-select form-select"
+                                            [class.is-invalid]="isFieldInvalid('provinceId')"
+                                            formControlName="provinceId"
+                                            [disabled]="!cityForm.get('countryId')?.value">
+                                            <option value="">Select a province</option>
+                                            @for (province of filteredProvinces; track province.id) {
+                                                <option [value]="province.id">{{ province.name }}</option>
+                                            }
+                                        </select>
+                                        @if (isFieldInvalid('provinceId')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                Province is required
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <div class="form-check form-switch">
+                                        <label for="isActive" class="form-label fw-semibold">
+                                            Is Active
+                                        </label>
+                                        <input 
+                                            class="form-check-input form-check-input-lg" 
+                                            type="checkbox" 
+                                            id="isActive"
+                                            formControlName="isActive">
+                                    </div>
+                                </div>
+                                <div class="col-lg-9" >
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-dark"
+                                            (click)="onCancel()"
+                                            [disabled]="isSubmitting">
+                                            <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
+                                            Back to List
+                                        </button>
+                                        <button 
+                                            type="submit" 
+                                            class="btn submit-button"
+                                            >
+                                            <!-- [disabled]="isSubmitting || cityForm.invalid" -->
+                                            @if (isSubmitting) {
+                                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                                Saving...
+                                            } @else {
+                                                <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                                                {{ isEditMode ? 'Update City' : 'Save City' }}
+                                            }
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

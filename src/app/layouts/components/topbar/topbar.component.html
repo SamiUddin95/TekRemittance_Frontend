@@ -1,0 +1,85 @@
+<header class="app-topbar">
+    <div class="container-fluid topbar-menu">
+        <div class="d-flex align-items-center gap-2">
+            <!-- Topbar Brand Logo -->
+            <div class="logo-topbar">
+                <!-- Logo light -->
+                <!-- <a routerLink="/" class="logo-light">
+                    <span class="logo-lg">
+                      <img src="assets/images/logo.png" alt="logo">
+                    </span>
+                    <span class="logo-sm">
+                        <img src="assets/images/logo-sm.png" alt="small logo">
+                    </span>
+                </a> -->
+                <div class="d-flex align-items-center logo-brand">
+                    
+                    <div class="logo-text">
+                        <h3 class="mb-0 fw-bold logo-title">
+                            <span class="gradient-text">TEK</span>
+                            <span class="text-muted mx-1">|</span>
+                            <span class="gradient-text">REMIT</span>
+                        </h3>
+                    </div>
+                </div>
+                
+                <style>
+
+
+                .logo-brand {
+                    transition: all 0.3s ease;
+                }
+                .logo-brand:hover {
+                    transform: translateY(-1px);
+                }
+                .logo-icon-wrapper {
+                    width: 40px;
+                    height: 40px;
+                    background: linear-gradient(135deg, #0d6efd 0%, #198754 100%);
+                    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+                }
+                .logo-title {
+                    font-size: 1.5rem;
+                    letter-spacing: 0.5px;
+                    line-height: 1.2;
+                }
+                .logo-text small {
+                    font-size: 0.7rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    line-height: 1;
+                }
+                </style>
+                <!-- Logo Dark -->
+                <!-- <a routerLink="/" class="logo-dark">
+                    <span class="logo-lg">
+                      <img src="assets/images/logo-black.png" alt="dark logo">
+                    </span>
+                    <span class="logo-sm">
+                      <img src="assets/images/logo-sm.png" alt="small logo">
+                    </span>
+                </a> -->
+            </div>
+
+            <!-- Sidebar Menu Toggle Button -->
+            <button (click)="toggleSidebar()" class="sidenav-toggle-button btn btn-primary btn-icon">
+                <ng-icon name="tablerMenu4" class="fs-22"/>
+            </button>
+ 
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+ 
+
+            <!-- Button Trigger Customizer Offcanvas -->
+            <app-customizer-toggler/>
+
+            <!-- Light/Dark Mode Button -->
+            <app-theme-toggler/>
+
+            <!-- User Dropdown -->
+            <app-user-profile-topbar/>
+
+        </div>
+    </div>
+</header>

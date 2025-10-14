@@ -1,0 +1,209 @@
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            @if (isLoading) {
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            } @else {
+                <app-page-title [title]="getPageTitle()" subTitle="Bank Management"></app-page-title>
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light text-white">
+                        <div class="d-flex align-items-center">
+                            <ng-icon name="tablerBuildingBank"  class="me-2 gradient-icon" size="20"></ng-icon>
+                            <h4 class="card-title mb-0 text-dark">Basic Information</h4>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <form [formGroup]="bankForm" (ngSubmit)="onSubmit()">
+                            <div class="row g-4">
+                                <!-- Bank Code -->
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="code" class="form-label fw-semibold">
+                                            <ng-icon name="tablerCode" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Bank Code <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="code"
+                                            class="form-control form-control"
+                                            [class.is-invalid]="isFieldInvalid('code')"
+                                            formControlName="code"
+                                            placeholder="Enter Bank Code"
+                                            maxlength="20">
+                                        @if (isFieldInvalid('code')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('code') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Bank Name -->
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label fw-semibold">
+                                            <ng-icon name="tablerBuildingBank" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Bank Name <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="name"
+                                            class="form-control form-control"
+                                            [class.is-invalid]="isFieldInvalid('name')"
+                                            formControlName="name"
+                                            placeholder="Enter Bank Name"
+                                            maxlength="100">
+                                        @if (isFieldInvalid('name')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('name') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <!-- Bank IATA -->
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="iata" class="form-label fw-semibold">
+                                            <ng-icon name="tablerId" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Bank IMD <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="iata"
+                                            class="form-control form-control"
+                                            [class.is-invalid]="isFieldInvalid('iata')"
+                                            formControlName="iata"
+                                            placeholder="Enter Bank IMD"
+                                            maxlength="10">
+                                        @if (isFieldInvalid('iata')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('iata') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Website -->
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="website" class="form-label fw-semibold">
+                                            <ng-icon name="tablerWorld" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Website <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="website"
+                                            class="form-control form-control"
+                                            [class.is-invalid]="isFieldInvalid('website')"
+                                            formControlName="website"
+                                            placeholder="Enter Bank Website"
+                                            maxlength="255">
+                                        @if (isFieldInvalid('website')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('website') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="phoneNo" class="form-label fw-semibold">
+                                            <ng-icon name="tablerPhone" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Phone No <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="phoneNo"
+                                            class="form-control form-control"
+                                            [class.is-invalid]="isFieldInvalid('phoneNo')"
+                                            formControlName="phoneNo"
+                                            placeholder="Enter Bank Phone No."
+                                            maxlength="20">
+                                        @if (isFieldInvalid('phoneNo')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('phoneNo') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="description" class="form-label fw-semibold">
+                                            <ng-icon name="tablerFileText" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Bank Description <span class="text-danger">*</span>
+                                        </label>
+                                        <textarea 
+                                        style="height: 44px;"
+                                            id="description"
+                                            class="form-control"
+                                            [class.is-invalid]="isFieldInvalid('description')"
+                                            formControlName="description"
+                                            placeholder="Enter Bank Description"
+                                            rows="1"
+                                            maxlength="500"></textarea>
+                                        @if (isFieldInvalid('description')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('description') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 mt-5">
+                                            <div class="form-check form-switch">
+                                                <label for="isActive" class="form-label fw-semibold">
+                                                    Is Active
+                                                </label>
+                                                <input 
+                                                    class="form-check-input form-check-input-lg" 
+                                                    type="checkbox" 
+                                                    id="isActive"
+                                                    formControlName="isActive">
+                                            </div>
+                                </div>
+                         
+                                <div class="col-lg-3 mt-5">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-dark"
+                                            (click)="onCancel()"
+                                            [disabled]="isSubmitting">
+                                            <ng-icon name="tablerArrowLeft"  class="me-1" size="16"></ng-icon>
+                                            Back to List
+                                        </button>
+                                        <button 
+                                            type="submit" 
+                                            class="btn submit-button"
+                                            >
+                                            <!-- [disabled]="isSubmitting || bankForm.invalid" -->
+                                            @if (isSubmitting) {
+                                                <span class="spinner-border  spinner-border-sm me-1" role="status"></span>
+                                                Saving...
+                                            } @else {
+                                                <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                                                Save Bank
+                                            }
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

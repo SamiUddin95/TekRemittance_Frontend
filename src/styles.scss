@@ -1,0 +1,101 @@
+/* You can add global styles to this file, and also import other style files */
+@use "simplebar/dist/simplebar.min.css";
+@use "jsvectormap/dist/css/jsvectormap.css";
+@use "leaflet/dist/leaflet.css";
+@use "flatpickr/dist/flatpickr.css";
+@use "choices.js/src/styles/choices";
+@use "@yaireo/tagify/dist/tagify.css";
+@use "quill/dist/quill.snow.css";
+@use "nouislider/dist/nouislider.css";
+@use "filepond/dist/filepond.min.css";
+@use "glightbox/dist/css/glightbox.min.css";
+@use "shepherd.js/dist/css/shepherd.css";
+@use "animate.css/animate.min.css";
+@use "spinkit/spinkit.css";
+@use "ladda/dist/ladda.min.css";
+@use "dropzone/dist/min/dropzone.min.css";
+@use "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
+//@use "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css";
+//@use 'datatables.net-select-bs5/css/select.bootstrap5.min.css';
+//@use 'datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css';
+
+@use "./assets/scss/app.scss";
+
+  
+  .gradient-text {
+      background: linear-gradient(90deg, #FF5102, #CE0E2D);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: bold;
+  }
+  
+  .gradient-icon {
+    //   background: linear-gradient(90deg, #FF5102, #CE0E2D);
+      color: #FF5102
+    }
+
+    .orange-header {
+        background: linear-gradient(90deg, #FF5102, #CE0E2D);
+    }
+
+    .submit-button {
+        background: #FF5102;
+        color: white;
+    }
+
+    .form-check-input:checked {
+        background-color: #FF5102 !important;
+        border-color: #FF5102 !important;
+      }
+      
+      .form-check-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(255, 81, 2, 0.25) !important;
+      }
+
+      .logo-title {
+        display: flex;
+        align-items: center;
+      }
+      
+      .divider {
+        line-height: 1;
+        position: relative;
+        top: -1px; /* zarurat ke mutabiq adjust kar lo (e.g. -2px ya 0px) */
+        font-weight: 500;
+      }
+    
+
+/*
+ * Navbar menu hover/active gradient styles
+ * Applies gradient to parent (.nav-link) and child (.dropdown-item) text on hover/active.
+ * For SVG icons rendered by <ng-icon>, use solid color fallback (gradient start),
+ */
+.navbar-nav .nav-link:hover .menu-text,
+.navbar-nav .nav-link:focus .menu-text,
+.navbar-nav .nav-item.active > .nav-link .menu-text,
+.navbar-nav .nav-link.active .menu-text {
+  background: linear-gradient(90deg, #FF5102, #CE0E2D);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+.dropdown-menu .dropdown-item:hover .menu-text,
+.dropdown-menu .dropdown-item:focus .menu-text,
+.dropdown-menu .dropdown-item.active .menu-text {
+  background: linear-gradient(90deg, #FF5102, #CE0E2D);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+.navbar-nav .nav-item.active > .nav-link .menu-icon,
+.navbar-nav .nav-link.active .menu-icon,
+.dropdown-menu .dropdown-item:hover .menu-icon,
+.dropdown-menu .dropdown-item:focus .menu-icon,
+.dropdown-menu .dropdown-item.active .menu-icon {
+  color: #FF5102; /* fallback to first gradient color */
+}

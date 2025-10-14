@@ -1,0 +1,114 @@
+
+<div class="container-fluid">
+    <app-page-title title="Bank Management" subTitle="Basic Setup"></app-page-title>
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light border-bottom">
+                    <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+                        <div class="d-flex align-items-center">
+                            <ng-icon name="tablerBuildingBank" class="me-2 gradient-icon" size="20"></ng-icon>
+                            <h4 class="card-title mb-0 text-dark">Banks List</h4>
+                        </div>
+                        <button type="button" class="btn submit-button" (click)="addNewBank()" >
+                            <ng-icon name="tablerPlus" class="me-1" size="16"></ng-icon>
+                            Add Bank
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- <div class="card-body"> -->
+                    @if (isLoading) {
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-sm">
+                                <thead class="table text-center">
+                                    <tr>
+                                        <th class="fw-bold">Bank Code</th>
+                                        <th class="fw-bold">Bank Name</th>
+                                        <th class="fw-bold">Status</th>
+                                        <th class="text-center fw-bold">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider text-center">
+                                    @for (bank of banks; track bank.id) {
+                                        <tr>
+                                            <td>
+                                                <span class="fw-medium">{{ bank.code }}</span>
+                                            </td>
+                                            <td>{{ bank.name }}</td>
+                                            <td>
+                                                <span [class]="getStatusBadgeClass(bank.isActive)">
+                                                    {{ getStatusText(bank.isActive) }}
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" 
+                                                            class="btn btn-sm btn-outline-primary" 
+                                                            (click)="editBank(bank.id!)"
+                                                            title="Edit Bank">
+                                                        <ng-icon name="tablerEdit" size="16"></ng-icon>
+                                                    </button>
+                                                    <button type="button" 
+                                                            class="btn btn-sm btn-outline-danger" 
+                                                            (click)="deleteBank(bank)"
+                                                            title="Delete Bank">
+                                                        <ng-icon name="tablerTrash" size="16"></ng-icon>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    } @empty {
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4">
+                                                <div class="text-muted">
+                                                    <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                                                    <p class="mb-0">No banks found</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        @if (totalPages > 1) {
+                            <nav aria-label="Banks pagination">
+                                <ul class="pagination justify-content-center mb-0">
+                                    <li class="page-item" [class.disabled]="currentPage === 1">
+                                        <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 1">
+                                            <ng-icon name="tablerChevronLeft" size="16" class="me-1"></ng-icon>
+                                            Previous
+                                        </button>
+                                    </li>
+                                    
+                                    @for (page of [].constructor(totalPages); track $index; let i = $index) {
+                                        <li class="page-item" [class.active]="currentPage === i + 1">
+                                            <button class="page-link" (click)="goToPage(i + 1)">
+                                                {{ i + 1 }}
+                                            </button>
+                                        </li>
+                                    }
+                                    
+                                    <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                        <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages">
+                                            Next
+                                            <ng-icon name="tablerChevronRight" size="16" class="ms-1"></ng-icon>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
+                        }
+                    }
+                <!-- </div> -->
+            </div>
+        </div>
+    </div>
+</div>
