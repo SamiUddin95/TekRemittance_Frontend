@@ -32,12 +32,12 @@ export class ProvinceListComponent implements OnInit {
 
     loadProvinces(): void {
         this.isLoading = true;
-        this.provinceService.getProvinces(this.currentPage, this.itemsPerPage)
+        this.provinceService.getProvinces()
             .subscribe({
-                next: (response) => {
-                    this.provinces = response.provinces;
-                    this.totalItems = response.total;
-                    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+                next: (provinces) => {
+                    this.provinces = provinces;
+                    this.totalItems = this.provinces.length;
+                    this.totalPages = Math.max(1, Math.ceil(this.totalItems / this.itemsPerPage));
                     this.isLoading = false;
                 },
                 error: (error) => {
@@ -51,7 +51,7 @@ export class ProvinceListComponent implements OnInit {
         this.router.navigate(['/province-management/add']);
     }
 
-    editProvince(id: number): void {
+    editProvince(id: string): void {
         this.router.navigate(['/province-management/edit', id]);
     }
 

@@ -13,7 +13,7 @@
                                           <span class="gradient-text mx-2 divider">|</span>
                                           <span class="gradient-text">REMIT</span>
                                         </h2>
-                                      </div>    
+                                    </div>    
                                       
                                     <style>
                                     
@@ -46,7 +46,7 @@
                                         password to continue.</p>
                                 </div>
 
-                                <form>
+                                <form [formGroup]="form" (ngSubmit)="signIn()">
                                     <div class="mb-3">
                                         <label for="userEmail" class="form-label">Email address <span
                                                 class="text-danger">*</span></label>
@@ -54,7 +54,7 @@
                                             <span class="input-group-text orange-header">
                                                 <ng-icon name="tablerMail" style="color: white;" class="fs-xl" /></span>
                                             <input type="email" class="form-control" id="userEmail"
-                                                placeholder="you@example.com" required>
+                                                placeholder="you@example.com" formControlName="username" required>
                                         </div>
                                     </div>
 
@@ -65,7 +65,7 @@
                                             <span class="input-group-text orange-header">
                                                 <ng-icon name="tablerLockPassword" style="color: white;" class="fs-xl" /></span>
                                             <input type="password" class="form-control" id="userPassword"
-                                                placeholder="••••••••" required>
+                                                placeholder="••••••••" formControlName="password" required>
                                         </div>
                                     </div>
 
@@ -81,7 +81,7 @@
                                     </div>
 
                                     <div class="d-grid">
-                                        <button class="btn submit-button fw-semibold py-2" click="signIn()" >Sign In</button>
+                                        <button class="btn submit-button fw-semibold py-2" type="submit">Sign In</button>
                                     </div>
                                 </form>
 

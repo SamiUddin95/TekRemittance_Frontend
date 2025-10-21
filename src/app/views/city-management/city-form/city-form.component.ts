@@ -21,7 +21,7 @@ import Swal from 'sweetalert2';
 export class CityFormComponent implements OnInit {
     cityForm: FormGroup;
     isEditMode = false;
-    cityId: number | null = null;
+    cityId: string | null = null;
     isSubmitting = false;
     isLoading = false;
     countries: Country[] = [];
@@ -47,7 +47,7 @@ export class CityFormComponent implements OnInit {
         this.route.params.subscribe(params => {
             if (params['id']) {
                 this.isEditMode = true;
-                this.cityId = +params['id'];
+                this.cityId = params['id'];
                 this.loadCity();
             }
         });
@@ -64,9 +64,9 @@ export class CityFormComponent implements OnInit {
     }
 
     loadCountries(): void {
-        this.countryService.getCountries(1, 100).subscribe({
-            next: (response) => {
-                this.countries = response.countries.filter(c => c.isActive);
+        this.countryService.getCountries().subscribe({
+            next: (countries) => {
+                this.countries = countries.filter(c => c.isActive);
             },
             error: (error) => {
                 console.error('Error loading countries:', error);
@@ -75,9 +75,9 @@ export class CityFormComponent implements OnInit {
     }
 
     loadProvinces(): void {
-        this.provinceService.getProvinces(1, 100).subscribe({
-            next: (response) => {
-                this.provinces = response.provinces.filter(p => p.isActive);
+        this.provinceService.getProvinces().subscribe({
+            next: (provinces) => {
+                this.provinces = provinces.filter((p) => p.isActive);
             },
             error: (error) => {
                 console.error('Error loading provinces:', error);
@@ -88,7 +88,7 @@ export class CityFormComponent implements OnInit {
     setupCountryChangeListener(): void {
         this.cityForm.get('countryId')?.valueChanges.subscribe(countryId => {
             if (countryId) {
-                this.filteredProvinces = this.provinces.filter(p => p.countryId === +countryId);
+                this.filteredProvinces = this.provinces.filter((p) => p.countryId === String(countryId));
                 this.cityForm.patchValue({ provinceId: '' });
             } else {
                 this.filteredProvinces = [];
@@ -130,8 +130,8 @@ export class CityFormComponent implements OnInit {
             const formValue = this.cityForm.value;
 
             // Add country and province names for display
-            const selectedCountry = this.countries.find(c => c.id === +formValue.countryId);
-            const selectedProvince = this.filteredProvinces.find(p => p.id === +formValue.provinceId);
+            const selectedCountry = this.countries.find(c => c.id === String(formValue.countryId));
+            const selectedProvince = this.filteredProvinces.find((p) => p.id === String(formValue.provinceId));
             
             if (selectedCountry) {
                 formValue.countryName = selectedCountry.name;

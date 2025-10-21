@@ -1,0 +1,110 @@
+<div class="">
+  <app-page-title title="Add File Upload Template"
+    subTitle="Fields marked with an asterisk (*) are required."></app-page-title>
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light text-white">
+          <div class="d-flex align-items-center">
+            <ng-icon name="tablerBuildingBank" class="me-2 gradient-icon" size="20"></ng-icon>
+            <h4 class="card-title mb-0 text-dark">File Template Form</h4>
+          </div>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="form" (ngSubmit)="save()" class="row g-4">
+            <div class="col-md-6">
+              <label class="form-label">Name <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerFileText"
+                    size="16"></ng-icon></span>
+                <input type="text" class="form-control" placeholder="Enter template name" formControlName="name" />
+              </div>
+              <small class="text-muted">A friendly name to identify this template.</small>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Sheet Name <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerTable"
+                    size="16"></ng-icon></span>
+                <input type="text" class="form-control" placeholder="Enter sheet name" formControlName="sheetName"
+                  [disabled]="form.get('format')?.value === '.txt'" />
+              </div>
+              <small class="text-muted">Required for Excel formats; disabled for .txt.</small>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label d-block">Format <span class="text-danger">*</span></label>
+              <div class="d-flex align-items-center gap-4 flex-wrap">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" id="fmtTxt" value=".txt" formControlName="format" />
+                  <label class="form-check-label" for="fmtTxt">.txt</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" id="fmtXls" value=".xls" formControlName="format" />
+                  <label class="form-check-label" for="fmtXls">.xls</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" id="fmtXlsx" value=".xlsx" formControlName="format" />
+                  <label class="form-check-label" for="fmtXlsx">.xlsx</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="fixLength" formControlName="fixLength" />
+                    <label class="form-check-label" for="fixLength">Fix Length</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="fieldDelimiter"
+                      formControlName="fieldDelimiter" />
+                    <label class="form-check-label" for="fieldDelimiter">Field Delimiter</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Delimiter</label>
+              <div class="input-group">
+                <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerSeparator"
+                    size="16"></ng-icon></span>
+                <input type="text" class="form-control" placeholder="e.g., , (comma) or ; (semicolon)"
+                  formControlName="delimiterText" [disabled]="!form.get('fieldDelimiter')?.value" />
+              </div>
+              <small class="text-muted">Enabled only when Field Delimiter is checked.</small>
+            </div>
+
+            <div class="col-12 d-flex justify-content-end gap-2 mt-1">
+              <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-dark" (click)="onCancel()" [disabled]="isSubmitting">
+                  <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
+                  Back to List
+                </button>
+                <button type="submit" class="btn submit-button">
+                  <!-- [disabled]="isSubmitting || bankForm.invalid" -->
+                  @if (isSubmitting) {
+                  <span class="spinner-border  spinner-border-sm me-1" role="status"></span>
+                  Saving...
+                  } @else {
+                  <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                  Save Template
+                  }
+                </button>
+              </div>
+            </div>
+
+            <!-- <div class="col-12 d-flex justify-content-end gap-2 mt-1">
+              <button type="button" class="btn btn-light" (click)="cancel()">Cancel</button>
+              <button type="submit" class="btn submit-button" [disabled]="form.invalid">Save</button>
+            </div> -->
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

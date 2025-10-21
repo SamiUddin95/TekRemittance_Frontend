@@ -1,74 +1,98 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { City, CityListResponse } from '../models/city.model';
+import { HttpClient } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
+import { City } from '../models/city.model';
+import { environment } from '@/environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CityService {
-    private cities: City[] = [
-        { id: 1, code: 'DEUTDEFFXXX', name: 'Germany', countryId: 1, countryName: 'Germany', provinceId: 1, provinceName: 'Bavaria', isActive: true },
-        { id: 2, code: 'HSBCLONCXXX', name: 'United Kingdom', countryId: 2, countryName: 'United Kingdom', provinceId: 2, provinceName: 'England', isActive: true },
-        { id: 3, code: 'SCBLSG22XXX', name: 'Singapore', countryId: 3, countryName: 'Singapore', provinceId: 3, provinceName: 'Central', isActive: true },
-        { id: 4, code: 'BNPAFRPPXXX', name: 'France', countryId: 4, countryName: 'France', provinceId: 4, provinceName: 'Ile-de-France', isActive: true },
-        { id: 5, code: 'CHASUS33XXX', name: 'United States', countryId: 5, countryName: 'United States', provinceId: 5, provinceName: 'California', isActive: false },
-    ];
+    constructor(private http: HttpClient) {}
 
-    private citiesSubject = new BehaviorSubject<City[]>(this.cities);
-    public cities$ = this.citiesSubject.asObservable();
-
-    getCities(page: number = 1, limit: number = 10): Observable<CityListResponse> {
-        const startIndex = (page - 1) * limit;
-        const endIndex = startIndex + limit;
-        const paginatedCities = this.cities.slice(startIndex, endIndex);
-
-        return of({
-            cities: paginatedCities,
-            total: this.cities.length,
-            page,
-            limit
-        });
+    private mapDtoToCity(dto: any): City {
+        return {
+            id: dto.id ?? dto.cityId ?? dto.Id,
+            code: dto.cityCode ?? dto.code,
+            name: dto.cityName ?? dto.name,
+            isActive: dto.isActive ?? true,
+            countryId: dto.countryId,
+            countryName: dto.countryName,
+            provinceId: dto.provinceId,
+            provinceName: dto.provinceName,
+            createdAt: dto.createdOn ? new Date(dto.createdOn) : undefined,
+            updatedAt: dto.updatedOn ? new Date(dto.updatedOn) : undefined,
+        } as City;
     }
 
-    getCityById(id: number): Observable<City | undefined> {
-        const city = this.cities.find(c => c.id === id);
-        return of(city);
+    getCities(): Observable<City[]> {
+        const url = `${environment.apiUrl}/BasicSetup/City`;
+        return this.http.get<any>(url).pipe(
+            map((res) => {
+                const data = Array.isArray(res) ? res : res?.data;
+                const arr = Array.isArray(data) ? data : [];
+                return arr.map((d) => this.mapDtoToCity(d));
+            })
+        );
+    }
+
+    getCityById(id: string): Observable<City | undefined> {
+        const url = `${environment.apiUrl}/BasicSetup/CitybyId/${id}`;
+        return this.http.get<any>(url).pipe(
+            map((res) => {
+                const dto = res?.data ?? res;
+                return dto ? this.mapDtoToCity(dto) : undefined;
+            })
+        );
     }
 
     addCity(city: Omit<City, 'id'>): Observable<City> {
-        const newCity: City = {
-            ...city,
-            id: Math.max(...this.cities.map(c => c.id || 0)) + 1,
-            createdAt: new Date(),
-            updatedAt: new Date()
+        const url = `${environment.apiUrl}/BasicSetup/CreateCity`;
+        const nowIso = new Date().toISOString();
+        const payload = {
+            id: crypto?.randomUUID ? crypto.randomUUID() : undefined,
+            cityCode: city.code,
+            cityName: city.name,
+            isActive: city.isActive,
+            createdBy: '',
+            updatedBy: '',
+            createdOn: nowIso,
+            updatedOn: nowIso,
+            countryId: city.countryId,
+            provinceId: city.provinceId,
         };
-        
-        this.cities.push(newCity);
-        this.citiesSubject.next([...this.cities]);
-        return of(newCity);
+        return this.http.post<any>(url, payload).pipe(
+            map((res) => this.mapDtoToCity(res?.data ?? res))
+        );
     }
 
-    updateCity(id: number, city: Partial<City>): Observable<City | null> {
-        const index = this.cities.findIndex(c => c.id === id);
-        if (index !== -1) {
-            this.cities[index] = {
-                ...this.cities[index],
-                ...city,
-                updatedAt: new Date()
-            };
-            this.citiesSubject.next([...this.cities]);
-            return of(this.cities[index]);
-        }
-        return of(null);
+    updateCity(id: string, city: Partial<City>): Observable<City> {
+        const url = `${environment.apiUrl}/BasicSetup/updateCity`;
+        const nowIso = new Date().toISOString();
+        const payload = {
+            id,
+            cityCode: city.code,
+            cityName: city.name,
+            isActive: city.isActive,
+            createdBy: '',
+            updatedBy: '',
+            createdOn: nowIso,
+            updatedOn: nowIso,
+            countryId: city.countryId,
+            provinceId: city.provinceId,
+        };
+        return this.http.put<any>(url, payload).pipe(
+            map((res) => this.mapDtoToCity(res?.data ?? res))
+        );
     }
 
-    deleteCity(id: number): Observable<boolean> {
-        const index = this.cities.findIndex(c => c.id === id);
-        if (index !== -1) {
-            this.cities.splice(index, 1);
-            this.citiesSubject.next([...this.cities]);
-            return of(true);
-        }
-        return of(false);
+    deleteCity(id: string): Observable<boolean> {
+        const url = `${environment.apiUrl}/BasicSetup/deleteCity/${id}`;
+        return this.http.delete<any>(url).pipe(
+            map((res) => {
+                const status = res?.status ?? res?.statusCode;
+                return status === 'success' || status === 200 || status === 204 || res === true;
+            })
+        );
     }
 }

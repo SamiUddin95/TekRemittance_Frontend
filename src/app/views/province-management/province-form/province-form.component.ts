@@ -19,7 +19,7 @@ import Swal from 'sweetalert2';
 export class ProvinceFormComponent implements OnInit {
     provinceForm: FormGroup;
     isEditMode = false;
-    provinceId: number | null = null;
+    provinceId: string | null = null;
     isSubmitting = false;
     isLoading = false;
     countries: Country[] = [];
@@ -39,7 +39,7 @@ export class ProvinceFormComponent implements OnInit {
         this.route.params.subscribe(params => {
             if (params['id']) {
                 this.isEditMode = true;
-                this.provinceId = +params['id'];
+                this.provinceId = params['id'];
                 this.loadProvince();
             }
         });
@@ -55,9 +55,9 @@ export class ProvinceFormComponent implements OnInit {
     }
 
     loadCountries(): void {
-        this.countryService.getCountries(1, 100).subscribe({
-            next: (response) => {
-                this.countries = response.countries.filter(c => c.isActive);
+        this.countryService.getCountries().subscribe({
+            next: (countries) => {
+                this.countries = countries.filter((c) => c.isActive);
             },
             error: (error) => {
                 console.error('Error loading countries:', error);
@@ -98,7 +98,7 @@ export class ProvinceFormComponent implements OnInit {
             const formValue = this.provinceForm.value;
 
             // Add country name for display
-            const selectedCountry = this.countries.find(c => c.id === +formValue.countryId);
+            const selectedCountry = this.countries.find(c => c.id === String(formValue.countryId));
             if (selectedCountry) {
                 formValue.countryName = selectedCountry.name;
             }

@@ -32,12 +32,12 @@ export class CityListComponent implements OnInit {
 
     loadCities(): void {
         this.isLoading = true;
-        this.cityService.getCities(this.currentPage, this.itemsPerPage)
+        this.cityService.getCities()
             .subscribe({
-                next: (response) => {
-                    this.cities = response.cities;
-                    this.totalItems = response.total;
-                    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+                next: (cities) => {
+                    this.cities = cities;
+                    this.totalItems = this.cities.length;
+                    this.totalPages = Math.max(1, Math.ceil(this.totalItems / this.itemsPerPage));
                     this.isLoading = false;
                 },
                 error: (error) => {
@@ -51,7 +51,7 @@ export class CityListComponent implements OnInit {
         this.router.navigate(['/city-management/add']);
     }
 
-    editCity(id: number): void {
+    editCity(id: string): void {
         this.router.navigate(['/city-management/edit', id]);
     }
 

@@ -21,7 +21,14 @@
 
 @use "./assets/scss/app.scss";
 
-  
+  .accordion-button.no-accordion-caret::after {
+  display: none !important;
+}
+
+// .accordion-button:not(.collapsed)::after {
+//   transform: rotate(180deg);
+// }
+
   .gradient-text {
       background: linear-gradient(90deg, #FF5102, #CE0E2D);
       background-clip: text;
@@ -98,4 +105,96 @@
 .dropdown-menu .dropdown-item:focus .menu-icon,
 .dropdown-menu .dropdown-item.active .menu-icon {
   color: #FF5102; /* fallback to first gradient color */
+}
+
+/* Align labels and inputs on forms that opt-in via .aligned-form */
+.aligned-form .form-group {
+  display: flex;
+  align-items: flex-start; /* keep label/input aligned; errors won't shift rows */
+  flex-wrap: wrap; /* allow error to wrap on next line */
+  gap: 12px;
+}
+
+.aligned-form .form-group .form-label {
+  width: 180px; /* adjust as needed for longest label */
+  margin: 0;    /* remove extra bottom space to vertically center */
+  white-space: nowrap;
+}
+
+.aligned-form .form-group .form-control,
+.aligned-form .form-group select,
+.aligned-form .form-group textarea {
+  flex: 1 1 auto;
+}
+
+/* Keep validation feedback aligned under inputs */
+.aligned-form .form-group .invalid-feedback {
+  display: block;
+  // width: calc(100% - (180px + 12px));
+  // margin-left: calc(180px + 12px);
+  // margin-top: 4px; /* place error just below input */
+}
+
+/* Small screens: stack label above input */
+@media (max-width: 575.98px) {
+  .aligned-form .form-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  // .aligned-form .form-group .form-label {
+  //   width: auto;
+  // }
+  .aligned-form .form-group .invalid-feedback {
+    margin-left: 0;
+  }
+}
+
+/* Align switch/checkbox rows the same as inputs */
+.aligned-form .form-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+// .aligned-form .form-check .form-label {
+//   // width: 180px;
+//   margin: 0;
+//   white-space: nowrap;
+// }
+
+/* Light UI refinements */
+.aligned-form .form-control,
+.aligned-form select,
+.aligned-form textarea {
+ margin-bottom: -10px;
+  border-radius: 6px;
+}
+
+.aligned-form .card-body {
+  padding-top: 1rem;
+}
+
+/* Credentials card visual style (scoped) */
+.credentials-card .card-header {
+  background-color: #f8fafc; /* very light */
+}
+
+.credentials-card .form-group .form-label {
+  font-weight: 600;
+}
+
+// .credentials-card .form-control {
+//   background-color: #eef5ff; /* soft blue like template */
+//   border-color: #d6e6ff;
+// }
+
+// .credentials-card .form-control:focus {
+//   border-color: #99c2ff;
+//   box-shadow: 0 0 0 0.2rem rgba(153, 194, 255, 0.25);
+// }
+
+/* spacing between the two columns on larger screens */
+@media (min-width: 768px) {
+  .aligned-form .col-md-8 { padding-right: .5rem; }
+  .aligned-form .col-md-4 { padding-left: .5rem; }
 }

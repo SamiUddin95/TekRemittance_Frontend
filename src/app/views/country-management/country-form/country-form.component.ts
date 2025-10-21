@@ -17,7 +17,7 @@ import Swal from 'sweetalert2';
 export class CountryFormComponent implements OnInit {
     countryForm: FormGroup;
     isEditMode = false;
-    countryId: number | null = null;
+    countryId: string | null = null;
     isSubmitting = false;
     isLoading = false;
 
@@ -34,7 +34,7 @@ export class CountryFormComponent implements OnInit {
         this.route.params.subscribe(params => {
             if (params['id']) {
                 this.isEditMode = true;
-                this.countryId = +params['id'];
+                this.countryId = params['id'];
                 this.loadCountry();
             }
         });
@@ -134,10 +134,6 @@ export class CountryFormComponent implements OnInit {
         });
     }
 
-    isFieldInvalid(fieldName: string): boolean {
-        const field = this.countryForm.get(fieldName);
-        return !!(field && field.invalid && (field.dirty || field.touched));
-    }
 
     getFieldError(fieldName: string): string {
         const field = this.countryForm.get(fieldName);
@@ -145,12 +141,12 @@ export class CountryFormComponent implements OnInit {
             if (field.errors['required']) {
                 return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`;
             }
-            if (field.errors['minlength']) {
-                return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} must be at least ${field.errors['minlength'].requiredLength} characters`;
-            }
-            if (field.errors['maxlength']) {
-                return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} cannot exceed ${field.errors['maxlength'].requiredLength} characters`;
-            }
+            // if (field.errors['minlength']) {
+            //     return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`;
+            // }
+            // if (field.errors['maxlength']) {
+            //     return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} `;
+            // }
         }
         return '';
     }

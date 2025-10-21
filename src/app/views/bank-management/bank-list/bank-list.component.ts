@@ -32,12 +32,12 @@ export class BankListComponent implements OnInit {
 
     loadBanks(): void {
         this.isLoading = true;
-        this.bankService.getBanks(this.currentPage, this.itemsPerPage)
+        this.bankService.getBanks()
             .subscribe({
-                next: (response) => {
-                    this.banks = response.banks;
-                    this.totalItems = response.total;
-                    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+                next: (banks) => {
+                    this.banks = banks;
+                    this.totalItems = this.banks.length;
+                    this.totalPages = Math.max(1, Math.ceil(this.totalItems / this.itemsPerPage));
                     this.isLoading = false;
                 },
                 error: (error) => {
@@ -51,7 +51,7 @@ export class BankListComponent implements OnInit {
         this.router.navigate(['/bank-management/add']);
     }
 
-    editBank(id: number): void {
+    editBank(id: string): void {
         this.router.navigate(['/bank-management/edit', id]);
     }
 

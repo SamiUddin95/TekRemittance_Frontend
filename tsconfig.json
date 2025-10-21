@@ -24,6 +24,7 @@
       "@core/*": ["./src/app/core/*"],
       "@layouts/*": ["./src/app/layouts/*"],
       "@/*": ["./src/*"],
+      "@env/*": ["./src/environments/*"]
     },
   },
   "angularCompilerOptions": {

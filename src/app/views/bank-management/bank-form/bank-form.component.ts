@@ -17,7 +17,7 @@ import Swal from 'sweetalert2';
 export class BankFormComponent implements OnInit {
     bankForm: FormGroup;
     isEditMode = false;
-    bankId: number | null = null;
+    bankId: string | null = null;
     isSubmitting = false;
     isLoading = false;
 
@@ -34,7 +34,7 @@ export class BankFormComponent implements OnInit {
         this.route.params.subscribe(params => {
             if (params['id']) {
                 this.isEditMode = true;
-                this.bankId = +params['id'];
+                this.bankId = params['id'];
                 this.loadBank();
             }
         });

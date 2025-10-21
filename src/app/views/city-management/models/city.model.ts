@@ -1,10 +1,10 @@
 export interface City {
-    id?: number;
+    id?: string;
     code: string;
     name: string;
-    countryId: number;
+    countryId: string;
     countryName?: string;
-    provinceId: number;
+    provinceId: string;
     provinceName?: string;
     isActive: boolean;
     createdAt?: Date;

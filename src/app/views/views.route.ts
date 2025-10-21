@@ -44,6 +44,14 @@ export const VIEWS_ROUTES: Routes = [
         loadChildren: () => import('./bank-management/bank-management.routes').then((mod) => mod.BANK_MANAGEMENT_ROUTES)
     },
     {
+        path: '',
+        loadChildren: () => import('./processing-management/processing-management.routes').then((mod) => mod.PROCESSING_MANAGEMENT_ROUTES)
+    },
+    {
+        path: '',
+        loadChildren: () => import('./user-management/user-management.routes').then((mod) => mod.USER_MANAGEMENT_ROUTES)
+    },
+    {
         path: 'widgets',
         component: WidgetsComponent,
         data: {title: "Widgets"},

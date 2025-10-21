@@ -4,7 +4,7 @@ import { Subject, timer, Subscription } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class IdleDetectorService {
   private idleTime = 0;
-  private idleLimit = 5;
+  private idleLimit = 300;
   private wasIdle = false;
   private activityEvents = ['mousemove', 'keydown', 'scroll', 'click'];
   private idleSub?: Subscription;

@@ -32,12 +32,12 @@ export class CountryListComponent implements OnInit {
 
     loadCountries(): void {
         this.isLoading = true;
-        this.countryService.getCountries(this.currentPage, this.itemsPerPage)
+        this.countryService.getCountries()
             .subscribe({
                 next: (response) => {
-                    this.countries = response.countries;
-                    this.totalItems = response.total;
-                    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+                    this.countries = response;
+                    this.totalItems = this.countries.length;
+                    this.totalPages = Math.max(1, Math.ceil(this.totalItems / this.itemsPerPage));
                     this.isLoading = false;
                 },
                 error: (error) => {
@@ -51,7 +51,7 @@ export class CountryListComponent implements OnInit {
         this.router.navigate(['/country-management/add']);
     }
 
-    editCountry(id: number): void {
+    editCountry(id: string): void {
         this.router.navigate(['/country-management/edit', id]);
     }
 

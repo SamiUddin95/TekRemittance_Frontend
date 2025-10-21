@@ -1,74 +1,90 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { Country, CountryListResponse } from '../models/country.model';
+import { HttpClient } from '@angular/common/http';
+import { map, Observable, of } from 'rxjs';
+import { Country } from '../models/country.model';
+import { environment } from '@/environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CountryService {
-    private countries: Country[] = [
-        { id: 1, code: 'DEUTDEFFXXX', name: 'Germany', isActive: true },
-        { id: 2, code: 'HSBCLONCXXX', name: 'United Kingdom', isActive: true },
-        { id: 3, code: 'SCBLSG22XXX', name: 'Singapore', isActive: true },
-        { id: 4, code: 'BNPAFRPPXXX', name: 'France', isActive: true },
-        { id: 5, code: 'CHASUS33XXX', name: 'United States', isActive: false },
-    ];
+    constructor(private http: HttpClient) {}
 
-    private countriesSubject = new BehaviorSubject<Country[]>(this.countries);
-    public countries$ = this.countriesSubject.asObservable();
-
-    getCountries(page: number = 1, limit: number = 10): Observable<CountryListResponse> {
-        const startIndex = (page - 1) * limit;
-        const endIndex = startIndex + limit;
-        const paginatedCountries = this.countries.slice(startIndex, endIndex);
-
-        return of({
-            countries: paginatedCountries,
-            total: this.countries.length,
-            page,
-            limit
-        });
+    private mapDtoToCountry(dto: any): Country {
+        return {
+            id: dto.id ?? dto.Id ?? dto.countryId,
+            code: dto.countryCode ?? dto.code,
+            name: dto.countryName ?? dto.name,
+            isActive: dto.isActive ?? true,
+            createdAt: dto.createdOn ? new Date(dto.createdOn) : undefined,
+            updatedAt: dto.updatedOn ? new Date(dto.updatedOn) : undefined,
+        } as Country;
     }
 
-    getCountryById(id: number): Observable<Country | undefined> {
-        const country = this.countries.find(c => c.id === id);
-        return of(country);
+    getCountries(): Observable<Country[]> {
+        const url = `${environment.apiUrl}/BasicSetup/countries`;
+        return this.http.get<any>(url).pipe(
+            map((res) => {
+                const data = Array.isArray(res) ? res : res?.data;
+                const arr = Array.isArray(data) ? data : [];
+                return arr.map((d) => this.mapDtoToCountry(d));
+            })
+        );
+    }
+
+    getCountryById(id: string): Observable<Country | undefined> {
+        const url = `${environment.apiUrl}/BasicSetup/countrybyId/${id}`;
+        return this.http.get<any>(url).pipe(
+            map((res) => {
+                const dto = res?.data ?? res;
+                return dto ? this.mapDtoToCountry(dto) : undefined;
+            })
+        );
     }
 
     addCountry(country: Omit<Country, 'id'>): Observable<Country> {
-        const newCountry: Country = {
-            ...country,
-            id: Math.max(...this.countries.map(c => c.id || 0)) + 1,
-            createdAt: new Date(),
-            updatedAt: new Date()
+        const url = `${environment.apiUrl}/BasicSetup/create`;
+        const nowIso = new Date().toISOString();
+        const payload = {
+            id: crypto?.randomUUID ? crypto.randomUUID() : undefined,
+            countryCode: country.code,
+            countryName: country.name,
+            isActive: country.isActive,
+            createdBy: '',
+            updatedBy: '',
+            createdOn: nowIso,
+            updatedOn: nowIso
         };
-        
-        this.countries.push(newCountry);
-        this.countriesSubject.next([...this.countries]);
-        return of(newCountry);
+        return this.http.post<any>(url, payload).pipe(
+            map((res) => this.mapDtoToCountry(res?.data ?? res))
+        );
     }
 
-    updateCountry(id: number, country: Partial<Country>): Observable<Country | null> {
-        const index = this.countries.findIndex(c => c.id === id);
-        if (index !== -1) {
-            this.countries[index] = {
-                ...this.countries[index],
-                ...country,
-                updatedAt: new Date()
-            };
-            this.countriesSubject.next([...this.countries]);
-            return of(this.countries[index]);
-        }
-        return of(null);
+    updateCountry(id: string, country: Partial<Country>): Observable<Country> {
+        const url = `${environment.apiUrl}/BasicSetup/update`;
+        const nowIso = new Date().toISOString();
+        const payload = {
+            id,
+            countryCode: country.code,
+            countryName: country.name,
+            isActive: country.isActive,
+            createdBy: '',
+            updatedBy: '',
+            createdOn: nowIso,
+            updatedOn: nowIso
+        };
+        return this.http.put<any>(url, payload).pipe(
+            map((res) => this.mapDtoToCountry(res?.data ?? res))
+        );
     }
 
-    deleteCountry(id: number): Observable<boolean> {
-        const index = this.countries.findIndex(c => c.id === id);
-        if (index !== -1) {
-            this.countries.splice(index, 1);
-            this.countriesSubject.next([...this.countries]);
-            return of(true);
-        }
-        return of(false);
+    deleteCountry(id: string): Observable<boolean> {
+        const url = `${environment.apiUrl}/BasicSetup/delete/${id}`;
+        return this.http.delete<any>(url).pipe(
+            map((res) => {
+                const status = res?.status ?? res?.statusCode;
+                return status === 'success' || status === 200 || status === 204 || res === true;
+            })
+        );
     }
 }

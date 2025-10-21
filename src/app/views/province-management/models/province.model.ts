@@ -1,8 +1,8 @@
 export interface Province {
-    id?: number;
+    id?: string;
     code: string;
     name: string;
-    countryId: number;
+    countryId: string;
     countryName?: string;
     isActive: boolean;
     createdAt?: Date;

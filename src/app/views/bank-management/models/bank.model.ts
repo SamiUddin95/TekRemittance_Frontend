@@ -1,10 +1,11 @@
 export interface Bank {
-    id?: number;
+    id?: string;
     code: string;
     name: string;
-    iata?: string;
+    iata?: string; // maps to backend 'imd'
     website?: string;
     phoneNo?: string;
+    aliases?: string; // maps to backend 'allases'
     description?: string;
     isActive: boolean;
     createdAt?: Date;
