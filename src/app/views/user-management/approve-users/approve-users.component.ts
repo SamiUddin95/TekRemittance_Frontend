@@ -7,11 +7,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../models/user.model';
 import { UserService } from '../services/user.service';
 import Swal from 'sweetalert2';
+import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 
 @Component({
   selector: 'app-approve-users',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, NgbCollapseModule, ReactiveFormsModule],
+  imports: [CommonModule, PageTitleComponent, NgIcon, NgbCollapseModule, ReactiveFormsModule, GenericPaginationComponent],
   templateUrl: './approve-users.component.html'
 })
 export class ApproveUsersComponent implements OnInit {
@@ -20,6 +21,12 @@ export class ApproveUsersComponent implements OnInit {
   isCollapsed: boolean = true;
   islistFiltered: boolean = false;
   filterForm!: FormGroup;
+  totalRecord = 0;
+  PaginationInfo: any = {
+    Page: 1,
+    RowsPerPage: 10
+  };
+  private lastFilterParams: any | undefined;
 
   constructor(private userService: UserService, private fb: FormBuilder) {}
 
@@ -34,8 +41,10 @@ export class ApproveUsersComponent implements OnInit {
 
   loadUsers(params?: any): void {
     this.isLoading = true;
-    this.userService.getUsers(params).subscribe({
-      next: (users) => { this.users = users; this.isLoading = false; },
+    if (params) this.lastFilterParams = params;
+    const effectiveParams = this.lastFilterParams;
+    this.userService.getUsers(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage, effectiveParams).subscribe({
+      next: (res) => { this.users = res.items; this.totalRecord = res.totalCount; this.isLoading = false; },
       error: () => { this.isLoading = false; }
     });
   }
@@ -47,6 +56,7 @@ export class ApproveUsersComponent implements OnInit {
     if (raw.employeeId) params['EmployeeId'] = raw.employeeId;
     if (raw.loginName) params['LoginName'] = raw.loginName;
     this.islistFiltered = true;
+    this.PaginationInfo.Page = 1;
     this.loadUsers(params);
   }
 
@@ -54,6 +64,8 @@ export class ApproveUsersComponent implements OnInit {
     this.filterForm.reset();
     this.isCollapsed = true;
     this.islistFiltered = false;
+    this.lastFilterParams = undefined;
+    this.PaginationInfo.Page = 1;
     this.loadUsers();
   }
 
@@ -79,5 +91,10 @@ export class ApproveUsersComponent implements OnInit {
         this.loadUsers();
       }
     });
+  }
+
+  onApproveUsersPageChanged(page: number): void {
+    this.PaginationInfo.Page = page;
+    this.loadUsers();
   }
 }

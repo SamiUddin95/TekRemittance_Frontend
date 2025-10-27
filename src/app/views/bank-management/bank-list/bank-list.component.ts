@@ -6,19 +6,21 @@ import { BankService } from '../services/bank.service';
 import { Bank } from '../models/bank.model';
 import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
+import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 
 @Component({
     selector: 'app-bank-list',
     standalone: true,
-    imports: [CommonModule, PageTitleComponent, NgIcon],
+    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent],
     templateUrl: './bank-list.component.html'
 })
 export class BankListComponent implements OnInit {
     banks: Bank[] = [];
-    currentPage = 1;
-    totalPages = 1;
-    totalItems = 0;
-    itemsPerPage = 10;
+    totalRecord = 0;
+    PaginationInfo: any = {
+        Page: 1,
+        RowsPerPage: 10
+    };
     isLoading = false;
 
     constructor(
@@ -32,12 +34,11 @@ export class BankListComponent implements OnInit {
 
     loadBanks(): void {
         this.isLoading = true;
-        this.bankService.getBanks()
+        this.bankService.getBanks(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
             .subscribe({
-                next: (banks) => {
-                    this.banks = banks;
-                    this.totalItems = this.banks.length;
-                    this.totalPages = Math.max(1, Math.ceil(this.totalItems / this.itemsPerPage));
+                next: (res) => {
+                    this.banks = res.items;
+                    this.totalRecord = res.totalCount;
                     this.isLoading = false;
                 },
                 error: (error) => {
@@ -82,25 +83,9 @@ export class BankListComponent implements OnInit {
         });
     }
 
-    goToPage(page: number): void {
-        if (page >= 1 && page <= this.totalPages) {
-            this.currentPage = page;
-            this.loadBanks();
-        }
-    }
-
-    previousPage(): void {
-        if (this.currentPage > 1) {
-            this.currentPage--;
-            this.loadBanks();
-        }
-    }
-
-    nextPage(): void {
-        if (this.currentPage < this.totalPages) {
-            this.currentPage++;
-            this.loadBanks();
-        }
+    onBankPageChanged(page: number): void {
+        this.PaginationInfo.Page = page;
+        this.loadBanks();
     }
 
     getStatusBadgeClass(isActive: boolean): string {

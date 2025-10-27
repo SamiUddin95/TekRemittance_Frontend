@@ -16,14 +16,23 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  getUsers(params?: { [key: string]: any }): Observable<User[]> {
-    const httpParams = new HttpParams({ fromObject: params ?? {} });
+  getUsers(page: number = 1, rowsPerPage: number = 100000, params?: { [key: string]: any }): Observable<{
+    items: User[];
+    totalCount: number;
+    pageNumber: number;
+    pageSize: number;
+    totalPages: number;
+  }> {
+    let httpParams = new HttpParams({ fromObject: params ?? {} })
+      .set('pageNumber', String(page))
+      .set('pageSize', String(rowsPerPage));
     return this.http
       .get<any>(`${environment.apiUrl}/Users`, { params: httpParams })
       .pipe(
         map((resp) => {
-          const rows = Array.isArray(resp) ? resp : resp?.data ?? [];
-          return (rows as any[]).map((r) => <User>{
+          const payload = resp?.data ?? resp;
+          const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
+          const users = (itemsRaw as any[]).map((r) => <User>{
             id: r.id,
             name: r.name,
             email: r.email,
@@ -37,6 +46,13 @@ export class UserService {
             createdAt: r.createdOn ? new Date(r.createdOn) : (r.createdAt ? new Date(r.createdAt) : undefined),
             updatedAt: r.updatedOn ? new Date(r.updatedOn) : (r.updatedAt ? new Date(r.updatedAt) : undefined),
           });
+          return {
+            items: users,
+            totalCount: payload?.totalCount ?? users.length,
+            pageNumber: payload?.pageNumber ?? page,
+            pageSize: payload?.pageSize ?? rowsPerPage,
+            totalPages: payload?.totalPages ?? 1,
+          };
         })
       );
   }
@@ -115,13 +131,15 @@ export class UserService {
   }
 
   deleteUser(id: string): Observable<boolean> {
-    const idx = this.users.findIndex(u => u.id === id);
-    if (idx !== -1) {
-      this.users.splice(idx, 1);
-      this.usersSubject.next([...this.users]);
-      return of(true);
-    }
-    return of(false);
+    return this.http.delete<any>(`${environment.apiUrl}/Users/${id}`).pipe(
+      map((resp) => {
+        const r = resp ?? {};
+        if (typeof r === 'boolean') return r;
+        if (typeof r?.statusCode === 'number') return r.statusCode === 200 || r.statusCode === 204;
+        if (typeof r?.status === 'string') return r.status.toLowerCase() === 'success';
+        return true;
+      })
+    );
   }
 
   superviseUser(id: string, isSupervise: boolean): Observable<any> {

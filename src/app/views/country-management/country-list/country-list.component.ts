@@ -6,20 +6,38 @@ import { CountryService } from '../services/country.service';
 import { Country } from '../models/country.model';
 import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
+import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 
 @Component({
     selector: 'app-country-list',
     standalone: true,
-    imports: [CommonModule, PageTitleComponent, NgIcon],
+    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent],
     templateUrl: './country-list.component.html'
 })
+
 export class CountryListComponent implements OnInit {
     countries: Country[] = [];
     currentPage = 1;
     totalPages = 1;
     totalItems = 0;
     itemsPerPage = 10;
+    totalRecord = 0;
+    PaginationInfo: any = {
+        Page: 1,
+        RowsPerPage: 10
+    }
     isLoading = false;
+
+private mapDtoToCountry(dto: any): Country {
+        return {
+            id: dto.id ?? dto.Id ?? dto.countryId,
+            code: dto.countryCode ?? dto.code,
+            name: dto.countryName ?? dto.name,
+            isActive: dto.isActive ?? true,
+            createdAt: dto.createdOn ? new Date(dto.createdOn) : undefined,
+            updatedAt: dto.updatedOn ? new Date(dto.updatedOn) : undefined,
+        } as Country;
+    }
 
     constructor(
         private countryService: CountryService,
@@ -30,21 +48,27 @@ export class CountryListComponent implements OnInit {
         this.loadCountries();
     }
 
-    loadCountries(): void {
+    async loadCountries() {
         this.isLoading = true;
-        this.countryService.getCountries()
+        const res =  await this.countryService.getCountries(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
             .subscribe({
-                next: (response) => {
-                    this.countries = response;
-                    this.totalItems = this.countries.length;
-                    this.totalPages = Math.max(1, Math.ceil(this.totalItems / this.itemsPerPage));
-                    this.isLoading = false;
+                next: (response: any) => {
+                    debugger
+                    if(response.statusCode === 200  && response.items){
+                        this.countries = response.items.map((item: any) => this.mapDtoToCountry(item));
+                        this.totalRecord = response.totalCount;
+                        this.isLoading = false; 
+                    }
+                this.isLoading = false;
                 },
                 error: (error) => {
                     console.error('Error loading countries:', error);
                     this.isLoading = false;
                 }
             });
+            console.log(res);
+            
+            this.isLoading = false;
     }
 
     addNewCountry(): void {
@@ -82,27 +106,10 @@ export class CountryListComponent implements OnInit {
         });
     }
 
-    goToPage(page: number): void {
-        if (page >= 1 && page <= this.totalPages) {
-            this.currentPage = page;
-            this.loadCountries();
-        }
+    async oncountryPageChanged(page: number) {
+    this.PaginationInfo.Page = page;
+    this.loadCountries();
     }
-
-    previousPage(): void {
-        if (this.currentPage > 1) {
-            this.currentPage--;
-            this.loadCountries();
-        }
-    }
-
-    nextPage(): void {
-        if (this.currentPage < this.totalPages) {
-            this.currentPage++;
-            this.loadCountries();
-        }
-    }
-
     getStatusBadgeClass(isActive: boolean): string {
         return isActive ? 'badge bg-success' : 'badge bg-danger';
     }

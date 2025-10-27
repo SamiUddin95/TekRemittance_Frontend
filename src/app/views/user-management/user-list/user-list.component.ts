@@ -8,11 +8,12 @@ import { UserService } from '../services/user.service';
 import Swal from 'sweetalert2';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, NgbCollapseModule, ReactiveFormsModule],
+  imports: [CommonModule, PageTitleComponent, NgIcon, NgbCollapseModule, ReactiveFormsModule, GenericPaginationComponent],
   templateUrl: './user-list.component.html'
 })
 export class UserListComponent implements OnInit {
@@ -21,6 +22,11 @@ export class UserListComponent implements OnInit {
   isCollapsed: boolean = true;
   islistFiltered: boolean = true;
   filterForm!: FormGroup;
+  totalRecord = 0;
+  PaginationInfo: any = {
+    Page: 1,
+    RowsPerPage: 10
+  };
 
   constructor(private userService: UserService, private router: Router, private fb: FormBuilder) {}
 
@@ -35,8 +41,13 @@ export class UserListComponent implements OnInit {
  
   loadUsers(): void {
     this.isLoading = true;
-    this.userService.getUsers().subscribe({
-      next: (users) => { this.users = users; this.isLoading = false; },
+    const raw = this.filterForm?.value ?? {};
+    const params: any = {};
+    if (raw.name) params['Name'] = raw.name;
+    if (raw.employeeId) params['EmployeeId'] = raw.employeeId;
+    if (raw.loginName) params['LoginName'] = raw.loginName;
+    this.userService.getUsers(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage, this.islistFiltered ? params : undefined).subscribe({
+      next: (res) => { this.users = res.items; this.totalRecord = res.totalCount; this.isLoading = false; },
       error: () => { this.isLoading = false; }
     });
   }
@@ -71,8 +82,10 @@ export class UserListComponent implements OnInit {
     if (raw.employeeId) params['EmployeeId'] = raw.employeeId;
     if (raw.loginName) params['LoginName'] = raw.loginName;
     this.isLoading = true;
-    this.userService.getUsers(params).subscribe({
-      next: (users) => { this.users = users; this.isLoading = false; this.islistFiltered = true; },
+    // reset to first page when applying filter
+    this.PaginationInfo.Page = 1;
+    this.userService.getUsers(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage, params).subscribe({
+      next: (res) => { this.users = res.items; this.totalRecord = res.totalCount; this.isLoading = false; this.islistFiltered = true; },
       error: () => { this.isLoading = false; }
     });
   }
@@ -81,6 +94,11 @@ export class UserListComponent implements OnInit {
     this.filterForm.reset();
     this.isCollapsed = true;
     this.islistFiltered = false;
+    this.loadUsers();
+  }
+
+  onUserPageChanged(page: number): void {
+    this.PaginationInfo.Page = page;
     this.loadUsers();
   }
 }

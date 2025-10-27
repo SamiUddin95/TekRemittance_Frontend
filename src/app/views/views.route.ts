@@ -45,6 +45,10 @@ export const VIEWS_ROUTES: Routes = [
     },
     {
         path: '',
+        loadChildren: () => import('./acquisition-management/acquisition-management.routes').then((mod) => mod.ACQUISITION_MANAGEMENT_ROUTES)
+    },
+    {
+        path: '',
         loadChildren: () => import('./processing-management/processing-management.routes').then((mod) => mod.PROCESSING_MANAGEMENT_ROUTES)
     },
     {

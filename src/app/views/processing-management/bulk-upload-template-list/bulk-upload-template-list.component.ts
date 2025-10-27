@@ -3,11 +3,17 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PageTitleComponent } from '@app/components/page-title.component';
 import { NgIcon } from '@ng-icons/core';
+import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
+import { TemplateService, TemplateListItem } from '@/app/views/processing-management/services/template.service';
+import { forkJoin } from 'rxjs';
+import Swal from 'sweetalert2';
 
 interface TemplateRow {
   id: string;
   name: string;
-  format: '.txt' | '.xls' | '.xlsx';
+  agentName: string;
+  agentId: string;
+  format: '.txt' | '.xls' | '.xlsx' | '.csv' | string;
   sheetName: string;
   fixLength: boolean;
   fieldDelimiter: string;
@@ -16,50 +22,93 @@ interface TemplateRow {
 @Component({
   selector: 'app-bulk-upload-template-list',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon],
+  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent],
   templateUrl: './bulk-upload-template-list.component.html'
 })
 export class BulkUploadTemplateListComponent implements OnInit {
   rows: TemplateRow[] = [];
   isLoading = false;
-  currentPage = 1;
-  totalPages = 1;
-  itemsPerPage = 10;
+  PaginationInfo: any = { Page: 1, RowsPerPage: 10 };
+  totalRecord = 0;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private templateService: TemplateService) {}
 
   ngOnInit(): void {
-    // Static seed matching the screenshot
-    this.rows = [
-      { id: '1', name: 'Sales Data Q1', format: '.xls', sheetName: 'sheet1', fixLength: false, fieldDelimiter: 'Comma' },
-      { id: '2', name: 'Customer Feedback', format: '.txt', sheetName: 'N/A', fixLength: true, fieldDelimiter: 'Tab' },
-      { id: '3', name: 'Inventory Update', format: '.xlsx', sheetName: 'Products', fixLength: false, fieldDelimiter: 'Semicolon' },
-      { id: '4', name: 'Marketing Leads', format: '.xls', sheetName: 'Leads', fixLength: false, fieldDelimiter: 'Comma' },
-      { id: '5', name: 'Expense Reports', format: '.txt', sheetName: 'N/A', fixLength: true, fieldDelimiter: 'Fixed-Width' },
-    ];
-    this.totalPages = 3; // static pagination indicator like screenshot
+    this.loadTemplates();
+  }
+
+  loadTemplates(): void {
+    this.isLoading = true;
+    this.templateService.getTemplates(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
+      .subscribe({
+        next: (res) => {
+          this.rows = (res.items as TemplateListItem[]).map((t) => ({
+            id: t.id,
+            name: t.name,
+            agentName: t.agentName ?? '-',
+            agentId: t.agentId ?? '',
+            format: t.format,
+            sheetName: t.sheetName ?? 'N/A',
+            fixLength: t.fixLength,
+            fieldDelimiter: t.fieldDelimiter || '-'
+          }));
+          this.totalRecord = res.totalCount;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error loading templates:', err);
+          this.isLoading = false;
+        }
+      });
   }
 
   addTemplate(): void {
     this.router.navigate(['/bulk-upload-template/add']);
   }
 
-  editTemplate(id: string): void {
+  editTemplate(row: TemplateRow): void {
     // future: navigate to edit with id
     // this.router.navigate(['/bulk-upload-template/edit', id]);
+    forkJoin({
+      template: this.templateService.getTemplateByAgent(row.agentId),
+      fields: this.templateService.getTemplateFields(row.id)
+    }).subscribe({
+      next: (result) => {
+        this.router.navigate(['/bulk-upload-template/add'], { state: result });
+      },
+      error: (err) => {
+        console.error('Error loading template for edit', err);
+      }
+    });
   }
 
   deleteTemplate(row: TemplateRow): void {
-    // static; no deletion for now
+    if (!row.agentId) return;
+    Swal.fire({
+      icon: 'warning',
+      title: 'Delete template?',
+      text: 'This will remove the template for this agent.',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel'
+    }).then((res) => {
+      if (!res.isConfirmed) return;
+      this.templateService.deleteTemplateByAgent(row.agentId).subscribe({
+        next: () => {
+          Swal.fire({ icon: 'success', title: 'Template deleted', timer: 1200, showConfirmButton: false });
+          this.loadTemplates();
+        },
+        error: (err) => {
+          const body = (err?.error ?? err) as any;
+          const msg = body?.errorMessage ?? body?.message ?? err?.message ?? 'Failed to delete template.';
+          Swal.fire({ icon: 'error', title: 'Delete failed', text: msg });
+        }
+      });
+    });
   }
 
-  previousPage(): void {
-    if (this.currentPage > 1) this.currentPage--;
-  }
-  nextPage(): void {
-    if (this.currentPage < this.totalPages) this.currentPage++;
-  }
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) this.currentPage = page;
+  onPageChanged(page: number): void {
+    this.PaginationInfo.Page = page;
+    this.loadTemplates();
   }
 }

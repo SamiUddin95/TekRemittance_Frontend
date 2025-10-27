@@ -141,6 +141,13 @@
               </tbody>
             </table>
           </div>
+          
+          <app-generic-pagination
+            [totalItems]="totalRecord"
+            [pageSize]="PaginationInfo.RowsPerPage"
+            [currentPage]="PaginationInfo.Page"
+            (pageChanged)="onApproveUsersPageChanged($event)">
+          </app-generic-pagination>
           }
         </div>
         <!-- End Table Section -->

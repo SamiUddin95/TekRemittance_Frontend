@@ -66,7 +66,7 @@ export class CityFormComponent implements OnInit {
     loadCountries(): void {
         this.countryService.getCountries().subscribe({
             next: (countries) => {
-                this.countries = countries.filter(c => c.isActive);
+                this.countries = countries.items.filter(c => c.isActive);
             },
             error: (error) => {
                 console.error('Error loading countries:', error);
@@ -76,8 +76,8 @@ export class CityFormComponent implements OnInit {
 
     loadProvinces(): void {
         this.provinceService.getProvinces().subscribe({
-            next: (provinces) => {
-                this.provinces = provinces.filter((p) => p.isActive);
+            next: (res) => {
+                this.provinces = res.items.filter((p: Province) => p.isActive);
             },
             error: (error) => {
                 console.error('Error loading provinces:', error);

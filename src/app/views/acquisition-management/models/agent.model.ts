@@ -1,0 +1,36 @@
+export interface Agent {
+    id?: string;
+    code: string;
+    name: string;
+    phone1?: string;
+    phone2?: string;
+    fax?: string;
+    email?: string;
+    logoUrl?: string;
+    address?: string;
+    countryId?: string;
+    provinceId?: string;
+    cityId?: string;
+    cutOffStart?: string;
+    cutOffEnd?: string;
+    brnByApplication?: boolean;
+    brnByAgent?: boolean;
+    autoProcess?: boolean;
+    manualProcess?: boolean;
+    isOnlineAllow?: boolean;
+    isFileUploadAllow?: boolean;
+    isFtpAllow?: boolean;
+    isEmailUploadAllow?: boolean;
+    isWebServiceAllow?: boolean;
+    isBeneficiarySmsAllow?: boolean;
+    isActive?: boolean;
+    IsCOTCAllow?: boolean;
+    isDirectCreditAllow?: boolean;
+    isOtherCreditAllow?: boolean;
+    isRemitterSmsAllow?: boolean;
+    directIntegration?: boolean;
+    inquiryUrl?: string;
+    paymentUrl?: string;
+    unlockUrl?: string;
+    approvalStatus?: boolean;
+}

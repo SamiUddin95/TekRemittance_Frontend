@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { Bank } from '../models/bank.model';
 import { environment } from '@/environments/environment';
 
@@ -26,14 +26,36 @@ export class BankService {
         } as Bank;
     }
 
-    getBanks(): Observable<Bank[]> {
-        const url = `${environment.apiUrl}/BasicSetup/Bank`;
+    getBanks(page: number = 1, rowsPerPage: number = 100000): Observable<{
+        items: Bank[];
+        totalCount: number;
+        pageNumber: number;
+        pageSize: number;
+        totalPages: number;
+        statusCode: number;
+        status: string;
+    }> {
+        const url = `${environment.apiUrl}/BasicSetup/banks?pageNumber=${page}&pageSize=${rowsPerPage}`;
         return this.http.get<any>(url).pipe(
             map((res) => {
-                const data = Array.isArray(res) ? res : res?.data;
-                const arr = Array.isArray(data) ? data : [];
-                return arr.map((d) => this.mapDtoToBank(d));
-            })
+                const statusCode = res?.statusCode ?? res?.status ?? 200;
+                const status = res?.status ?? 'success';
+                const payload = res?.data ?? res;
+                if (statusCode !== 200 || !payload) {
+                    throw new Error(`Failed to load banks (statusCode=${statusCode})`);
+                }
+                const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
+                return {
+                    items: itemsRaw.map((d: any) => this.mapDtoToBank(d)),
+                    totalCount: payload?.totalCount ?? itemsRaw.length,
+                    pageNumber: payload?.pageNumber ?? page,
+                    pageSize: payload?.pageSize ?? rowsPerPage,
+                    totalPages: payload?.totalPages ?? 1,
+                    statusCode,
+                    status,
+                };
+            }),
+            catchError((err) => throwError(() => err instanceof Error ? err : new Error('Error loading banks')))
         );
     }
 

@@ -57,7 +57,7 @@ export class ProvinceFormComponent implements OnInit {
     loadCountries(): void {
         this.countryService.getCountries().subscribe({
             next: (countries) => {
-                this.countries = countries.filter((c) => c.isActive);
+                this.countries = countries.items.filter((c) => c.isActive);
             },
             error: (error) => {
                 console.error('Error loading countries:', error);

@@ -14,7 +14,7 @@ export const userDropdownItems: UserDropdownItemType[] = [
     {
         label: 'Log Out',
         icon: 'tablerLogout2',
-        url: 'Sign In',
+        url: '/sign-in',
         class: 'text-danger fw-semibold'
     }
 ];
@@ -60,6 +60,14 @@ export const menuItems: MenuItemType[] = [
             {icon: 'tablerMapPin', label: 'Province Management', url: '/province-management'},
             {icon: 'tablerBuilding', label: 'City Management', url: '/city-management'},
             {icon: 'tablerBuildingBank', label: 'Bank Management', url: '/bank-management'},
+        ]
+    },
+    {
+        label: 'Acquisition Management',
+        icon: 'tablerUsers',
+        isCollapsed: true,
+        children: [
+            {icon: 'tablerUserCheck', label: 'Agent Management', url: '/acquisition-management'},
         ]
     },
     
@@ -111,12 +119,19 @@ export const horizontalMenuItems: MenuItemType[] = [
         ]
     },
     {
+        label: 'Acquisition Management',
+        icon: 'tablerUsers',
+        isCollapsed: true,
+        children: [
+            {icon: 'tablerUserCheck', label: 'Agent Management', url: '/acquisition-management'},
+        ]
+    },
+    {
         label: 'Processing Management',
         icon: 'tablerTableColumn',
         isCollapsed: true,
         children: [
-            {icon: 'tablerWorld', label: 'Bulk Upload Template', url: '/bulk-upload-template'},
-            {icon: 'tablerMapPin', label: 'Bulk Upload', url: '/bulk-upload'}, 
+            {icon: 'tablerWorld', label: 'Upload Template', url: '/bulk-upload-template'},
         ]
     },
      

@@ -6,19 +6,21 @@ import { CityService } from '../services/city.service';
 import { City } from '../models/city.model';
 import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
+import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 
 @Component({
     selector: 'app-city-list',
     standalone: true,
-    imports: [CommonModule, PageTitleComponent, NgIcon],
+    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent],
     templateUrl: './city-list.component.html'
 })
 export class CityListComponent implements OnInit {
     cities: City[] = [];
-    currentPage = 1;
-    totalPages = 1;
-    totalItems = 0;
-    itemsPerPage = 10;
+    totalRecord = 0;
+    PaginationInfo: any = {
+        Page: 1,
+        RowsPerPage: 10
+    };
     isLoading = false;
 
     constructor(
@@ -32,12 +34,11 @@ export class CityListComponent implements OnInit {
 
     loadCities(): void {
         this.isLoading = true;
-        this.cityService.getCities()
+        this.cityService.getCities(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
             .subscribe({
-                next: (cities) => {
-                    this.cities = cities;
-                    this.totalItems = this.cities.length;
-                    this.totalPages = Math.max(1, Math.ceil(this.totalItems / this.itemsPerPage));
+                next: (res) => {
+                    this.cities = res.items;
+                    this.totalRecord = res.totalCount;
                     this.isLoading = false;
                 },
                 error: (error) => {
@@ -82,25 +83,9 @@ export class CityListComponent implements OnInit {
         });
     }
 
-    goToPage(page: number): void {
-        if (page >= 1 && page <= this.totalPages) {
-            this.currentPage = page;
-            this.loadCities();
-        }
-    }
-
-    previousPage(): void {
-        if (this.currentPage > 1) {
-            this.currentPage--;
-            this.loadCities();
-        }
-    }
-
-    nextPage(): void {
-        if (this.currentPage < this.totalPages) {
-            this.currentPage++;
-            this.loadCities();
-        }
+    onCityPageChanged(page: number): void {
+        this.PaginationInfo.Page = page;
+        this.loadCities();
     }
 
     getStatusBadgeClass(isActive: boolean): string {

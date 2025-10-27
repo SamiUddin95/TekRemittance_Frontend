@@ -78,34 +78,12 @@
                             </table>
                         </div>
 
-                        <!-- Pagination -->
-                        @if (totalPages > 1) {
-                            <nav aria-label="Banks pagination">
-                                <ul class="pagination justify-content-center mb-0">
-                                    <li class="page-item" [class.disabled]="currentPage === 1">
-                                        <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 1">
-                                            <ng-icon name="tablerChevronLeft" size="16" class="me-1"></ng-icon>
-                                            Previous
-                                        </button>
-                                    </li>
-                                    
-                                    @for (page of [].constructor(totalPages); track $index; let i = $index) {
-                                        <li class="page-item" [class.active]="currentPage === i + 1">
-                                            <button class="page-link" (click)="goToPage(i + 1)">
-                                                {{ i + 1 }}
-                                            </button>
-                                        </li>
-                                    }
-                                    
-                                    <li class="page-item" [class.disabled]="currentPage === totalPages">
-                                        <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages">
-                                            Next
-                                            <ng-icon name="tablerChevronRight" size="16" class="ms-1"></ng-icon>
-                                        </button>
-                                    </li>
-                                </ul>
-                            </nav>
-                        }
+                        <app-generic-pagination
+                            [totalItems]="totalRecord"
+                            [pageSize]="PaginationInfo.RowsPerPage"
+                            [currentPage]="PaginationInfo.Page"
+                            (pageChanged)="onBankPageChanged($event)">
+                        </app-generic-pagination>
                     }
                 <!-- </div> -->
             </div>

@@ -5,11 +5,14 @@ export interface Country {
     isActive: boolean;
     createdAt?: Date;
     updatedAt?: Date;
+    createdBy?: string;
+    updatedBy?: string;
 }
 
 export interface CountryListResponse {
-    countries: Country[];
-    total: number;
-    page: number;
-    limit: number;
+    items: Country[];
+    totalCount: number;
+    pageNumber: number;
+    pageSize: number;
+    totalPages: number;
 }

@@ -4,105 +4,247 @@
   <div class="row">
     <div class="col-12">
       <div class="card shadow-sm">
-        <div class="card-header bg-light text-white">
+        <div class="card-header bg-light border-bottom">
           <div class="d-flex align-items-center">
             <ng-icon name="tablerBuildingBank" class="me-2 gradient-icon" size="20"></ng-icon>
-            <h4 class="card-title mb-0 text-dark">File Template Form</h4>
+            <h4 class="card-title mb-0 text-dark">File Template</h4>
           </div>
         </div>
+        <div class="px-4 pt-3">
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="activeTab==='template'" (click)="switchTab('template')">
+                File Template
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="activeTab==='fields'" [class.disabled]="!templateSaved" [attr.aria-disabled]="!templateSaved" (click)="switchTab('fields')">
+                Fields
+              </button>
+            </li>
+          </ul>
+        </div>
         <div class="card-body">
-          <form [formGroup]="form" (ngSubmit)="save()" class="row g-4">
-            <div class="col-md-6">
-              <label class="form-label">Name <span class="text-danger">*</span></label>
-              <div class="input-group">
-                <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerFileText"
-                    size="16"></ng-icon></span>
-                <input type="text" class="form-control" placeholder="Enter template name" formControlName="name" />
+          @if (activeTab === 'template') {
+            @if (errorMessage) {
+              <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <ng-icon name="tablerAlertCircle" class="me-2" size="18"></ng-icon>
+                <div>{{ errorMessage }}</div>
               </div>
-              <small class="text-muted">A friendly name to identify this template.</small>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Sheet Name <span class="text-danger">*</span></label>
-              <div class="input-group">
-                <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerTable"
-                    size="16"></ng-icon></span>
-                <input type="text" class="form-control" placeholder="Enter sheet name" formControlName="sheetName"
-                  [disabled]="form.get('format')?.value === '.txt'" />
+            }
+            <form [formGroup]="form" (ngSubmit)="save()" class="row g-4">
+              <div class="col-md-3">
+                <label class="form-label">Acquisition Agent <span class="text-danger">*</span></label>
+                <select class="form-select" formControlName="agentId">
+                  <option value="">Select an agent</option>
+                  <option *ngFor="let a of agents" [value]="a.id">{{ a.name }}</option>
+                </select>
               </div>
-              <small class="text-muted">Required for Excel formats; disabled for .txt.</small>
-            </div>
 
-            <div class="col-12">
-              <label class="form-label d-block">Format <span class="text-danger">*</span></label>
-              <div class="d-flex align-items-center gap-4 flex-wrap">
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" id="fmtTxt" value=".txt" formControlName="format" />
-                  <label class="form-check-label" for="fmtTxt">.txt</label>
+              <div class="col-md-3">
+                <label class="form-label">Name <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerFileText" size="16"></ng-icon></span>
+                  <input type="text" class="form-control" placeholder="Enter template name" formControlName="name" />
                 </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" id="fmtXls" value=".xls" formControlName="format" />
-                  <label class="form-check-label" for="fmtXls">.xls</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" id="fmtXlsx" value=".xlsx" formControlName="format" />
-                  <label class="form-check-label" for="fmtXlsx">.xlsx</label>
-                </div>
+                <small class="text-muted">A friendly name to identify this template.</small>
               </div>
-            </div>
 
-            <div class="col-12">
-              <div class="row g-3 align-items-center">
-                <div class="col-md-6">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="fixLength" formControlName="fixLength" />
-                    <label class="form-check-label" for="fixLength">Fix Length</label>
+              <div class="col-md-3">
+                <label class="form-label">Sheet Name <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerTable" size="16"></ng-icon></span>
+                  <input type="text" class="form-control" placeholder="Enter sheet name" formControlName="sheetName" [disabled]="form.get('format')?.value === '.txt'" />
+                </div>
+                <small class="text-muted">Required for Excel formats; disabled for .txt.</small>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Delimiter</label>
+                <div class="input-group"
+                     [attr.aria-disabled]="!isDelimiterEnabled"
+                     [class.opacity-75]="!isDelimiterEnabled"
+                     [style.cursor]="!isDelimiterEnabled ? 'not-allowed' : null">
+                  <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerSeparator" size="16"></ng-icon></span>
+                  <input type="text" class="form-control"
+                         placeholder="e.g., , (comma) or ; (semicolon)"
+                         formControlName="delimiterText"
+                         [disabled]="!isDelimiterEnabled"
+                         [readonly]="!isDelimiterEnabled"
+                         [attr.title]="!isDelimiterEnabled ? 'To enter Delimiter, you need to check Field Delimiter' : null" />
+                </div>
+                <small class="text-muted">Enabled only when Field Delimiter is checked.</small>
+              </div>
+
+
+              <div class="d-flex flex-wrap align-items-center gap-3 py-2 px-3 bg-light rounded border">
+                <div class="d-flex align-items-center me-2">
+                  <label class="form-label mb-0 me-3">Format <span class="text-danger">*</span></label>
+                  <div class="d-flex align-items-center gap-4">
+                    <div class="form-check mb-0">
+                      <input class="form-check-input" type="radio" id="fmtTxt" value=".txt" formControlName="format" />
+                      <label class="form-check-label" for="fmtTxt">.txt</label>
+                    </div>
+                    <div class="form-check mb-0">
+                      <input class="form-check-input" type="radio" id="fmtXls" value=".xls" formControlName="format" />
+                      <label class="form-check-label" for="fmtXls">.xls</label>
+                    </div>
+                    <div class="form-check mb-0">
+                      <input class="form-check-input" type="radio" id="fmtXlsx" value=".xlsx" formControlName="format" />
+                      <label class="form-check-label" for="fmtXlsx">.xlsx</label>
+                    </div>
                   </div>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="fieldDelimiter"
-                      formControlName="fieldDelimiter" />
-                    <label class="form-check-label" for="fieldDelimiter">Field Delimiter</label>
+
+                <div class="vr mx-2 d-none d-md-block" style="height:24px;"></div>
+
+                <div class="form-check mb-0 me-2">
+                  <input class="form-check-input" type="checkbox" id="fixLength" formControlName="fixLength" />
+                  <label class="form-check-label" for="fixLength">Fix Length</label>
+                </div>
+
+                <div class="vr mx-2 d-none d-md-block" style="height:24px;"></div>
+
+                <div class="form-check mb-0">
+                  <input class="form-check-input" type="checkbox" id="fieldDelimiter" formControlName="fieldDelimiter" />
+                  <label class="form-check-label" for="fieldDelimiter">Field Delimiter</label>
+                </div>
+
+
+              <div class="col-6 d-flex justify-content-end gap-2">
+                  <button type="button" class="btn btn-dark" (click)="onCancel()" [disabled]="isSubmitting">
+                    <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn submit-button">
+                    @if (isSubmitting) {
+                      <span class="spinner-border  spinner-border-sm me-1" role="status"></span>
+                      Saving...
+                    } @else {
+                      <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                      Save
+                    }
+                  </button>
+                </div>
+
+              </div>
+              
+              <!-- <div class="col-3"> -->
+                <!-- <div class="row g-3 align-items-center"> -->
+                  
+                <!-- </div> -->
+              <!-- </div> -->
+
+              
+
+              <!-- <div class="col-12 d-flex justify-content-end gap-2 mt-1"> -->
+                <!-- <div class="d-flex justify-content-end gap-2">
+                  <button type="button" class="btn btn-dark" (click)="onCancel()" [disabled]="isSubmitting">
+                    <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn submit-button">
+                    @if (isSubmitting) {
+                      <span class="spinner-border  spinner-border-sm me-1" role="status"></span>
+                      Saving...
+                    } @else {
+                      <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                      Save
+                    }
+                  </button>
+                </div> -->
+              <!-- </div> -->
+            </form>
+          } @else {
+            <div class="row g-4">
+              <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-light" (click)="toggleAddField()">
+                    {{ showAddFieldForm ? 'Cancel' : 'Add' }}
+                  </button>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped table-sm">
+                  <thead class="table text-center">
+                    <tr>
+                      <th class="fw-bold">Field Order</th>
+                      <th class="fw-bold">Field Name</th>
+                      <th class="fw-bold">Field Type</th>
+                      <th class="fw-bold">Required</th>
+                      <th class="fw-bold">Enable</th>
+                      <th class="text-center fw-bold">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-group-divider text-center">
+                    @for (f of fields; track f.fieldName) {
+                      <tr>
+                        <td>{{ f.order }}</td>
+                        <td>{{ f.fieldName }}</td>
+                        <td>{{ f.fieldType }}</td>
+                        <td><input class="form-check-input" type="checkbox" [checked]="f.required" disabled /></td>
+                        <td><input class="form-check-input" type="checkbox" [checked]="f.enable" disabled /></td>
+                        <td class="text-center">
+                          <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-outline-primary" title="Edit" (click)="onEditField(f)"><ng-icon name="tablerEdit" size="16"></ng-icon></button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" (click)="onDeleteField(f)"><ng-icon name="tablerTrash" size="16"></ng-icon></button>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              @if (showAddFieldForm) {
+                <div class="card shadow-sm mt-2">
+                  <div class="card-header bg-light text-white">
+                    <div class="d-flex align-items-center">
+                      <ng-icon name="tablerForms" class="me-2 gradient-icon" size="20"></ng-icon>
+                      <h6 class="card-title mb-0 text-dark">Add New Field</h6>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <form [formGroup]="fieldForm" (ngSubmit)="saveField()" class="row g-3">
+                      <div class="col-md-4">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" placeholder="Enter Template Name" formControlName="fieldTemplateName" />
+                      </div>
+                      <div class="col-md-2">
+                        <label class="form-label">Field Order <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" placeholder="e.g., 1" formControlName="fieldOrder" />
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label">Field Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="e.g., Pr1_PrincipalBankCode" formControlName="fieldName" />
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label">Field Type <span class="text-danger">*</span></label>
+                        <select class="form-select" formControlName="fieldType">
+                          <option value="">Select a type</option>
+                          <option value="TextBox">TextBox</option>
+                          <option value="Number">Number</option>
+                          <option value="Date">Date</option>
+                        </select>
+                      </div>
+                      <div class="col-12 d-flex gap-4">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="fldRequired" formControlName="required" />
+                          <label class="form-check-label" for="fldRequired">Required</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="fldEnable" formControlName="enable" />
+                          <label class="form-check-label" for="fldEnable">Enable</label>
+                        </div>
+                      </div>
+                      <div class="col-12 d-flex justify-content-end gap-2 mt-1">
+                        <button type="button" class="btn btn-dark" (click)="toggleAddField()">Cancel</button>
+                        <button type="submit" class="btn submit-button">Save</button>
+                      </div>
+                    </form>
                   </div>
                 </div>
-              </div>
+              }
             </div>
-
-            <div class="col-12">
-              <label class="form-label">Delimiter</label>
-              <div class="input-group">
-                <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerSeparator"
-                    size="16"></ng-icon></span>
-                <input type="text" class="form-control" placeholder="e.g., , (comma) or ; (semicolon)"
-                  formControlName="delimiterText" [disabled]="!form.get('fieldDelimiter')?.value" />
-              </div>
-              <small class="text-muted">Enabled only when Field Delimiter is checked.</small>
-            </div>
-
-            <div class="col-12 d-flex justify-content-end gap-2 mt-1">
-              <div class="d-flex justify-content-end gap-2">
-                <button type="button" class="btn btn-dark" (click)="onCancel()" [disabled]="isSubmitting">
-                  <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
-                  Back to List
-                </button>
-                <button type="submit" class="btn submit-button">
-                  <!-- [disabled]="isSubmitting || bankForm.invalid" -->
-                  @if (isSubmitting) {
-                  <span class="spinner-border  spinner-border-sm me-1" role="status"></span>
-                  Saving...
-                  } @else {
-                  <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
-                  Save Template
-                  }
-                </button>
-              </div>
-            </div>
-
-            <!-- <div class="col-12 d-flex justify-content-end gap-2 mt-1">
-              <button type="button" class="btn btn-light" (click)="cancel()">Cancel</button>
-              <button type="submit" class="btn submit-button" [disabled]="form.invalid">Save</button>
-            </div> -->
-          </form>
+          }
         </div>
       </div>
     </div>
