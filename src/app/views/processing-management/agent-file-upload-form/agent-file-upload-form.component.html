@@ -1,0 +1,86 @@
+<div class="">
+  <app-page-title title="Add Acquisition Agent File"></app-page-title>
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-light border-bottom">
+          <div class="d-flex align-items-center">
+            <ng-icon name="tablerUpload" class="me-2 gradient-icon" size="20"></ng-icon>
+            <h4 class="card-title mb-0 text-dark">Upload Acquisition Agent File</h4>
+          </div>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="form" (submit)="save()" class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Acquisition Agent File <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="file" class="form-control" (change)="onFileSelected($event)" required />
+              </div>
+            </div>
+            <div class="col-12 d-flex justify-content-end gap-2 mt-1">
+              <button type="button" class="btn btn-dark" (click)="cancel()">
+                <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
+                Cancel
+              </button>
+              <button type="submit" class="btn submit-button" [disabled]="isSubmitting || !selectedFile">
+                @if (isSubmitting) {
+                  <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                  Saving...
+                } @else {
+                  <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                  Save
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-header bg-light border-bottom">
+          <div class="d-flex align-items-center">
+            <ng-icon name="tablerTable" class="me-2 gradient-icon" size="20"></ng-icon>
+            <h6 class="card-title mb-0 text-dark">Recent Uploads</h6>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped table-sm">
+              <thead class="table text-center">
+                <tr>
+                  <th class="fw-bold">Template Id</th>
+                  <th class="fw-bold">File Name</th>
+                  <th class="fw-bold">Status</th>
+                  <th class="fw-bold">Error message</th>
+                  <th class="fw-bold">Data Count</th>
+                  <th class="fw-bold">Process At</th>
+                </tr>
+              </thead>
+              <tbody class="table-group-divider text-center">
+                @for (row of rows; track row.id) {
+                <tr>
+                  <td>{{ row.templateId }}</td>
+                  <td class="text-break">{{ row.fileName }}</td>
+                  <td>{{ row.status }}</td>
+                  <td class="text-break">{{ row.errorMessage || '-' }}</td>
+                  <td>{{ row.dataCount }}</td>
+                  <td>{{ row.processAt | date:'medium' }}</td>
+                </tr>
+                } @empty {
+                <tr>
+                  <td colspan="6" class="text-center py-4">
+                    <div class="text-muted">
+                      <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                      <p class="mb-0">No files</p>
+                    </div>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

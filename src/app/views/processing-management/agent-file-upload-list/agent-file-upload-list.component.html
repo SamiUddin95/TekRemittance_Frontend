@@ -1,0 +1,84 @@
+<div class="">
+  <app-page-title title="Acquisition Agent File List"></app-page-title>
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light border-bottom">
+          <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+            <div class="d-flex align-items-center">
+              <ng-icon name="tablerTable" class="me-2 gradient-icon" size="20"></ng-icon>
+              <h4 class="card-title mb-0 text-dark">Existing Files</h4>
+            </div>
+            <button type="button" class="btn submit-button" (click)="addFile()">
+              <ng-icon name="tablerPlus" class="me-1" size="16"></ng-icon>
+              Add Acquisition Agent File
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          @if (isLoading) {
+            <div class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped table-sm">
+                <thead class="table text-center">
+                  <tr>
+                    <th class="fw-bold">Template Id</th>
+                    <th class="fw-bold">File Name</th>
+                    <th class="fw-bold">Status</th>
+                    <th class="fw-bold">Error message</th>
+                    <th class="fw-bold">Data Count</th>
+                    <th class="fw-bold">Process At</th>
+                    <th class="text-center fw-bold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="table-group-divider text-center">
+                  @for (row of rows; track row.id) {
+                    <tr>
+                      <td>{{ row.templateId }}</td>
+                      <td class="text-break">{{ row.fileName }}</td>
+                      <td>{{ row.status }}</td>
+                      <td class="text-break">{{ row.errorMessage || '-' }}</td>
+                      <td>{{ row.dataCount }}</td>
+                      <td>{{ row.processAt | date:'medium' }}</td>
+                      <td class="text-center">
+                        <div class="btn-group" role="group">
+                          <button type="button" class="btn btn-sm btn-outline-primary" title="View" (click)="view(row)">
+                            <ng-icon name="tablerEye" size="16"></ng-icon>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" (click)="delete(row)">
+                            <ng-icon name="tablerTrash" size="16"></ng-icon>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="7" class="text-center py-4">
+                        <div class="text-muted">
+                          <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                          <p class="mb-0">No files found</p>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <app-generic-pagination
+              [totalItems]="totalRecord"
+              [pageSize]="PaginationInfo.RowsPerPage"
+              [currentPage]="PaginationInfo.Page"
+              (pageChanged)="onPageChanged($event)">
+            </app-generic-pagination>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
