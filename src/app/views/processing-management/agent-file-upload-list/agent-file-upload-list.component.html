@@ -42,9 +42,22 @@
                     <tr>
                       <td>{{ row.templateId }}</td>
                       <td class="text-break">{{ row.fileName }}</td>
-                      <td>{{ row.status }}</td>
-                      <td class="text-break">{{ row.errorMessage || '-' }}</td>
-                      <td>{{ row.dataCount }}</td>
+                      <td>
+                        <span class="badge" 
+                              [ngClass]="{
+                                'bg-success': row.status?.toLowerCase() === 'parsed',
+                                'bg-warning': row.status?.toLowerCase() === 'pending',
+                                'bg-danger': row.status?.toLowerCase() === 'failed' || row.status?.toLowerCase() === 'error',
+                                'bg-info': row.status?.toLowerCase() === 'processing',
+                                'bg-secondary': !row.status
+                              }">
+                          {{ row.status || 'N/A' }}
+                        </span>
+                      </td>
+                      <td class="text-break" [class.text-danger]="row.errorMessage">
+                        {{ row.errorMessage || '-' }}
+                      </td>
+                      <td>{{ row.rowCount | number }}</td>
                       <td>{{ row.processAt | date:'medium' }}</td>
                       <td class="text-center">
                         <div class="btn-group" role="group">

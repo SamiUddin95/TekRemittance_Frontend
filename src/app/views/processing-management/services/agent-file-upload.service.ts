@@ -9,7 +9,7 @@ export interface AgentUploadedFile {
   fileName: string;
   status: string;
   errorMessage?: string;
-  dataCount: number;
+  rowCount: number;
   processAt?: string;
 }
 
@@ -33,7 +33,7 @@ export class AgentFileUploadService {
             fileName: String(d.fileName ?? d.name ?? ''),
             status: String(d.status ?? d.fileStatus ?? ''),
             errorMessage: d.errorMessage ?? d.errors ?? '',
-            dataCount: Number(d.dataCount ?? d.count ?? 0),
+            rowCount: Number(d.rowCount ?? d.count ?? 0),
             processAt: d.processAt ?? d.processedAt ?? d.createdOn ?? null,
           } as AgentUploadedFile)),
           totalCount: payload?.totalCount ?? itemsRaw.length,

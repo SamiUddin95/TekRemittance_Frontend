@@ -13,7 +13,7 @@ interface FileRow {
   fileName: string;
   status: string;
   errorMessage?: string;
-  dataCount: number;
+  rowCount: number;
   processAt?: string;
 }
 
@@ -45,7 +45,7 @@ export class AgentFileUploadListComponent implements OnInit {
           fileName: x.fileName,
           status: x.status,
           errorMessage: x.errorMessage,
-          dataCount: x.dataCount,
+          rowCount: x.rowCount,
           processAt: x.processAt
         }));
         this.totalRecord = res.totalCount;

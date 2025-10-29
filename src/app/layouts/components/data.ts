@@ -54,6 +54,7 @@ export const menuItems: MenuItemType[] = [
         children: [
             {icon: 'tablerUserCheck', label: 'Agent Management', url: '/acquisition-management'},
             {icon: 'tablerUserCheck', label: 'Agent Accounts', url: '/agent-accounts'},
+            {icon: 'tablerUserCheck', label: 'Bank Branches', url: '/bank-branches'},
         ]
     },
     {
@@ -124,6 +125,7 @@ export const horizontalMenuItems: MenuItemType[] = [
         children: [
             {icon: 'tablerUserCheck', label: 'Agent Management', url: '/acquisition-management'},
             {icon: 'tablerUserCheck', label: 'Agent Accounts', url: '/agent-accounts'},
+            {icon: 'tablerUserCheck', label: 'Bank Branches', url: '/bank-branches'},
         ]
     },
     {

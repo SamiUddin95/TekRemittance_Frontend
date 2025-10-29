@@ -35,7 +35,7 @@ export class AgentAccountsService {
         const d = res?.data ?? res ?? {};
         const items: AgentAccount[] = (d.items ?? []).map((x: AgentAccountItemDto) => ({
           id: x.id,
-          accountName: x.agentAccountName,
+          accountName: (x as any).accountTitle ?? x.agentAccountName ?? '',
           accountNumber: String(x.accountNumber ?? ''),
           agentName: x.agentName,
           approve: !!x.approve,
@@ -54,14 +54,21 @@ export class AgentAccountsService {
     );
   }
 
-  createAccount(payload: { agentId: string; accountNumber: string; accountTitle: string; accountType: string; isActive: boolean }): Observable<AgentAccount> {
+  createAccount(payload: { agentId: string; accountNumber: string; accountTitle: string; accountType: string; isActive: boolean; approve?: boolean; agentName?: string }): Observable<AgentAccount> {
     const url = `${environment.apiUrl}/AcquisitionAgentAccount`;
+    const nowIso = new Date().toISOString();
     const body = {
       agentId: payload.agentId,
       accountNumber: payload.accountNumber,
       accountTitle: payload.accountTitle,
       accountType: payload.accountType,
       isActive: payload.isActive,
+      approve: payload.approve ?? false,
+      agentName: payload.agentName ?? '',
+      createdBy: 'admin',
+      updatedBy: 'system',
+      createdOn: nowIso,
+      updatedOn: nowIso,
     };
     return this.http.post<any>(url, body).pipe(
       map((res) => {
@@ -90,6 +97,8 @@ export class AgentAccountsService {
           agentName: d.agentName ?? '',
           approve: !!d.approve,
           isActive: !!d.isActive,
+          // expose agentId for edit form selection
+          agentId: String((d as any).agentId ?? ''),
         } as AgentAccount;
       })
     );
@@ -97,7 +106,15 @@ export class AgentAccountsService {
 
   updateAccountById(payload: { id: string; agentAccountName: string; accountNumber: any; agentName: string; approve: boolean; accountTitle: string; accountType: string; isActive: boolean; }): Observable<AgentAccount> {
     const url = `${environment.apiUrl}/AcquisitionAgentAccount/updatebyid`;
-    return this.http.put<any>(url, payload).pipe(
+    const nowIso = new Date().toISOString();
+    const body = {
+      ...payload,
+      createdBy: 'admin',
+      updatedBy: 'system',
+      createdOn: nowIso,
+      updatedOn: nowIso,
+    };
+    return this.http.put<any>(url, body).pipe(
       map((res) => {
         const d: AgentAccountItemDto = (res?.data ?? res) as any;
         return {

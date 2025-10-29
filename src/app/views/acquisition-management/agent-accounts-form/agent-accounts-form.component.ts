@@ -38,6 +38,7 @@ export class AgentAccountsFormComponent implements OnInit {
       next: (acc) => {
         // Prefill available fields
         this.form.patchValue({
+          agentId: (acc as any).agentId ?? '',
           accountNumber: acc.accountNumber,
           accountTitle: acc.accountName || acc.agentName,
           // map accountType to radio: default Funded when unknown
@@ -100,12 +101,15 @@ export class AgentAccountsFormComponent implements OnInit {
         }
       });
     } else {
+      const selectedAgentName = this.agents.find(a => a.id === v.agentId)?.name || '';
       this.accountsService.createAccount({
         agentId: v.agentId,
         accountNumber: v.accountNumber,
         accountTitle: v.accountTitle,
         accountType: v.type,
         isActive: !!v.isActive,
+        approve: false,
+        agentName: selectedAgentName,
       }).subscribe({
         next: () => {
           this.isSubmitting = false;

@@ -59,6 +59,15 @@ export class BulkUploadTemplateFormComponent {
   }
 
   ngOnInit(): void {
+    // Subscribe to template name changes to update field template name
+    this.form.get('name')?.valueChanges.subscribe(name => {
+      if (this.fieldForm) {
+        this.fieldForm.patchValue({
+          fieldTemplateName: name
+        }, { emitEvent: false });
+      }
+    });
+
     this.agentService.getAgents(1, 1000).subscribe({
       next: (res) => {
         this.agents = res.items.map((a: any) => ({ id: a.id, name: a.name ?? a.agentName ?? a.code }));
