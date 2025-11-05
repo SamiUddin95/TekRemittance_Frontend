@@ -9,7 +9,7 @@ import {NgIcon} from '@ng-icons/core';
     <div class="">
         <div class="page-title-head d-flex align-items-center">
             <div class="flex-grow-1">
-                <h4 class="fs-sm text-uppercase fw-bold m-0">{{ title }}</h4>
+                <h4 class="text-uppercase fw-bold m-0" style="font-size: 22px;">{{ title }}</h4>
             </div>
 
             <div class="text-end">

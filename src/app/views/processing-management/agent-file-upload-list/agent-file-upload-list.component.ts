@@ -29,6 +29,17 @@ export class AgentFileUploadListComponent implements OnInit {
   PaginationInfo: any = { Page: 1, RowsPerPage: 10 };
   totalRecord = 0;
 
+  // Preview modal state
+  previewVisible = false;
+  previewLoading = false;
+  previewFileId = '';
+  previewHeaders: string[] = [];
+  previewTableRows: string[][] = [];
+  previewPage = 1;
+  previewPageSize = 10;
+  previewTotalCount = 0;
+  previewTotalPages = 1;
+
   constructor(private router: Router, private service: AgentFileUploadService) {}
 
   ngOnInit(): void {
@@ -56,7 +67,71 @@ export class AgentFileUploadListComponent implements OnInit {
   }
 
   addFile(): void { this.router.navigate(['/agent-file-upload/add']); }
-  view(row: FileRow): void {}
+  view(row: FileRow): void {
+    if (!row?.id) {
+      Swal.fire({ icon: 'info', title: 'No id', text: 'File id not found for this row.' });
+      return;
+    }
+    this.openPreview(row.id, 1, this.PaginationInfo.RowsPerPage || 10);
+  }
+
+  private mapPreview(items: Array<{ key: string; value: string[] }>): void {
+    this.previewHeaders = items.map((c) => String(c.key ?? ''));
+    const rowsLen = Math.max(0, ...items.map((c) => (Array.isArray(c.value) ? c.value.length : 0)));
+    const rows: string[][] = [];
+    for (let r = 0; r < rowsLen; r++) {
+      rows.push(items.map((col) => {
+        const v = Array.isArray(col.value) && col.value[r] != null ? String(col.value[r]) : '';
+        return v;
+      }));
+    }
+    this.previewTableRows = rows;
+  }
+
+  private escape(v: string): string {
+    return v
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  private openPreview(fileId: string, page: number, pageSize: number): void {
+    this.previewVisible = true;
+    this.previewLoading = true;
+    this.previewFileId = fileId;
+    this.previewPage = page;
+    this.previewPageSize = pageSize;
+    this.previewHeaders = [];
+    this.previewTableRows = [];
+    this.service.getRemittancePreview(fileId, page, pageSize).subscribe({
+      next: (res: any) => {
+        const payload = res?.data ?? res;
+        const items: Array<{ key: string; value: string[] }> = Array.isArray(payload?.items) ? payload.items : [];
+        this.mapPreview(items);
+        this.previewTotalCount = Number(payload?.totalCount ?? 0);
+        this.previewPage = Number(payload?.pageNumber ?? page);
+        this.previewPageSize = Number(payload?.pageSize ?? pageSize);
+        this.previewTotalPages = Number(payload?.totalPages ?? Math.max(1, Math.ceil(this.previewTotalCount / (this.previewPageSize || 1))));
+        this.previewLoading = false;
+      },
+      error: (err: any) => {
+        this.previewLoading = false;
+        const msg = err?.error?.errorMessage || err?.message || 'Failed to load preview';
+        Swal.fire({ icon: 'error', title: 'Error', text: msg });
+      }
+    });
+  }
+
+  closePreview(): void {
+    this.previewVisible = false;
+  }
+
+  onPreviewPageChanged(page: number): void {
+    if (!this.previewFileId) return;
+    this.openPreview(this.previewFileId, page, this.previewPageSize || 10);
+  }
   delete(row: FileRow): void {
     if (!row?.id) return;
     Swal.fire({ icon: 'warning', title: 'Delete file?', showCancelButton: true }).then((r) => {
@@ -73,3 +148,4 @@ export class AgentFileUploadListComponent implements OnInit {
     this.loadFiles();
   }
 }
+

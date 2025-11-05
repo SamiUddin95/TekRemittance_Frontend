@@ -1,0 +1,49 @@
+/* Wizard sidebar */
+.wizard-tabs .nav-link {
+  border-radius: 8px;
+  margin-bottom: .5rem;
+  padding: .75rem .75rem;
+  background: #f8fafc;
+  border: 1px solid #eef2f7;
+  color: #334155;
+  transition: all .15s ease-in-out;
+}
+.wizard-tabs .nav-link:hover { background: #f3f6fb; }
+.wizard-tabs .nav-link.active {
+  background: #e9f5ff;
+  border-color: #b6e0fe;
+  box-shadow: inset 2px 0 0 #2f74ff;
+  color: #0f3d87;
+}
+.wizard-tabs .nav-link.wizard-item-done {
+  background: #f1fff6;
+  border-color: #c9f3d5;
+}
+.wizard-tabs .nav-link .fs-32 { font-size: 22px; }
+
+/* Step progress header */
+.wizard-progress {
+  display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem;
+}
+.wizard-progress .bar {
+  flex: 1; height: 6px; background: #eef2f7; border-radius: 6px; overflow: hidden;
+}
+.wizard-progress .bar > span {
+  display: block; height: 100%; background: #2f74ff; border-radius: 6px; transition: width .25s ease;
+}
+
+/* Card refinements */
+.ins-wizard .tab-content {
+  background: #fff; border-radius: 10px;
+}
+.card.shadow-sm { border-radius: 12px; }
+.card-header {
+  background: #f7fbff !important;
+  border-bottom: 1px dashed #e3eefc !important;
+  padding: .75rem 1rem !important;
+}
+.card-body { padding: 1rem !important; }
+
+/* Actions */
+.wizard-actions { margin-top: 1rem; }
+.wizard-actions .btn { min-width: 110px; }

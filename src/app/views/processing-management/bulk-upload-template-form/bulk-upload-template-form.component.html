@@ -161,39 +161,6 @@
                     {{ showAddFieldForm ? 'Cancel' : 'Add' }}
                   </button>
               </div>
-
-              <div class="table-responsive">
-                <table class="table table-bordered table-striped table-sm">
-                  <thead class="table text-center">
-                    <tr>
-                      <th class="fw-bold">Field Order</th>
-                      <th class="fw-bold">Field Name</th>
-                      <th class="fw-bold">Field Type</th>
-                      <th class="fw-bold">Required</th>
-                      <th class="fw-bold">Enable</th>
-                      <th class="text-center fw-bold">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody class="table-group-divider text-center">
-                    @for (f of fields; track f.fieldName) {
-                      <tr>
-                        <td>{{ f.order }}</td>
-                        <td>{{ f.fieldName }}</td>
-                        <td>{{ f.fieldType }}</td>
-                        <td><input class="form-check-input" type="checkbox" [checked]="f.required" disabled /></td>
-                        <td><input class="form-check-input" type="checkbox" [checked]="f.enable" disabled /></td>
-                        <td class="text-center">
-                          <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-sm btn-outline-primary" title="Edit" (click)="onEditField(f)"><ng-icon name="tablerEdit" size="16"></ng-icon></button>
-                            <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" (click)="onDeleteField(f)"><ng-icon name="tablerTrash" size="16"></ng-icon></button>
-                          </div>
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-
               @if (showAddFieldForm) {
                 <div class="card shadow-sm mt-2">
                   <div class="card-header bg-light text-white">
@@ -245,6 +212,40 @@
                   </div>
                 </div>
               }
+
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped table-sm">
+                  <thead class="table text-center">
+                    <tr>
+                      <th class="fw-bold">Field Order</th>
+                      <th class="fw-bold">Field Name</th>
+                      <th class="fw-bold">Field Type</th>
+                      <th class="fw-bold">Required</th>
+                      <th class="fw-bold">Enable</th>
+                      <th class="text-center fw-bold">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-group-divider text-center">
+                    @for (f of fields; track f.fieldName) {
+                      <tr>
+                        <td>{{ f.order }}</td>
+                        <td>{{ f.fieldName }}</td>
+                        <td>{{ f.fieldType }}</td>
+                        <td><input class="form-check-input" type="checkbox" [checked]="f.required" disabled /></td>
+                        <td><input class="form-check-input" type="checkbox" [checked]="f.enable" disabled /></td>
+                        <td class="text-center">
+                          <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-outline-primary" title="Edit" (click)="onEditField(f)"><ng-icon name="tablerEdit" size="16"></ng-icon></button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" (click)="onDeleteField(f)"><ng-icon name="tablerTrash" size="16"></ng-icon></button>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              
             </div>
           }
         </div>

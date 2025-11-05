@@ -3,6 +3,7 @@ import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle} from "@ng-bootstrap/ng-
 import {userDropdownItems} from '@layouts/components/data';
 import {RouterLink} from '@angular/router';
 import {NgIcon} from '@ng-icons/core';
+import { AuthService } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-user-profile-topbar',
@@ -17,4 +18,9 @@ import {NgIcon} from '@ng-icons/core';
 })
 export class UserProfileComponent {
   menuItems = userDropdownItems;
+  displayName: string | null = null;
+
+  constructor(private auth: AuthService) {
+    this.displayName = this.auth.getName();
+  }
 }

@@ -1,0 +1,88 @@
+<div class="">
+  <app-page-title title="Agent Branches" subTitle="Acquisitions"></app-page-title>
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light border-bottom">
+          <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+            <div class="d-flex align-items-center">
+              <ng-icon name="tablerBuilding" class="me-2 gradient-icon" size="20"></ng-icon>
+              <h4 class="card-title mb-0 text-dark">Agent Bank Branch</h4>
+            </div>
+            <button type="button" class="btn submit-button" (click)="addNewBranch()">
+              <ng-icon name="tablerPlus" class="me-1" size="16"></ng-icon>
+              Add Agent Branch
+            </button>
+          </div>
+        </div>
+
+        @if (isLoading) {
+          <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        } @else {
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped table-sm">
+              <thead class="table text-center">
+                <tr>
+                  <th class="fw-bold">Acquisition Agent Branch Code</th>
+                  <th class="fw-bold">Acquisition Agent Branch Name</th>
+                  <th class="fw-bold">Acquisition Agent Name</th>
+                  <th class="fw-bold">Active</th>
+                  <th class="fw-bold">Approve</th>
+                  <th class="text-center fw-bold">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="table-group-divider text-center">
+                @for (branch of branches; track branch.id) {
+                  <tr>
+                    <td><span class="fw-medium">{{ branch.code }}</span></td>
+                    <td>{{ branch.name }}</td>
+                    <td>{{ branch.agentName }}</td>
+                    <td>
+                      <span [class]="getStatusBadgeClass(branch.isActive)">
+                        {{ getStatusText(branch.isActive) }}
+                      </span>
+                    </td>
+                    <td>
+                      <input class="form-check-input" type="checkbox" [checked]="branch.approvalStatus" disabled>
+                    </td>
+                    <td class="text-center">
+                      <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-outline-primary" (click)="editBranch(branch.id)" title="Edit Branch">
+                          <ng-icon name="tablerEdit" size="16"></ng-icon>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteBranch(branch)" title="Delete Branch">
+                          <ng-icon name="tablerTrash" size="16"></ng-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="6" class="text-center py-4">
+                      <div class="text-muted">
+                        <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                        <p class="mb-0">No branches found</p>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <app-generic-pagination
+            [totalItems]="totalRecord"
+            [pageSize]="PaginationInfo.RowsPerPage"
+            [currentPage]="PaginationInfo.Page"
+            (pageChanged)="onBranchPageChanged($event)">
+          </app-generic-pagination>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+

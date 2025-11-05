@@ -18,7 +18,8 @@ import { City } from '@/app/views/city-management/models/city.model';
     selector: 'app-agent-form',
     standalone: true,
     imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon],
-    templateUrl: './agent-form.component.html'
+    templateUrl: './agent-form.component.html',
+    styleUrls: ['./agent-form.component.scss']
 })
 export class AgentFormComponent implements OnInit {
     agentForm: FormGroup;
@@ -29,6 +30,17 @@ export class AgentFormComponent implements OnInit {
     countries: Country[] = [];
     provinces: Province[] = [];
     cities: City[] = [];
+
+    // Wizard state
+    currentStep = 0;
+    steps: Array<{ title: string; subtitle: string; icon: string }> = [
+        { title: 'Basic Information', subtitle: 'Agent basics', icon: 'tablerUserPlus' },
+        { title: 'Location Details', subtitle: 'Address & area', icon: 'tablerMapPin' },
+        { title: 'Operational Preferences', subtitle: 'Working options', icon: 'tablerSettings' },
+        { title: 'Acquisition Modes', subtitle: 'Acquisition channels', icon: 'tablerPlugConnected' },
+        { title: 'Disbursement Modes', subtitle: 'Payout methods', icon: 'tablerCurrencyDollar' },
+        { title: 'Direct Integration', subtitle: 'URLs & toggles', icon: 'tablerLink' },
+    ];
 
     constructor(
         private fb: FormBuilder,
@@ -307,5 +319,18 @@ export class AgentFormComponent implements OnInit {
                 this.cities = (res.items || []).filter(c => c.isActive && String(c.provinceId) === String(provinceId));
             }
         });
+    }
+
+    // Wizard navigation methods
+    nextStep(): void {
+        if (this.currentStep < this.steps.length - 1) this.currentStep++;
+    }
+
+    previousStep(): void {
+        if (this.currentStep > 0) this.currentStep--;
+    }
+
+    goToStep(index: number): void {
+        if (index >= 0 && index < this.steps.length) this.currentStep = index;
     }
 }

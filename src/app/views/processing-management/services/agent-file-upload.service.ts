@@ -58,4 +58,11 @@ export class AgentFileUploadService {
     const url = `${environment.apiUrl}/AgentFileUploads/${id}`;
     return this.http.delete<void>(url);
   }
+
+  // Fetch preview rows for a template (dynamic columns)
+  getRemittancePreview(templateId: string, pageNumber: number = 1, pageSize: number = 50): Observable<{ items: Array<{ key: string; value: string[] }>; totalCount: number; pageNumber: number; pageSize: number; totalPages: number; statusCode: number; status: string; }> {
+    const url = `${environment.apiUrl}/AgentFileTemplates/remittance/${templateId}`;
+    const params = new HttpParams().set('pageNumber', pageNumber).set('pageSize', pageSize);
+    return this.http.get<any>(url, { params });
+  }
 }

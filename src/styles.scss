@@ -29,6 +29,8 @@
 //   transform: rotate(180deg);
 // }
 
+
+
   .gradient-text {
       background: linear-gradient(90deg, #FF5102, #CE0E2D);
       background-clip: text;
@@ -197,4 +199,79 @@
 @media (min-width: 768px) {
   .aligned-form .col-md-8 { padding-right: .5rem; }
   .aligned-form .col-md-4 { padding-left: .5rem; }
+}
+
+/* Wizard styling overrides (scoped) */
+.ins-wizard {
+  /* Progress bar: soft orange */
+  .wizard-progress {
+    .bar {
+      background-color: #FFE9D6 !important; /* track */
+      border-radius: 999px;
+      height: 6px;
+      span {
+        display: block;
+        background-color: #FFB26B !important; /* fill */
+        border-radius: 999px;
+        height: 100%;
+      }
+    }
+  }
+
+  /* Steps list colors */
+  .wizard-tabs .nav-link {
+    border: 1px dashed #e5e7eb;
+    border-radius: .75rem;
+  }
+
+  /* Completed step: light orange */
+  .wizard-tabs.nav-pills .nav-link.wizard-item-done,
+  .wizard-tabs.nav-pills .nav-link.wizard-item-done:hover,
+  .wizard-tabs.nav-pills .nav-link.wizard-item-done:focus {
+    background-color: #FFF4E9 !important;
+    border-color: #FFD7B8 !important;
+    color: inherit !important;
+  }
+  .wizard-tabs .nav-link.wizard-item-done ng-icon {
+    color: inherit; /* keep default, no forced orange */
+  }
+
+  /* Tick icon color for completed steps */
+  .ins-wizard .wizard-tabs .nav-link.wizard-item-done .ms-auto ng-icon,
+  .ins-wizard .wizard-tabs .nav-link.wizard-item-done .ms-auto ng-icon svg,
+  .ins-wizard .wizard-tabs .nav-link.wizard-item-done .ms-auto ng-icon [stroke] {
+    color: #FF7A1A !important;
+    stroke: #FF7A1A !important; /* for stroke-based icons (e.g., Tabler) */
+  }
+
+  /* Remove green color from the check icon inside done steps */
+  .wizard-tabs.nav-pills .nav-link.wizard-item-done .text-success {
+    color: inherit !important;
+  }
+  /* Also neutralize any theme-forced green on inner text for done */
+  .wizard-tabs .nav-link.wizard-item-done .text-body,
+  .wizard-tabs .nav-link.wizard-item-done i,
+  .wizard-tabs .nav-link.wizard-item-done svg {
+    color: inherit !important;
+  }
+
+  /* Wizard bordered variant forces green left border; override to soft orange */
+  .wizard-tabs.wizard-bordered .nav-link.wizard-item-done {
+    border-left-color: #FFB26B !important;
+  }
+
+  /* Active step: soft orange (override nav-pills defaults) */
+  .wizard-tabs.nav-pills > .nav-item > .nav-link.active,
+  .wizard-tabs.nav-pills > .nav-item > .nav-link.active:focus,
+  .wizard-tabs.nav-pills > .nav-item > .nav-link.active:hover {
+    background-color: #FFEDD8 !important; /* slightly deeper than done */
+    border-color: #FFB26B !important;
+    color: inherit !important;
+    box-shadow: none !important;
+  }
+  .wizard-tabs.nav-pills > .nav-item > .nav-link.active .text-body,
+  .wizard-tabs.nav-pills > .nav-item > .nav-link.active .fs-xxs,
+  .wizard-tabs.nav-pills > .nav-item > .nav-link.active ng-icon {
+    color: inherit !important; /* do not force white */
+  }
 }

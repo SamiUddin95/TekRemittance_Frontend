@@ -1,5 +1,5 @@
 <div class="">
-  <app-page-title title="Acquisition Agent File List"></app-page-title>
+ <app-page-title title="File Upload" subTitle="Processing Management"></app-page-title>
   <div class="row">
     <div class="col-12">
       <div class="card shadow-sm">
@@ -11,7 +11,7 @@
             </div>
             <button type="button" class="btn submit-button" (click)="addFile()">
               <ng-icon name="tablerPlus" class="me-1" size="16"></ng-icon>
-              Add Acquisition Agent File
+              Upload File
             </button>
           </div>
         </div>
@@ -57,7 +57,7 @@
                       <td class="text-break" [class.text-danger]="row.errorMessage">
                         {{ row.errorMessage || '-' }}
                       </td>
-                      <td>{{ row.rowCount | number }}</td>
+                      <td>{{ row.rowCount }}</td>
                       <td>{{ row.processAt | date:'medium' }}</td>
                       <td class="text-center">
                         <div class="btn-group" role="group">
@@ -95,3 +95,61 @@
     </div>
   </div>
 </div>
+
+<!-- Preview Modal -->
+@if (previewVisible) {
+  <div class="modal fade show" style="display:block; background: rgba(0,0,0,0.4);">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Remittance File Preview</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closePreview()"></button>
+        </div>
+        <div class="modal-body">
+          @if (previewLoading) {
+            <div class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          } @else {
+            @if (previewTableRows.length === 0) {
+              <div class="text-muted">No preview rows available.</div>
+            } @else {
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped table-sm">
+                  <thead class="table text-center">
+                    <tr>
+                      @for (h of previewHeaders; track h) {
+                        <th class="fw-bold text-nowrap">{{ h }}</th>
+                      }
+                    </tr>
+                  </thead>
+                  <tbody class="table-group-divider text-center">
+                    @for (r of previewTableRows; track $index) {
+                      <tr>
+                        @for (c of r; track $index) {
+                          <td>{{ c }}</td>
+                        }
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              <app-generic-pagination
+                [totalItems]="previewTotalCount"
+                [pageSize]="previewPageSize"
+                [currentPage]="previewPage"
+                (pageChanged)="onPreviewPageChanged($event)">
+              </app-generic-pagination>
+            }
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closePreview()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+

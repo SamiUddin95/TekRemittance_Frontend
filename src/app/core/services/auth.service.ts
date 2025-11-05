@@ -10,14 +10,18 @@ export interface LoginResponse { status: string; data: { token: string; [k: stri
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
+  private readonly NAME_KEY = 'auth_name';
 
   constructor(private http: HttpClient, private router: Router) {}
 
   login(body: LoginPayload): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${environment.apiUrl}/Auth/login`, body).pipe(
       tap(res => {
-        const token = res?.data?.token;
+        const data: any = res?.data;
+        const token = data?.token;
         if (token) this.setToken(token);
+        const name = data?.['name'] || data?.['userName'] || data?.['loginName'];
+        if (name) this.setName(name);
       })
     );
   }
@@ -27,11 +31,13 @@ export class AuthService {
       return this.http.post(`${environment.apiUrl}/Auth/logout`, {}).pipe(
         finalize(() => {
           this.clearToken();
+          this.clearName();
           this.router.navigate(['/sign-in']);
         })
       );
     } else {
       this.clearToken();
+      this.clearName();
       this.router.navigate(['/sign-in']);
       return null;
     }
@@ -47,6 +53,18 @@ export class AuthService {
 
   clearToken() {
     sessionStorage.removeItem(this.TOKEN_KEY);
+  }
+
+  setName(name: string) {
+    sessionStorage.setItem(this.NAME_KEY, name);
+  }
+
+  getName(): string | null {
+    return sessionStorage.getItem(this.NAME_KEY);
+  }
+
+  clearName() {
+    sessionStorage.removeItem(this.NAME_KEY);
   }
 
   isAuthenticated(): boolean {

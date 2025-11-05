@@ -54,7 +54,7 @@ export const menuItems: MenuItemType[] = [
         children: [
             {icon: 'tablerUserCheck', label: 'Agent Management', url: '/acquisition-management'},
             {icon: 'tablerUserCheck', label: 'Agent Accounts', url: '/agent-accounts'},
-            {icon: 'tablerUserCheck', label: 'Bank Branches', url: '/bank-branches'},
+            {icon: 'tablerUserCheck', label: 'Bank Branches', url: '/agent-branches'},
         ]
     },
     {
@@ -119,41 +119,41 @@ export const horizontalMenuItems: MenuItemType[] = [
     //     ]
     // },
     {
-        label: 'Acquisition Management',
+        label: 'Acquisitions',
         icon: 'tablerUsers',
         isCollapsed: true,
         children: [
             {icon: 'tablerUserCheck', label: 'Agent Management', url: '/acquisition-management'},
             {icon: 'tablerUserCheck', label: 'Agent Accounts', url: '/agent-accounts'},
-            {icon: 'tablerUserCheck', label: 'Bank Branches', url: '/bank-branches'},
+            {icon: 'tablerUserCheck', label: 'Agent Branches', url: '/agent-branches'},
         ]
     },
     {
-        label: 'Processing Management',
+        label: 'Processing',
         icon: 'tablerTableColumn',
         isCollapsed: true,
         children: [
-            {icon: 'tablerWorld', label: 'Upload Template', url: '/bulk-upload-template'},
-            {icon: 'tablerWorld', label: 'Agent File Upload', url: '/agent-file-upload'},
+            {icon: 'tablerWorld', label: 'File Template', url: '/bulk-upload-template'},
+            {icon: 'tablerWorld', label: 'File Upload', url: '/agent-file-upload'},
             
         ]
     },
     {
-        label: 'Disbursement Management',
+        label: 'Disbursement',
         icon: 'tablerTableColumn',
         isCollapsed: true,
         children: [
-            {icon: 'tablerWorld', label: 'Disbursement', url: '/disbursement'},
+            {icon: 'tablerWorld', label: 'Disbursement Queue', url: '/disbursement'},
             
         ]
     },
     {
-        label: 'User Management',
+        label: 'Security',
         icon: 'tablerTableColumn',
         isCollapsed: true,
         children: [
             {icon: 'tablerWorld', label: 'Users', url: '/users'},
-            {icon: 'tablerCheck', label: 'Approve Users', url: '/users/approve'},
+            {icon: 'tablerCheck', label: 'Un-Authorized Users', url: '/users/approve'},
         ]
     },
      

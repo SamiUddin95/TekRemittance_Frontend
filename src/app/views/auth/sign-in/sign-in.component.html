@@ -4,6 +4,18 @@
             <div class="col-xl-10">
                 <div class="card rounded-4">
                     <div class="row justify-content-between g-0">
+                        <!-- Left: Image -->
+                        <div class="col-lg-6 d-none d-lg-block">
+                            <div
+                                class="h-100 position-relative card-side-img rounded-start-4 rounded-start rounded-0 overflow-hidden">
+                                <div
+                                    class="p-4 card-img-overlay rounded-4 rounded-end-0 auth-overlay d-flex align-items-end justify-content-center">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Form -->
                         <div class="col-lg-6">
                             <div class="card-body">
                                 <div class="auth-brand text-center mb-4">
@@ -14,9 +26,7 @@
                                           <span class="gradient-text">REMIT</span>
                                         </h2>
                                     </div>    
-                                      
                                     <style>
-                                    
                                     .logo-icon-wrapper {
                                         width: 40px;
                                         height: 40px;
@@ -35,12 +45,6 @@
                                         line-height: 1;
                                     }
                                     </style>
-                                    <!-- <a routerLink="/" class="logo-dark">
-                                        <img src="assets/images/logo-black.png" alt="dark logo" height="32">
-                                    </a>
-                                    <a routerLink="/" class="logo-light">
-                                        <img src="assets/images/logo.png" alt="logo" height="32">
-                                    </a> -->
                                     <h4 class="fw-bold mt-4">Welcome Back </h4>
                                     <p class="text-muted w-lg-75 mx-auto">Let’s get you signed in. Enter your email and
                                         password to continue.</p>
@@ -48,13 +52,13 @@
 
                                 <form [formGroup]="form" (ngSubmit)="signIn()">
                                     <div class="mb-3">
-                                        <label for="userEmail" class="form-label">Email address <span
+                                        <label for="userEmail" class="form-label">Login Name <span
                                                 class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text orange-header">
-                                                <ng-icon name="tablerMail" style="color: white;" class="fs-xl" /></span>
+                                                <ng-icon name="tablerUser" style="color: white;" class="fs-xl" /></span>
                                             <input type="email" class="form-control" id="userEmail"
-                                                placeholder="you@example.com" formControlName="username" required>
+                                                placeholder="Login Name" formControlName="username" required>
                                         </div>
                                     </div>
 
@@ -84,26 +88,10 @@
                                         <button class="btn submit-button fw-semibold py-2" type="submit">Sign In</button>
                                     </div>
                                 </form>
-
-                                <!-- <p class="text-muted text-center mt-4 mb-0">
-                                    New here? <a routerLink="sign-up"
-                                        class="text-decoration-underline link-offset-3 fw-semibold">Create an
-                                        account</a>
-                                </p> -->
-
-                                 
                             </div>
                         </div>
 
-                        <div class="col-lg-6 d-none d-lg-block">
-                            <div
-                                class="h-100 position-relative card-side-img rounded-end-4 rounded-end rounded-0 overflow-hidden">
-                                <div
-                                    class="p-4 card-img-overlay rounded-4 rounded-start-0 auth-overlay d-flex align-items-end justify-content-center">
-
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
