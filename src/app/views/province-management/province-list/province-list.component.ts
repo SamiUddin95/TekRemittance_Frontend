@@ -7,11 +7,12 @@ import { Province } from '../models/province.model';
 import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
+import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
 
 @Component({
     selector: 'app-province-list',
     standalone: true,
-    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent],
+    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
     templateUrl: './province-list.component.html'
 })
 export class ProvinceListComponent implements OnInit {

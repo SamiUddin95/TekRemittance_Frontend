@@ -7,11 +7,12 @@ import { CountryService } from '../services/country.service';
 import { Country } from '../models/country.model';
 import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
+import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
 
 @Component({
     selector: 'app-country-form',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon],
+    imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon, SkeletonLoaderComponent],
     templateUrl: './country-form.component.html'
 })
 export class CountryFormComponent implements OnInit {

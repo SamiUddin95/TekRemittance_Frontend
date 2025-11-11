@@ -11,11 +11,12 @@ import { Country } from '../../country-management/models/country.model';
 import { Province } from '../../province-management/models/province.model';
 import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
+import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
 
 @Component({
     selector: 'app-city-form',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon],
+    imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon, SkeletonLoaderComponent],
     templateUrl: './city-form.component.html'
 })
 export class CityFormComponent implements OnInit {

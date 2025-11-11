@@ -2,11 +2,7 @@
     <div class="row">
         <div class="col-12">
             @if (isLoading) {
-                <div class="d-flex justify-content-center align-items-center" style="height: 70vh;">
-                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
+                <app-skeleton-loader variant="form" ariaLabel="Loading form"></app-skeleton-loader>
             } @else {
                 <app-page-title [title]="getPageTitle()" subTitle="Acquisition Management"></app-page-title>
                 

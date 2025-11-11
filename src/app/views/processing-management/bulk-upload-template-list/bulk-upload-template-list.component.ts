@@ -7,6 +7,7 @@ import { GenericPaginationComponent } from '@/app/shared/generic-pagination/gene
 import { TemplateService, TemplateListItem } from '@/app/views/processing-management/services/template.service';
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
+import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
 
 interface TemplateRow {
   id: string;
@@ -22,7 +23,7 @@ interface TemplateRow {
 @Component({
   selector: 'app-bulk-upload-template-list',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent],
+  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
   templateUrl: './bulk-upload-template-list.component.html'
 })
 export class BulkUploadTemplateListComponent implements OnInit {

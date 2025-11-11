@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 import { AgentAccountsService } from '../services/agent-accounts.service';
 import Swal from 'sweetalert2';
+import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
 
 interface AccountRow {
   id: string;
@@ -19,7 +20,7 @@ interface AccountRow {
 @Component({
   selector: 'app-agent-accounts-list',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent],
+  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
   templateUrl: './agent-accounts-list.component.html'
 })
 export class AgentAccountsListComponent implements OnInit {

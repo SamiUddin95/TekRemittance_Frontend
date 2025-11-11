@@ -38,7 +38,7 @@ export const menuItems: MenuItemType[] = [
     },
     {
         label: 'General Features',
-        icon: 'tablerTableColumn',
+        icon: 'tablerApps',
         isCollapsed: true,
         // children: [
         //     {icon: 'tablerWorld', label: 'Country Management', url: '/country-management'},
@@ -49,40 +49,43 @@ export const menuItems: MenuItemType[] = [
     },
     {
         label: 'Acquisition Management',
-        icon: 'tablerUsers',
+        icon: 'tablerUserPlus',
         isCollapsed: true,
         children: [
-            {icon: 'tablerUserCheck', label: 'Agent Management', url: '/acquisition-management'},
+            {icon: 'tablerUsers', label: 'Agent Management', url: '/acquisition-management'},
             {icon: 'tablerUserCheck', label: 'Agent Accounts', url: '/agent-accounts'},
-            {icon: 'tablerUserCheck', label: 'Bank Branches', url: '/agent-branches'},
+            {icon: 'tablerBuilding', label: 'Bank Branches', url: '/agent-branches'},
         ]
     },
     {
         label: 'Processing Management',
-        icon: 'tablerTableColumn',
+        icon: 'tablerFileUpload',
         isCollapsed: true,
         children: [
-            {icon: 'tablerWorld', label: 'Upload Template', url: '/bulk-upload-template'},
-            {icon: 'tablerWorld', label: 'Agent File Upload', url: '/agent-file-upload'},
+            {icon: 'tablerFileDescription', label: 'Upload Template', url: '/bulk-upload-template'},
+            {icon: 'tablerCloudUpload', label: 'Agent File Upload', url: '/agent-file-upload'},
             
         ]
     },
     {
         label: 'Disbursement Management',
-        icon: 'tablerTableColumn',
+        icon: 'tablerCashBanknote',
         isCollapsed: true,
         children: [
-            {icon: 'tablerWorld', label: 'Disbursement', url: '/disbursement'},
-            
+            {icon: 'tablerClock', label: 'Disbursement Queue', url: '/disbursement-queue'},
+            {icon: 'tablerChecklist', label: 'Authorization Queue', url: '/authorization-queue'},
+            {icon: 'tablerX', label: 'Rejected Queue', url: '/rejected-queue'},
+            {icon: 'tablerCircleCheck', label: 'Approved Queue', url: '/approved-queue'},
+
         ]
     },
     {
         label: 'User Management',
-        icon: 'tablerTableColumn',
+        icon: 'tablerShield',
         isCollapsed: true,
         children: [
-            {icon: 'tablerWorld', label: 'Users', url: '/users'},
-            {icon: 'tablerCheck', label: 'Approve Users', url: '/users/approve'},
+            {icon: 'tablerUsers', label: 'Users', url: '/users'},
+            {icon: 'tablerUserCheck', label: 'Approve Users', url: '/users/approve'},
         ]
     },
     
@@ -107,53 +110,56 @@ export const horizontalMenuItems: MenuItemType[] = [
             {icon: 'tablerBuildingBank', label: 'Bank Management', url: '/bank-management'},
         ]
     },
-    // {
-    //     label: 'General Features',
-    //     icon: 'tablerTableColumn',
-    //     isCollapsed: true,
-    //     children: [
-    //         {icon: 'tablerWorld', label: 'Country Management', url: '/country-management'},
-    //         {icon: 'tablerMapPin', label: 'Province Management', url: '/province-management'},
-    //         {icon: 'tablerBuilding', label: 'City Management', url: '/city-management'},
-    //         {icon: 'tablerBuildingBank', label: 'Bank Management', url: '/bank-management'},
-    //     ]
-    // },
     {
-        label: 'Acquisitions',
-        icon: 'tablerUsers',
+        label: 'General Features',
+        icon: 'tablerApps',
         isCollapsed: true,
         children: [
-            {icon: 'tablerUserCheck', label: 'Agent Management', url: '/acquisition-management'},
+            // {icon: 'tablerWorld', label: 'Country Management', url: '/country-management'},
+            // {icon: 'tablerMapPin', label: 'Province Management', url: '/province-management'},
+            // {icon: 'tablerBuilding', label: 'City Management', url: '/city-management'},
+            // {icon: 'tablerBuildingBank', label: 'Bank Management', url: '/bank-management'},
+        ]
+    },
+    {
+        label: 'Acquisitions',
+        icon: 'tablerUserPlus',
+        isCollapsed: true,
+        children: [
+            {icon: 'tablerUsers', label: 'Agent Management', url: '/acquisition-management'},
             {icon: 'tablerUserCheck', label: 'Agent Accounts', url: '/agent-accounts'},
-            {icon: 'tablerUserCheck', label: 'Agent Branches', url: '/agent-branches'},
+            {icon: 'tablerBuilding', label: 'Agent Branches', url: '/agent-branches'},
         ]
     },
     {
         label: 'Processing',
-        icon: 'tablerTableColumn',
+        icon: 'tablerFileUpload',
         isCollapsed: true,
         children: [
-            {icon: 'tablerWorld', label: 'File Template', url: '/bulk-upload-template'},
-            {icon: 'tablerWorld', label: 'File Upload', url: '/agent-file-upload'},
+            {icon: 'tablerFileDescription', label: 'File Template', url: '/bulk-upload-template'},
+            {icon: 'tablerCloudUpload', label: 'File Upload', url: '/agent-file-upload'},
+            {icon: 'tablerTools', label: 'Repair Queue', url: '/repair-queue'},
             
         ]
     },
     {
         label: 'Disbursement',
-        icon: 'tablerTableColumn',
+        icon: 'tablerCashBanknote',
         isCollapsed: true,
         children: [
-            {icon: 'tablerWorld', label: 'Disbursement Queue', url: '/disbursement'},
-            
+            {icon: 'tablerClock', label: 'Disbursement Queue', url: '/disbursement-queue'},
+            {icon: 'tablerChecklist', label: 'Authorization Queue', url: '/authorization-queue'},
+            {icon: 'tablerX', label: 'Rejected Queue', url: '/rejected-queue'},
+            {icon: 'tablerCircleCheck', label: 'Approved Queue', url: '/approved-queue'},
         ]
     },
     {
         label: 'Security',
-        icon: 'tablerTableColumn',
+        icon: 'tablerShield',
         isCollapsed: true,
         children: [
-            {icon: 'tablerWorld', label: 'Users', url: '/users'},
-            {icon: 'tablerCheck', label: 'Un-Authorized Users', url: '/users/approve'},
+            {icon: 'tablerUsers', label: 'Users', url: '/users'},
+            {icon: 'tablerUserOff', label: 'Un-Authorized Users', url: '/users/approve'},
         ]
     },
      

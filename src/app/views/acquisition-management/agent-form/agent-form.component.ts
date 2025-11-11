@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -13,11 +13,12 @@ import { CityService } from '@/app/views/city-management/services/city.service';
 import { Country } from '@/app/views/country-management/models/country.model';
 import { Province } from '@/app/views/province-management/models/province.model';
 import { City } from '@/app/views/city-management/models/city.model';
+import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
 
 @Component({
     selector: 'app-agent-form',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon],
+    imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon, SkeletonLoaderComponent],
     templateUrl: './agent-form.component.html',
     styleUrls: ['./agent-form.component.scss']
 })
@@ -42,6 +43,16 @@ export class AgentFormComponent implements OnInit {
         { title: 'Direct Integration', subtitle: 'URLs & toggles', icon: 'tablerLink' },
     ];
 
+    // Define required fields for each step
+    private stepFields: { [key: number]: string[] } = {
+        0: ['code', 'name'],
+        1: ['countryId', 'provinceId', 'cityId'],
+        2: [],
+        3: [],
+        4: [],
+        5: [],
+    };
+
     constructor(
         private fb: FormBuilder,
         private agentService: AgentService,
@@ -49,7 +60,8 @@ export class AgentFormComponent implements OnInit {
         private route: ActivatedRoute,
         private countryService: CountryService,
         private provinceService: ProvinceService,
-        private cityService: CityService
+        private cityService: CityService,
+        private cdr: ChangeDetectorRef
     ) {
         this.agentForm = this.createForm();
     }
@@ -89,6 +101,7 @@ export class AgentFormComponent implements OnInit {
         this.setupLocationCascades();
         this.loadCountries();
         this.setupDirectIntegrationValidation();
+        this.setupFormValueChanges();
     }
 
     createForm(): FormGroup {
@@ -100,9 +113,9 @@ export class AgentFormComponent implements OnInit {
             fax: ['', [Validators.maxLength(20)]],
             email: ['', [Validators.email, Validators.maxLength(255)]],
             address: ['', [Validators.maxLength(255)]],
-            countryId: [''],
-            provinceId: [''],
-            cityId: [''],
+            countryId: ['', Validators.required],
+            provinceId: ['', Validators.required],
+            cityId: ['', Validators.required],
             cutOffStart: ['09:00'],
             cutOffEnd: ['17:00'],
             brnByApplication: [false],
@@ -149,7 +162,7 @@ export class AgentFormComponent implements OnInit {
     }
 
     onSubmit(): void {
-        if (this.agentForm.valid && !this.isSubmitting) {
+        if (this.validateAllRequiredFields() && this.agentForm.valid && !this.isSubmitting) {
             this.isSubmitting = true;
             const formValue = this.agentForm.value as Omit<Agent, 'id'>;
             if (this.isEditMode && this.agentId) {
@@ -159,6 +172,7 @@ export class AgentFormComponent implements OnInit {
             }
         } else {
             this.markFormGroupTouched();
+            this.showAllFieldsWarning();
         }
     }
 
@@ -323,7 +337,11 @@ export class AgentFormComponent implements OnInit {
 
     // Wizard navigation methods
     nextStep(): void {
-        if (this.currentStep < this.steps.length - 1) this.currentStep++;
+        if (this.currentStep < this.steps.length - 1) {
+            if (this.validateCurrentStep()) {
+                this.currentStep++;
+            }
+        }
     }
 
     previousStep(): void {
@@ -331,6 +349,180 @@ export class AgentFormComponent implements OnInit {
     }
 
     goToStep(index: number): void {
-        if (index >= 0 && index < this.steps.length) this.currentStep = index;
+        if (index >= 0 && index < this.steps.length) {
+            if (index < this.currentStep || this.validateCurrentStep()) {
+                this.currentStep = index;
+            }
+        }
+    }
+
+    // Validation methods
+    private validateCurrentStep(): boolean {
+        const requiredFields = this.stepFields[this.currentStep] || [];
+        
+        for (const field of requiredFields) {
+            const control = this.agentForm.get(field);
+            if (control) {
+                control.markAsTouched();
+                if (control.invalid) {
+                    this.showValidationWarning();
+                    return false;
+                }
+            }
+        }
+        
+        // Special validation for Direct Integration step
+        if (this.currentStep === 5) {
+            const diCtrl = this.agentForm.get('directIntegration');
+            if (diCtrl?.value) {
+                const inquiryCtrl = this.agentForm.get('inquiryUrl');
+                const paymentCtrl = this.agentForm.get('paymentUrl');
+                
+                inquiryCtrl?.markAsTouched();
+                paymentCtrl?.markAsTouched();
+                
+                if (inquiryCtrl?.invalid || paymentCtrl?.invalid) {
+                    this.showValidationWarning();
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
+    private showValidationWarning(): void {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Validation Required',
+            text: 'Please fill in all required fields before proceeding to the next step.',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#3b82f6'
+        });
+    }
+
+    isStepValid(stepIndex: number): boolean {
+        const requiredFields = this.stepFields[stepIndex] || [];
+        
+        for (const field of requiredFields) {
+            const control = this.agentForm.get(field);
+            if (control && control.invalid) {
+                return false;
+            }
+        }
+        
+        // Special validation for Direct Integration step
+        if (stepIndex === 5) {
+            const diCtrl = this.agentForm.get('directIntegration');
+            if (diCtrl?.value) {
+                const inquiryCtrl = this.agentForm.get('inquiryUrl');
+                const paymentCtrl = this.agentForm.get('paymentUrl');
+                
+                if (inquiryCtrl?.invalid || paymentCtrl?.invalid) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
+    getStepValidationIcon(stepIndex: number): string {
+        if (this.isStepValid(stepIndex)) {
+            return 'tablerCircleCheck';
+        } else if (stepIndex < this.currentStep) {
+            return 'tablerCircleX';
+        } else {
+            return '';
+        }
+    }
+
+    private setupFormValueChanges(): void {
+        this.agentForm.valueChanges.subscribe(() => {
+            this.cdr.detectChanges();
+        });
+    }
+
+    private validateAllRequiredFields(): boolean {
+        // Get all required fields from all steps
+        const allRequiredFields: string[] = [];
+        Object.values(this.stepFields).forEach(fields => {
+            allRequiredFields.push(...fields);
+        });
+
+        for (const field of allRequiredFields) {
+            const control = this.agentForm.get(field);
+            if (control && control.invalid) {
+                return false;
+            }
+        }
+
+        // Special validation for Direct Integration step
+        const diCtrl = this.agentForm.get('directIntegration');
+        if (diCtrl?.value) {
+            const inquiryCtrl = this.agentForm.get('inquiryUrl');
+            const paymentCtrl = this.agentForm.get('paymentUrl');
+            
+            if (inquiryCtrl?.invalid || paymentCtrl?.invalid) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private getMissingRequiredFields(): string[] {
+        const missingFields: string[] = [];
+        
+        // Check all required fields from all steps
+        Object.entries(this.stepFields).forEach(([stepIndex, fields]) => {
+            fields.forEach(field => {
+                const control = this.agentForm.get(field);
+                if (control && control.invalid) {
+                    const fieldName = this.getFieldDisplayName(field);
+                    missingFields.push(fieldName);
+                }
+            });
+        });
+
+        // Special validation for Direct Integration step
+        const diCtrl = this.agentForm.get('directIntegration');
+        if (diCtrl?.value) {
+            const inquiryCtrl = this.agentForm.get('inquiryUrl');
+            const paymentCtrl = this.agentForm.get('paymentUrl');
+            
+            if (inquiryCtrl?.invalid) {
+                missingFields.push('Inquiry URL');
+            }
+            if (paymentCtrl?.invalid) {
+                missingFields.push('Payment URL');
+            }
+        }
+
+        return missingFields;
+    }
+
+    private getFieldDisplayName(fieldName: string): string {
+        const fieldNames: { [key: string]: string } = {
+            'code': 'Code',
+            'name': 'Name',
+            'countryId': 'Country',
+            'provinceId': 'Province',
+            'cityId': 'City'
+        };
+        return fieldNames[fieldName] || fieldName;
+    }
+
+    private showAllFieldsWarning(): void {
+        const missingFields = this.getMissingRequiredFields();
+        const fieldsList = missingFields.join(', ');
+        
+        Swal.fire({
+            icon: 'warning',
+            title: 'Required Fields Missing',
+            text: `Please fill in the following required fields before saving: ${fieldsList}`,
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#3b82f4'
+        });
     }
 }

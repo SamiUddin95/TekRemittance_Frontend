@@ -1,0 +1,116 @@
+<div class="">
+  <app-page-title title="Rejected" subTitle="Disbursement Management"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light border-bottom">
+          <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+            <div class="d-flex align-items-center">
+              <ng-icon name="tablerTable" class="me-2 gradient-icon" size="20"></ng-icon>
+              <h4 class="card-title mb-0 text-dark">Recent Disbursements</h4>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Filters (static for now) -->
+          <form [formGroup]="filterForm" class="mb-3">
+            <div class="row g-2 align-items-end">
+              <div class="col-md-3">
+                <label class="form-label">Agent</label>
+                <select class="form-select" formControlName="agentId">
+                  <option value="">All Agents</option>
+                  @for (a of agents; track a.id) {
+                    <option [value]="a.id">{{ a.name }}</option>
+                  }
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Mode</label>
+                <input type="text" class="form-control" formControlName="mode" placeholder="All Modes" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Status</label>
+                <input type="text" class="form-control" formControlName="status" placeholder="All Statuses" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-control" formControlName="date" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Search</label>
+                <input type="text" class="form-control" formControlName="search" placeholder="Search by RIN, Beneficiary..." />
+              </div>
+              <div class="col-md-1 d-grid">
+                <button type="button" class="btn submit-button" (click)="onSearch()">Search</button>
+              </div>
+            </div>
+          </form>
+
+          @if (isLoading) {
+            <div class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped table-sm">
+                <thead class="table text-center">
+                  <tr>
+                    <th class="fw-bold">RIN</th>
+                    <th class="fw-bold">Agent Name</th>
+                    <th class="fw-bold">Beneficiary Name</th>
+                    <th class="fw-bold">Amount</th>
+                    <th class="fw-bold">Disbursement Mode</th>
+                    <th class="fw-bold">Remarks</th>
+                    <th class="text-center fw-bold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="table-group-divider text-center">
+                  @for (row of rows; track row.id) {
+                    <tr>
+                      <td class="fw-semibold">{{ row.rin }}</td>
+                      <td>{{ row.agentName }}</td>
+                      <td>{{ row.beneficiaryName }}</td>
+                      <td>{{ row.amount }}</td>
+                      <td>{{ row.disbursementMode }}</td>
+                      <td>
+                        <span class="badge"
+                          [ngClass]="{
+                            'bg-danger': row.remarks === 'Invalid Amount',
+                            'bg-warning': row.remarks === 'Missing Info'
+                          }">{{ row.remarks }}</span>
+                      </td>
+                      <td class="text-center">
+                        <div class="btn-group" role="group">
+                          <button type="button" class="btn btn-sm btn-outline-primary" title="Repair" (click)="repair(row)">Repair</button>
+                          <button type="button" class="btn btn-sm btn-outline-danger" title="Revert" (click)="revert(row)">Revert</button>
+                        </div>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="7" class="text-center py-4">
+                        <div class="text-muted">
+                          <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                          <p class="mb-0">No records found</p>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <app-generic-pagination
+              [totalItems]="totalRecord"
+              [pageSize]="PaginationInfo.RowsPerPage"
+              [currentPage]="PaginationInfo.Page"
+              (pageChanged)="onPageChanged($event)">
+            </app-generic-pagination>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

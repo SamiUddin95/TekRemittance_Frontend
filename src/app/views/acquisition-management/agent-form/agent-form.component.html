@@ -2,11 +2,7 @@
   <div class="row">
     <div class="col-12">
       @if (isLoading) {
-      <div class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
+      <app-skeleton-loader variant="form" ariaLabel="Loading form"></app-skeleton-loader>
       } @else {
       <app-page-title [title]="getPageTitle()" subTitle="Acquisition Management"></app-page-title>
       <form [formGroup]="agentForm" (ngSubmit)="onSubmit()">
@@ -31,8 +27,12 @@
                             <span class="mb-0 lh-base d-block fw-semibold text-body fs-base">{{ s.title }}</span>
                             <span class="fs-xxs mb-0">{{ s.subtitle }}</span>
                           </span>
-                          <span class="ms-auto" *ngIf="i < currentStep">
-                            <ng-icon name="tablerCheck" size="16"></ng-icon>
+                          <span class="ms-auto" *ngIf="i < currentStep || i === currentStep">
+                            @if (getStepValidationIcon(i)) {
+                            <ng-icon [name]="getStepValidationIcon(i)"
+                              [class]="getStepValidationIcon(i) === 'tablerCircleCheck' ? 'text-success' : 'text-danger'"
+                              size="16"></ng-icon>
+                            }
                           </span>
                         </span>
                       </a>
@@ -140,8 +140,7 @@
                       </div>
                       <div class="wizard-actions d-flex justify-content-between mt-3">
                         <span></span>
-                        <button type="button" class="btn submit-button" (click)="nextStep()"
-                          [disabled]="isFieldInvalid('code') || isFieldInvalid('name')">Next </button>
+                        <button type="button" class="btn submit-button" (click)="nextStep()">Next </button>
                       </div>
                       }
                       @case (1) {
@@ -151,7 +150,8 @@
                           <!-- <h6 class="mb-0">Location Details</h6> -->
                           <div>
                             <h4 class="mb-0">Location Details</h4>
-                            <small class="text-muted">Provide full address and select country, province, and city.</small>
+                            <small class="text-muted">Provide full address and select country, province, and
+                              city.</small>
                           </div>
                         </div>
                       </div>
@@ -166,7 +166,7 @@
                         <div class="col-lg-2">
                           <label class="form-label fw-semibold">
                             <ng-icon name="tablerWorld" class="me-1 gradient-icon" size="16"></ng-icon>
-                            Country
+                            Country <span class="text-danger">*</span>
                           </label>
                           <select class="form-select" formControlName="countryId">
                             <option value="">Select Country</option>
@@ -176,7 +176,7 @@
                         <div class="col-lg-2">
                           <label class="form-label fw-semibold">
                             <ng-icon name="tablerMapPin" class="me-1 gradient-icon" size="16"></ng-icon>
-                            Province
+                            Province <span class="text-danger">*</span>
                           </label>
                           <select class="form-select" formControlName="provinceId">
                             <option value="">Select Province</option>
@@ -186,7 +186,7 @@
                         <div class="col-lg-2">
                           <label class="form-label fw-semibold">
                             <ng-icon name="tablerBuilding" class="me-1 gradient-icon" size="16"></ng-icon>
-                            City
+                            City <span class="text-danger">*</span>
                           </label>
                           <select class="form-select" formControlName="cityId">
                             <option value="">Select City</option>
@@ -384,34 +384,42 @@
                         </div>
                         }
                       </div>
-                      <div class="wizard-actions d-flex justify-content-between gap-2 mt-4">
+                      <div class="wizard-actions d-flex justify-content-between mt-3">
                         <button type="button" class="btn btn-dark" (click)="previousStep()">← Back</button>
-                        <div class="ms-auto d-flex gap-2">
-                          <button type="button" class="btn btn-dark" (click)="onCancel()" [disabled]="isSubmitting">
-                            <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
-                            Back to List
-                          </button>
-                          <button type="submit" class="btn submit-button">
-                            @if (isSubmitting) {
-                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
-                            Saving...
-                            } @else {
-                            <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
-                            Save
-                            }
-                          </button>
-                        </div>
+                        <button type="button" class="btn submit-button" (click)="nextStep()">Next</button>
                       </div>
                       }
                       }
                     </div>
                     }
+
+                  </div>
+                  <!-- Global Form Actions - Outside Tabs -->
+                  <div class="card-footer border-top gap-2">
+                    <div class="d-flex justify-content-end">
+                      <button type="button" class="btn btn-dark" (click)="onCancel()" [disabled]="isSubmitting">
+                        <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
+                        Back to List
+                      </button>
+                      <button type="submit" class="btn submit-button">
+                        @if (isSubmitting) {
+                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                        Saving...
+                        } @else {
+                        <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                        Save
+                        }
+                      </button>
+                    </div>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
         </div>
+
+
       </form>
       }
     </div>

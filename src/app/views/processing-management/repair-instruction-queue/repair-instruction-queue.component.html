@@ -1,0 +1,83 @@
+<div class="">
+  <app-page-title title="Repair Instruction" subTitle="Make necessary corrections to the instruction."></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <form [formGroup]="form" novalidate>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">RIN</label>
+                <input type="text" class="form-control" formControlName="rin" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Agent Name</label>
+                <input type="text" class="form-control" formControlName="agentName" />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Beneficiary Name</label>
+                <input type="text" class="form-control" formControlName="beneficiaryName"
+                  placeholder="Enter Beneficiary Name" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Beneficiary CNIC</label>
+                <input type="text" class="form-control" formControlName="beneficiaryCnic"
+                  placeholder="12345-6789012-3" />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Beneficiary Account Number</label>
+                <input type="text" class="form-control" formControlName="beneficiaryAccountNumber"
+                  placeholder="Enter Account Number" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Amount</label>
+                <input type="number" class="form-control" formControlName="amount" placeholder="Enter Amount"
+                  [class.is-invalid]="form.get('amount')?.invalid && form.get('amount')?.touched" />
+                <div class="invalid-feedback">
+                  Original amount was invalid, please correct.
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Remarks</label>
+                <textarea class="form-control" rows="3" formControlName="remarks"
+                  placeholder="Enter any specific remarks or details for the repair."></textarea>
+              </div>
+
+              <div class="col-12">
+                <div class="d-flex justify-content-end gap-2">
+                  <button type="button" class="btn btn-dark" (click)="cancel()" [disabled]="isSubmitting">
+                    <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
+                    Back to List
+                  </button>
+                  <button type="submit" class="btn submit-button" (click)="save()">
+                    @if (isSubmitting) {
+                    <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                    Saving...
+                    } @else {
+                    <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                    {{ isEditMode ? 'Update Repair' : 'Save Repair' }}
+                    }
+                  </button>
+                </div>
+              </div>
+
+              <!-- <div class="col-12">
+                <div class="d-flex gap-2">
+                  <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+                  <button type="button" class="btn submit-button" (click)="save()">
+                    <ng-icon name="tablerCheck" class="me-1" size="16"></ng-icon>
+                    Save Repair
+                  </button>
+                </div>
+              </div> -->
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

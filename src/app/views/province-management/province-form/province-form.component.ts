@@ -9,11 +9,12 @@ import { Province } from '../models/province.model';
 import { Country } from '../../country-management/models/country.model';
 import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
+import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
 
 @Component({
     selector: 'app-province-form',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon],
+    imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon, SkeletonLoaderComponent],
     templateUrl: './province-form.component.html'
 })
 export class ProvinceFormComponent implements OnInit {

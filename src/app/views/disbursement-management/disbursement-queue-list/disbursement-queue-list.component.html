@@ -1,0 +1,195 @@
+<div class="">
+  <app-page-title title="Disbursement Queue" subTitle="Disbursement Management"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light border-bottom">
+          <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+            <div class="d-flex align-items-center">
+              <ng-icon name="tablerTable" class="me-2 gradient-icon" size="20"></ng-icon>
+              <h4 class="card-title mb-0 text-dark">Recent Disbursements</h4>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Filters (non-functional for now) -->
+          <form [formGroup]="filterForm" class="mb-3">
+            <div class="row g-2 align-items-end">
+              <div class="col-md-3">
+                <label class="form-label">Agent</label>
+                <select class="form-select" formControlName="agentId">
+                  <option value="">All Agents</option>
+                  @for (a of agents; track a.id) {
+                    <option [value]="a.id">{{ a.name }}</option>
+                  }
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Mode</label>
+                <input type="text" class="form-control" formControlName="mode" placeholder="All Modes" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Status</label>
+                <input type="text" class="form-control" formControlName="status" placeholder="All Statuses" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Date From</label>
+                <input type="date" class="form-control" formControlName="dateFrom" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Date To</label>
+                <input type="date" class="form-control" formControlName="dateTo" />
+              </div>
+              <div class="col-md-1 d-grid">
+                <button type="button" class="btn submit-button" (click)="onSearch()">Search</button>
+              </div>
+            </div>
+          </form>
+
+          @if (isLoading) {
+            <app-skeleton-loader [isLoading]="true" variant="table" [rows]="10" [cols]="8" ariaLabel="Loading disbursement list"></app-skeleton-loader>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped table-sm">
+                <thead class="table text-center">
+                  <tr>
+                    <th class="fw-bold">XPIN</th>
+                    <th class="fw-bold">Agent Name</th>
+                    <th class="fw-bold">Beneficiary Name</th>
+                    <th class="fw-bold">Amount</th>
+                    <th class="fw-bold">Disbursement Mode</th>
+                    <th class="fw-bold">Status</th>
+                    <!-- <th class="fw-bold">Transfer Mode</th> -->
+                    <th class="text-center fw-bold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="table-group-divider text-center">
+                  @for (row of rows; track row.id) {
+                    <tr>
+                      <td class="fw-semibold">{{ row.rin }}</td>
+                      <td>{{ row.agentName }}</td>
+                      <td>{{ row.beneficiaryName }}</td>
+                      <td>{{ row.amount }}</td>
+                      <td>{{ row.disbursementMode }}</td>
+                      <td>
+                        <span class="badge"
+                          [ngClass]="{
+                            'bg-success': row.status === 'Completed',
+                            'bg-warning': row.status === 'Pending',
+                            'bg-danger': row.status === 'On Hold'
+                          }">{{ row.status }}</span>
+                      </td>
+                      <!-- <td>
+                        <div class="btn-group btn-group-sm">
+                          <button class="btn btn-success">{{ row.transferMode }}</button>
+                          <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
+                        </div>
+                      </td> -->
+                      <td class="text-center">
+                        <div class="btn-group " role="group" >
+                          <button type="button" class="btn btn-sm btn-outline-secondary" title="View" (click)="view(row)">
+                            <ng-icon name="tablerEye" size="16"></ng-icon>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="disburse(row)">
+                            <ng-icon name="tablerCheck" size="16" class="me-1"></ng-icon>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="reject(row)">
+                            <ng-icon name="tablerTrash" size="16" class="me-1"></ng-icon>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="8" class="text-center py-4">
+                        <div class="text-muted">
+                          <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                          <p class="mb-0">No records found</p>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <app-generic-pagination
+              [totalItems]="totalRecord"
+              [pageSize]="PaginationInfo.RowsPerPage"
+              [currentPage]="PaginationInfo.Page"
+              (pageChanged)="onPageChanged($event)">
+            </app-generic-pagination>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Details Modal -->
+@if (detailsVisible && selectedRow) {
+  <div class="modal fade show" style="display:block; background: rgba(0,0,0,0.4);">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Disbursement Details</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closeDetails()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="text-muted">Beneficiary Name</div>
+              <div class="fw-semibold">{{ selectedRow.beneficiaryName }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="text-muted">RIN</div>
+              <div class="fw-semibold">{{ selectedRow.rin }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="text-muted">Bank</div>
+              <div class="fw-semibold">First National Bank</div>
+            </div>
+            <div class="col-md-6">
+              <div class="text-muted">Account Number</div>
+              <div class="fw-semibold">XXXX-XXXX-1234</div>
+            </div>
+            <div class="col-12"><hr/></div>
+            <div class="col-md-6">
+              <div class="text-muted">Disbursement Amount</div>
+              <div class="fw-semibold">{{ selectedRow.amount }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="text-muted">Processing Fee</div>
+              <div class="fw-semibold">$10.00</div>
+            </div>
+            <div class="col-md-6">
+              <div class="text-muted">Total Amount</div>
+              <div class="fw-bold text-primary">$510.00</div>
+            </div>
+            <!-- <div class="col-md-6">
+              <div class="text-muted">Transfer Mode</div>
+              <div class="fw-semibold">{{ selectedRow.transferMode }} Payment</div>
+            </div> -->
+            <div class="col-md-6">
+              <div class="text-muted">Disbursement Mode</div>
+              <div class="fw-semibold">{{ selectedRow.disbursementMode }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="text-muted">Status</div>
+              <div class="fw-semibold">{{ selectedRow.status }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeDetails()">Cancel</button>
+          @if (detailsMode === 'disburse') {
+            <button type="button" class="btn btn-primary">
+              <ng-icon name="tablerCheck" size="16" class="me-1"></ng-icon>
+              Confirm Disbursement
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

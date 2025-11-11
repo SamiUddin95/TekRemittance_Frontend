@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { CountryService } from '../../country-management/services/country.service';
 import { ProvinceService } from '../../province-management/services/province.service';
 import { CityService } from '../../city-management/services/city.service';
+import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
 
 interface Agent {
   id: string;
@@ -19,7 +20,7 @@ interface Agent {
 @Component({
   selector: 'app-agent-branch-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon],
+  imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon, SkeletonLoaderComponent],
   templateUrl: './agent-branch-form.component.html'
 })
 export class AgentBranchFormComponent implements OnInit {

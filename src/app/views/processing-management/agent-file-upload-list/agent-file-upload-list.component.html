@@ -18,11 +18,7 @@
 
         <div class="card-body">
           @if (isLoading) {
-            <div class="text-center py-4">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
-            </div>
+            <app-skeleton-loader variant="table" [rows]="8" [cols]="7" ariaLabel="Loading files table"></app-skeleton-loader>
           } @else {
             <div class="table-responsive">
               <table class="table table-bordered table-striped table-sm">
@@ -107,11 +103,7 @@
         </div>
         <div class="modal-body">
           @if (previewLoading) {
-            <div class="text-center py-4">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
-            </div>
+            <app-skeleton-loader variant="table" [rows]="6" [cols]="previewHeaders?.length || 6" ariaLabel="Loading preview"></app-skeleton-loader>
           } @else {
             @if (previewTableRows.length === 0) {
               <div class="text-muted">No preview rows available.</div>

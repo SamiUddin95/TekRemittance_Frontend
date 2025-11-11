@@ -6,6 +6,7 @@ import { NgIcon } from '@ng-icons/core';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 import { AgentFileUploadService, AgentUploadedFile } from '@/app/views/processing-management/services/agent-file-upload.service';
 import Swal from 'sweetalert2';
+import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
 
 interface FileRow {
   id: string;
@@ -20,7 +21,7 @@ interface FileRow {
 @Component({
   selector: 'app-agent-file-upload-list',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent],
+  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
   templateUrl: './agent-file-upload-list.component.html'
 })
 export class AgentFileUploadListComponent implements OnInit {

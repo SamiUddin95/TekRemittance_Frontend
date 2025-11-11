@@ -1,13 +1,8 @@
-
 <div class="">
     <div class="row">
         <div class="col-12">
             @if (isLoading) {
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
+                <app-skeleton-loader variant="form" ariaLabel="Loading form"></app-skeleton-loader>
             } @else {
                 <app-page-title [title]="getPageTitle()" subTitle="Country Management"></app-page-title>
                 <div class="card shadow-sm">

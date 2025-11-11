@@ -7,11 +7,12 @@ import { BankService } from '../services/bank.service';
 import { Bank } from '../models/bank.model';
 import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
+import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
 
 @Component({
     selector: 'app-bank-form',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon],
+    imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, NgIcon, SkeletonLoaderComponent],
     templateUrl: './bank-form.component.html'
 })
 export class BankFormComponent implements OnInit {

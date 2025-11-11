@@ -6,6 +6,7 @@ import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
 import { AgentBranchService } from '../services/agent-branch.service';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
+import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
 
 interface Branch {
   id: string;
@@ -19,7 +20,7 @@ interface Branch {
 @Component({
   selector: 'app-agent-branch-list',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent],
+  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
   templateUrl: './agent-branch-list.component.html'
 })
 export class AgentBranchListComponent implements OnInit {

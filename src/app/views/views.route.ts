@@ -53,6 +53,10 @@ export const VIEWS_ROUTES: Routes = [
     },
     {
         path: '',
+        loadChildren: () => import('./disbursement-management/disbursement-management.routes').then((mod) => mod.DISBURSEMENT_MANAGEMENT_ROUTES)
+    },
+    {
+        path: '',
         loadChildren: () => import('./user-management/user-management.routes').then((mod) => mod.USER_MANAGEMENT_ROUTES)
     },
     {

@@ -1,0 +1,37 @@
+@if (isLoading) {
+  <div class="skeleton" role="status" aria-live="polite" [attr.aria-label]="ariaLabel">
+    @switch (variant) {
+      @case ('table') {
+        <div class="sk-table" [style.gap]="gap">
+          @for (row of rowArray; track trackByIndex) {
+            <div class="sk-row">
+              @for (col of colArray; track trackByIndex) {
+                <div class="sk-cell shimmer" [style.height]="lineHeight"></div>
+              }
+            </div>
+          }
+        </div>
+      }
+      @case ('form') {
+        <div class="sk-form" [style.gap]="gap">
+          @for (row of rowArray; track trackByIndex) {
+            <div class="sk-form-row">
+              <div class="sk-label shimmer"></div>
+              <div class="sk-input shimmer"></div>
+            </div>
+          }
+        </div>
+      }
+      @case ('card') {
+        <div class="sk-card shimmer" [style.height]="height || '120px'" [style.width]="width || '100%'"></div>
+      }
+      @default {
+        <div class="sk-list" [style.gap]="gap">
+          @for (row of rowArray; track trackByIndex) {
+            <div class="sk-line shimmer" [style.height]="lineHeight" [style.width]="width || '100%'"></div>
+          }
+        </div>
+      }
+    }
+  </div>
+}

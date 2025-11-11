@@ -1,0 +1,44 @@
+:root {
+  --sk-bg: hsl(210 16% 94%);
+  --sk-shimmer: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.6), rgba(255,255,255,0));
+}
+
+:root[data-theme='dark'] {
+  --sk-bg: hsl(220 10% 20%);
+}
+
+.skeleton {
+  width: 100%;
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--sk-bg);
+  border-radius: 6px;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: var(--sk-shimmer);
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+.sk-table .sk-row { display: grid; grid-template-columns: repeat(var(--cols, 6), 1fr); gap: 12px; margin-bottom: 10px; }
+.sk-table .sk-cell { height: 14px; }
+
+.sk-form { display: grid; grid-template-columns: 1fr; }
+.sk-form-row { display: grid; grid-template-columns: 160px 1fr; align-items: center; gap: 12px; margin-bottom: 12px; }
+.sk-label { height: 12px; width: 120px; }
+.sk-input { height: 38px; }
+
+.sk-card { border-radius: 10px; }
+
+.sk-list .sk-line { border-radius: 6px; }

@@ -1,0 +1,167 @@
+<div class="">
+  <app-page-title title="Authorization Queue" subTitle="Disbursement Management"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light border-bottom">
+          <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+            <div class="d-flex align-items-center">
+              <ng-icon name="tablerTable" class="me-2 gradient-icon" size="20"></ng-icon>
+              <h4 class="card-title mb-0 text-dark">Pending Authorizations</h4>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Filters -->
+          <form [formGroup]="filterForm" class="mb-3">
+            <div class="row g-2 align-items-end">
+              <div class="col-md-3">
+                <label class="form-label">Agent</label>
+                <select class="form-select" formControlName="agentId">
+                  <option value="">Select Agent</option>
+                  @for (a of agents; track a.id) {
+                    <option [value]="a.id">{{ a.name }}</option>
+                  }
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Mode</label>
+                <input type="text" class="form-control" formControlName="mode" placeholder="Select Mode" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Status</label>
+                <select class="form-select" formControlName="status">
+                  <option value="Pending">Pending</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-control" formControlName="date" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Search</label>
+                <input type="text" class="form-control" formControlName="search" placeholder="Search by RIN or Beneficiary" />
+              </div>
+              <div class="col-md-1 d-grid">
+                <button type="button" class="btn submit-button" (click)="onSearch()">Search</button>
+              </div>
+              <!-- <div class="col-md-3 d-flex gap-2 mt-2">
+                <button type="button" class="btn submit-button"><ng-icon name="tablerFilter" size="16" class="me-1"></ng-icon> Apply Filters</button>
+                <button type="button" class="btn btn-outline-secondary">Clear Filters</button>
+              </div> -->
+            </div>
+          </form>
+
+          @if (isLoading) {
+            <app-skeleton-loader [isLoading]="true" variant="table" [rows]="10" [cols]="8" ariaLabel="Loading authorization list"></app-skeleton-loader>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped table-sm">
+                <thead class="table text-center">
+                  <tr>
+                    <th class="fw-bold">RIN</th>
+                    <th class="fw-bold">Agent Name</th>
+                    <th class="fw-bold">Beneficiary Name</th>
+                    <th class="fw-bold">Amount</th>
+                    <th class="fw-bold">Mode</th>
+                    <th class="fw-bold">Maker User</th>
+                    <th class="fw-bold">Status</th>
+                    <th class="text-center fw-bold">View</th>
+                  </tr>
+                </thead>
+                <tbody class="table-group-divider text-center">
+                  @for (row of rows; track row.id) {
+                    <tr>
+                      <td class="fw-semibold">{{ row.rin }}</td>
+                      <td>{{ row.agentName }}</td>
+                      <td>{{ row.beneficiaryName }}</td>
+                      <td>{{ row.amount }}</td>
+                      <td>{{ row.mode }}</td>
+                      <td>{{ row.makerUser }}</td>
+                      <td>
+                        <span class="badge"
+                          [ngClass]="{
+                            'bg-warning': row.status === 'Pending',
+                            'bg-success': row.status === 'Approved',
+                            'bg-danger': row.status === 'Rejected'
+                          }">{{ row.status }}</span>
+                      </td>
+                      <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" title="View" (click)="view(row)">
+                          <ng-icon name="tablerEye" size="16"></ng-icon>
+                        </button>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="8" class="text-center py-4">
+                        <div class="text-muted">
+                          <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                          <p class="mb-0">No records found</p>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <app-generic-pagination
+              [totalItems]="totalRecord"
+              [pageSize]="PaginationInfo.RowsPerPage"
+              [currentPage]="PaginationInfo.Page"
+              (pageChanged)="onPageChanged($event)">
+            </app-generic-pagination>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Details Modal (reuse simple view mode) -->
+@if (detailsVisible && selectedRow) {
+  <div class="modal fade show" style="display:block; background: rgba(0,0,0,0.4);">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Authorization Details</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closeDetails()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="text-muted">Beneficiary Name</div>
+              <div class="fw-semibold">{{ selectedRow.beneficiaryName }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="text-muted">RIN</div>
+              <div class="fw-semibold">{{ selectedRow.rin }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="text-muted">Amount</div>
+              <div class="fw-semibold">{{ selectedRow.amount }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="text-muted">Mode</div>
+              <div class="fw-semibold">{{ selectedRow.mode }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="text-muted">Maker User</div>
+              <div class="fw-semibold">{{ selectedRow.makerUser }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="text-muted">Created On</div>
+              <div class="fw-semibold">{{ selectedRow.createdOn | date:'medium' }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeDetails()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
