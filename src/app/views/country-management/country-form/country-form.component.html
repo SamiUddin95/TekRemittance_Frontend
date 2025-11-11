@@ -78,7 +78,8 @@
                                 <div class="col-lg-3 mt-5">
                                     <div class="d-flex justify-content-end gap-2">
                                         <button 
-                                            type="button" 
+                                        style="font-size: 12px;"    
+                                        type="button" 
                                             class="btn btn-dark"
                                             (click)="onCancel()"
                                             [disabled]="isSubmitting">
@@ -88,6 +89,7 @@
                                         <button 
                                             type="submit" 
                                             class="btn submit-button"
+                                            style="font-size: 12px;"
                                             >
                                             <!-- [disabled]="isSubmitting || countryForm.invalid" -->
                                             @if (isSubmitting) {

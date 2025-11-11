@@ -79,6 +79,12 @@
               </tbody>
             </table>
           </div>
+          <app-generic-pagination
+            [totalItems]="totalRecord"
+            [pageSize]="PaginationInfo.RowsPerPage"
+            [currentPage]="PaginationInfo.Page"
+            (pageChanged)="onPageChanged($event)">
+          </app-generic-pagination>
         </div>
       </div>
     </div>

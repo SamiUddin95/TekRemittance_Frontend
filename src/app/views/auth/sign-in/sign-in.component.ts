@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '@core/services/auth.service';
 import { PopupService } from '@core/services/popup.service';
 import Swal from 'sweetalert2';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-sign-in',
@@ -20,6 +21,7 @@ export class SignInComponent {
     credits = credits
 
     form!: FormGroup;
+    isSubmitting = false;
 
     constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private popup: PopupService) {
         this.form = this.fb.nonNullable.group({
@@ -29,19 +31,22 @@ export class SignInComponent {
     }
 
     signIn(){
-        if (this.form.invalid) return;
+        if (this.form.invalid || this.isSubmitting) return;
         const { username, password } = this.form.getRawValue();
-        this.auth.login({ loginName: username, password }).subscribe({
-            next: (res) => {
-                if (res?.statusCode === 200 && res?.data) {
-                    this.popup.success('Login successful', 'You have successfully logged in.')
-                    this.router.navigate(['/dashboard']);
+        this.isSubmitting = true;
+        this.auth.login({ loginName: username, password })
+            .pipe(finalize(() => { this.isSubmitting = false; }))
+            .subscribe({
+                next: (res) => {
+                    if (res?.statusCode === 200 && res?.data) {
+                        this.popup.success('Login successful', 'You have successfully logged in.')
+                        this.router.navigate(['/dashboard']);
+                    }
+                },
+                error: (err) => {
+                    const msg = err?.error?.errorMessage || err?.message || 'Invalid credentials';
+                    this.popup.error('Login failed', msg);
                 }
-            },
-            error: (err) => {
-                const msg = err?.error?.errorMessage || err?.message || 'Invalid credentials';
-                this.popup.error('Login failed', msg);
-            }
-        });
+            });
     }
 }

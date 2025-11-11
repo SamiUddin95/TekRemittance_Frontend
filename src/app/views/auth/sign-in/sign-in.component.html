@@ -85,7 +85,14 @@
                                     </div>
 
                                     <div class="d-grid">
-                                        <button class="btn submit-button fw-semibold py-2" type="submit">Sign In</button>
+                                        <button class="btn submit-button fw-semibold py-2" type="submit" [disabled]="isSubmitting">
+                                            @if (isSubmitting) {
+                                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                                Signing in...
+                                            } @else {
+                                                Sign In
+                                            }
+                                        </button>
                                     </div>
                                 </form>
                             </div>
