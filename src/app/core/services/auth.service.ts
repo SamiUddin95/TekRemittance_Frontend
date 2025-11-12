@@ -11,6 +11,7 @@ export interface LoginResponse { status: string; data: { token: string; [k: stri
 export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
   private readonly NAME_KEY = 'auth_name';
+  private readonly USERID_KEY = 'auth_userid';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -22,6 +23,8 @@ export class AuthService {
         if (token) this.setToken(token);
         const name = data?.['name'] || data?.['userName'] || data?.['loginName'];
         if (name) this.setName(name);
+        const userId = data?.['userid'] || data?.['userId'] || data?.['id'];
+        if (userId) this.setUserId(String(userId));
       })
     );
   }
@@ -32,12 +35,14 @@ export class AuthService {
         finalize(() => {
           this.clearToken();
           this.clearName();
+          this.clearUserId();
           this.router.navigate(['/sign-in']);
         })
       );
     } else {
       this.clearToken();
       this.clearName();
+      this.clearUserId();
       this.router.navigate(['/sign-in']);
       return null;
     }
@@ -65,6 +70,18 @@ export class AuthService {
 
   clearName() {
     sessionStorage.removeItem(this.NAME_KEY);
+  }
+
+  setUserId(userId: string) {
+    sessionStorage.setItem(this.USERID_KEY, userId);
+  }
+
+  getUserId(): string | null {
+    return sessionStorage.getItem(this.USERID_KEY);
+  }
+
+  clearUserId() {
+    sessionStorage.removeItem(this.USERID_KEY);
   }
 
   isAuthenticated(): boolean {

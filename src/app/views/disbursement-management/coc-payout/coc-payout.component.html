@@ -1,0 +1,129 @@
+<div class="">
+  <app-page-title title="COC Payout" subTitle="Disbursement Management"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light border-bottom">
+          <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+            <div class="d-flex align-items-center">
+              <ng-icon name="tablerCash" class="me-2 gradient-icon" size="20"></ng-icon>
+              <h4 class="card-title mb-0 text-dark">COC Payout</h4>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Search Filters -->
+          <div class="rounded mb-3">
+            <form [formGroup]="searchForm">
+              <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold mb-1">Acquisition Agent <span class="text-danger">*</span></label>
+                  <select class="form-select" formControlName="agentId">
+                    <option value="">-- Please Select --</option>
+                    @for (a of agents; track a.id) {
+                      <option [value]="a.id">{{ a.name }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold mb-1">Inquiry x pin <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" formControlName="inquiryPin" placeholder="Enter Inquiry x pin" />
+                </div>
+                <div class="col-md-3 ms-auto">
+                  <div class="d-flex gap-2 justify-content-end">
+                    <button type="button" class="btn submit-button" (click)="onSearch()">
+                      <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                      Search
+                    </button>
+                    <button type="button" class="btn btn-dark" (click)="onClear()">
+                      <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Search Result and Cash Denominations -->
+          @if (showResults) {
+            <div class="row g-3">
+              <!-- Search Result Section -->
+              <div class="col-md-5">
+                <div class="p-3 border rounded-2 h-100">
+                  <h6 class="fw-semibold mb-3">Search Result</h6>
+                  <div class="row g-2 small">
+                    <div class="col-6"><span class="text-muted">Tracking Number :</span></div>
+                    <div class="col-6 fw-semibold">{{ searchResult.trackingNumber }}</div>
+                    <div class="col-6"><span class="text-muted">RIN :</span></div>
+                    <div class="col-6 fw-semibold">{{ searchResult.rin }}</div>
+                    <div class="col-6"><span class="text-muted">Beneficiary Name :</span></div>
+                    <div class="col-6 fw-semibold">{{ searchResult.beneficiaryName }}</div>
+                    <div class="col-6"><span class="text-muted">Name :</span></div>
+                    <div class="col-6 fw-semibold">{{ searchResult.name }}</div>
+                    <div class="col-6"><span class="text-muted">CNIC/Passport :</span></div>
+                    <div class="col-6 fw-semibold">{{ searchResult.cnicPassport }}</div>
+                    <div class="col-6"><span class="text-muted">Amount :</span></div>
+                    <div class="col-6 fw-semibold text-success">{{ searchResult.amount }}</div>
+                    <div class="col-6"><span class="text-muted">Contact No :</span></div>
+                    <div class="col-6 fw-semibold">{{ searchResult.contactNo }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Cash Denominations Section -->
+              <div class="col-md-7">
+                <div class="p-3 border rounded-2 h-100">
+                  <h6 class="fw-semibold mb-3">Cash Denominations</h6>
+                  <form [formGroup]="denominationsForm">
+                    <div class="table-responsive">
+                      <table class="table table-sm align-middle mb-2">
+                        <tbody>
+                          @for (denom of denominations; track denom.value) {
+                            <tr>
+                              <td class="text-end text-muted" style="width: 18%;"><strong>{{ denom.value }}</strong></td>
+                              <td class="text-center" style="width: 6%;">x</td>
+                              <td style="width: 28%;">
+                                <input
+                                  type="number"
+                                  class="form-control form-control-sm text-center"
+                                  [formControlName]="'qty_' + denom.value"
+                                  (input)="calculateDenomination(denom.value)"
+                                  min="0"
+                                />
+                              </td>
+                              <td class="text-center" style="width: 6%;">=</td>
+                              <td class="text-end" style="width: 20%;">
+                                <strong>{{ denom.total }}</strong>
+                              </td>
+                            </tr>
+                          }
+                          <tr class="table-light">
+                            <td class="text-end" colspan="4"><strong>Total</strong></td>
+                            <td class="text-end"><strong>{{ grandTotal }}</strong></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </form>
+                  <div class="d-flex justify-content-end gap-2 mt-2">
+                    <button type="button" class="btn btn-dark btn-sm" (click)="onClearDenominations()">Clear</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="onCancelDenominations()">Cancel</button>
+                    <button type="button" class="btn submit-button btn-sm" (click)="onSaveDenominations()">Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Action Buttons -->
+            <div class="d-flex justify-content-center gap-3 mt-4">
+              <button type="button" class="btn btn-dark px-4" (click)="onCancel()">Cancel</button>
+              <button type="button" class="btn submit-button px-4" (click)="onPay()">Pay</button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

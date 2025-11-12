@@ -13,39 +13,48 @@
           </div>
         </div>
         <div class="card-body">
-          <!-- Filters (non-functional for now) -->
-          <form [formGroup]="filterForm" class="mb-3">
-            <div class="row g-2 align-items-end">
-              <div class="col-md-3">
-                <label class="form-label">Agent</label>
-                <select class="form-select" formControlName="agentId">
-                  <option value="">All Agents</option>
-                  @for (a of agents; track a.id) {
-                    <option [value]="a.id">{{ a.name }}</option>
-                  }
-                </select>
+          <!-- Filters -->
+          <div class="rounded mb-2">
+            <form [formGroup]="filterForm">
+              <div class="row g-3">
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Agent</label>
+                  <select class="form-select" formControlName="agentId">
+                    <option value="">All Agents</option>
+                    @for (a of agents; track a.id) {
+                      <option [value]="a.id">{{ a.name }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Mode</label>
+                  <input type="text" class="form-control" formControlName="mode" placeholder="All Modes" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Status</label>
+                  <input type="text" class="form-control" formControlName="status" placeholder="All Statuses" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Date From</label>
+                  <input type="date" class="form-control" formControlName="dateFrom" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Date To</label>
+                  <input type="date" class="form-control" formControlName="dateTo" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                  <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
+                    <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                    Search
+                  </button>
+                  <button type="button" class="btn btn-dark" (click)="onClearFilters()">
+                    <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                    Clear
+                  </button>
+                </div>
               </div>
-              <div class="col-md-2">
-                <label class="form-label">Mode</label>
-                <input type="text" class="form-control" formControlName="mode" placeholder="All Modes" />
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">Status</label>
-                <input type="text" class="form-control" formControlName="status" placeholder="All Statuses" />
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">Date From</label>
-                <input type="date" class="form-control" formControlName="dateFrom" />
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">Date To</label>
-                <input type="date" class="form-control" formControlName="dateTo" />
-              </div>
-              <div class="col-md-1 d-grid">
-                <button type="button" class="btn submit-button" (click)="onSearch()">Search</button>
-              </div>
-            </div>
-          </form>
+            </form>
+          </div>
 
           @if (isLoading) {
             <app-skeleton-loader [isLoading]="true" variant="table" [rows]="10" [cols]="8" ariaLabel="Loading disbursement list"></app-skeleton-loader>
@@ -54,47 +63,27 @@
               <table class="table table-bordered table-striped table-sm">
                 <thead class="table text-center">
                   <tr>
-                    <th class="fw-bold">XPIN</th>
-                    <th class="fw-bold">Agent Name</th>
-                    <th class="fw-bold">Beneficiary Name</th>
-                    <th class="fw-bold">Amount</th>
-                    <th class="fw-bold">Disbursement Mode</th>
-                    <th class="fw-bold">Status</th>
-                    <!-- <th class="fw-bold">Transfer Mode</th> -->
+                    @for (h of tableHeaders; track h) {
+                      <th class="fw-bold text-nowrap">{{ h }}</th>
+                    }
                     <th class="text-center fw-bold">Actions</th>
                   </tr>
                 </thead>
                 <tbody class="table-group-divider text-center">
-                  @for (row of rows; track row.id) {
+                  @for (r of dataRows; track r.id) {
                     <tr>
-                      <td class="fw-semibold">{{ row.rin }}</td>
-                      <td>{{ row.agentName }}</td>
-                      <td>{{ row.beneficiaryName }}</td>
-                      <td>{{ row.amount }}</td>
-                      <td>{{ row.disbursementMode }}</td>
-                      <td>
-                        <span class="badge"
-                          [ngClass]="{
-                            'bg-success': row.status === 'Completed',
-                            'bg-warning': row.status === 'Pending',
-                            'bg-danger': row.status === 'On Hold'
-                          }">{{ row.status }}</span>
-                      </td>
-                      <!-- <td>
-                        <div class="btn-group btn-group-sm">
-                          <button class="btn btn-success">{{ row.transferMode }}</button>
-                          <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
-                        </div>
-                      </td> -->
+                      @for (h of tableHeaders; track h) {
+                        <td>{{ r.obj?.[h] ?? '-' }}</td>
+                      }
                       <td class="text-center">
-                        <div class="btn-group " role="group" >
-                          <button type="button" class="btn btn-sm btn-outline-secondary" title="View" (click)="view(row)">
+                        <div class="btn-group" role="group">
+                          <button type="button" class="btn btn-sm btn-outline-secondary" title="View" (click)="onView(r.id)">
                             <ng-icon name="tablerEye" size="16"></ng-icon>
                           </button>
-                          <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="disburse(row)">
+                          <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="onDisburse(r.id)">
                             <ng-icon name="tablerCheck" size="16" class="me-1"></ng-icon>
                           </button>
-                          <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="reject(row)">
+                          <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">
                             <ng-icon name="tablerTrash" size="16" class="me-1"></ng-icon>
                           </button>
                         </div>
@@ -102,7 +91,7 @@
                     </tr>
                   } @empty {
                     <tr>
-                      <td colspan="8" class="text-center py-4">
+                      <td [attr.colspan]="((tableHeaders?.length || 1) > 1 ? (tableHeaders?.length || 1) : 1) + 1" class="text-center py-4">
                         <div class="text-muted">
                           <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
                           <p class="mb-0">No records found</p>

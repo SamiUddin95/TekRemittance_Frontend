@@ -5,6 +5,7 @@ import { AgentFileUploadListComponent } from './agent-file-upload-list/agent-fil
 import { AgentFileUploadFormComponent } from './agent-file-upload-form/agent-file-upload-form.component';
 import { RepairInstructionQueueComponent } from './repair-instruction-queue/repair-instruction-queue.component';
 import { RepairQueueListComponent } from './repair-queue/repair-queue.component';
+import { AmlScreeningQueueComponent } from './aml-screening-queue/aml-screening-queue.component';
 
 
 export const PROCESSING_MANAGEMENT_ROUTES: Routes = [
@@ -37,5 +38,10 @@ export const PROCESSING_MANAGEMENT_ROUTES: Routes = [
     path: 'repair-instruction',
     component: RepairInstructionQueueComponent,
     data: { title: 'Repair Instruction' },
+  },
+  {
+    path: 'aml-screening-queue',
+    component: AmlScreeningQueueComponent,
+    data: { title: 'AML/Screening Queue Management' },
   },
 ];

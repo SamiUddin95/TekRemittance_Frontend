@@ -13,77 +13,78 @@
           </div>
         </div>
         <div class="card-body">
-          <!-- Filters (static for now) -->
-          <form [formGroup]="filterForm" class="mb-3">
-            <div class="row g-2 align-items-end">
-              <div class="col-md-3">
-                <label class="form-label">Agent</label>
-                <select class="form-select" formControlName="agentId">
-                  <option value="">All Agents</option>
-                  @for (a of agents; track a.id) {
-                    <option [value]="a.id">{{ a.name }}</option>
-                  }
-                </select>
+          <!-- Filters -->
+          <div class="rounded mb-2">
+            <form [formGroup]="filterForm">
+              <div class="row g-3">
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Agent</label>
+                  <select class="form-select" formControlName="agentId">
+                    <option value="">All Agents</option>
+                    @for (a of agents; track a.id) {
+                      <option [value]="a.id">{{ a.name }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Mode</label>
+                  <input type="text" class="form-control" formControlName="mode" placeholder="All Modes" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Status</label>
+                  <input type="text" class="form-control" formControlName="status" placeholder="All Statuses" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Date</label>
+                  <input type="date" class="form-control" formControlName="date" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Search</label>
+                  <input type="text" class="form-control" formControlName="search" placeholder="Search by RIN, Beneficiary..." />
+                </div>
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                  <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
+                    <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                    Search
+                  </button>
+                  <button type="button" class="btn btn-dark" (click)="onClearFilters()">
+                    <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                    Clear
+                  </button>
+                </div>
               </div>
-              <div class="col-md-2">
-                <label class="form-label">Mode</label>
-                <input type="text" class="form-control" formControlName="mode" placeholder="All Modes" />
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">Status</label>
-                <input type="text" class="form-control" formControlName="status" placeholder="All Statuses" />
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">Date</label>
-                <input type="date" class="form-control" formControlName="date" />
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">Search</label>
-                <input type="text" class="form-control" formControlName="search" placeholder="Search by RIN, Beneficiary..." />
-              </div>
-              <div class="col-md-1 d-grid">
-                <button type="button" class="btn submit-button" (click)="onSearch()">Search</button>
-              </div>
-            </div>
-          </form>
+            </form>
+          </div>
 
           @if (isLoading) {
-            <app-skeleton-loader [isLoading]="true" variant="table" [rows]="10" [cols]="7" ariaLabel="Loading approved list"></app-skeleton-loader>
+            <app-skeleton-loader [isLoading]="true" variant="table" [rows]="10" [cols]="(tableHeaders?.length || 6) + 1" ariaLabel="Loading approved list"></app-skeleton-loader>
           } @else {
             <div class="table-responsive">
               <table class="table table-bordered table-striped table-sm">
                 <thead class="table text-center">
                   <tr>
-                    <th class="fw-bold">RIN</th>
-                    <th class="fw-bold">Agent Name</th>
-                    <th class="fw-bold">Beneficiary Name</th>
-                    <th class="fw-bold">Amount</th>
-                    <th class="fw-bold">Disbursement Mode</th>
-                    <th class="fw-bold">Status</th>
+                    @for (h of tableHeaders; track h) {
+                      <th class="fw-bold text-nowrap">{{ h }}</th>
+                    }
                     <th class="text-center fw-bold">Actions</th>
                   </tr>
                 </thead>
                 <tbody class="table-group-divider text-center">
-                  @for (row of rows; track row.id) {
+                  @for (r of dataRows; track r.id) {
                     <tr>
-                      <td class="fw-semibold">{{ row.rin }}</td>
-                      <td>{{ row.agentName }}</td>
-                      <td>{{ row.beneficiaryName }}</td>
-                      <td>{{ row.amount }}</td>
-                      <td>{{ row.disbursementMode }}</td>
-                      <td>
-                        <span class="badge bg-success">{{ row.status }}</span>
-                      </td>
+                      @for (h of tableHeaders; track h) {
+                        <td>{{ r.obj?.[h] ?? '-' }}</td>
+                      }
                       <td class="text-center">
                         <div class="btn-group" role="group">
-                          <button type="button" class="btn btn-sm btn-outline-primary" title="Repair" (click)="repair(row)">Repair</button>
-                          <button type="button" class="btn btn-sm btn-outline-danger" title="Revert" (click)="revert(row)">Revert</button>
+                          <button type="button" class="btn btn-sm btn-outline-primary" title="Repair" (click)="onRepair(r.id)">Repair</button>
+                          <button type="button" class="btn btn-sm btn-outline-danger" title="Revert" (click)="onRevert(r.id)">Revert</button>
                         </div>
                       </td>
                     </tr>
                   } @empty {
                     <tr>
-                      <td colspan="7" class="text-center py-4">
+                      <td [attr.colspan]="(tableHeaders?.length || 1) + 1" class="text-center py-4">
                         <div class="text-muted">
                           <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
                           <p class="mb-0">No records found</p>

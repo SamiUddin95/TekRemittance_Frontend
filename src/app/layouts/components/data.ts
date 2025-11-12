@@ -139,7 +139,7 @@ export const horizontalMenuItems: MenuItemType[] = [
             {icon: 'tablerFileDescription', label: 'File Template', url: '/bulk-upload-template'},
             {icon: 'tablerCloudUpload', label: 'File Upload', url: '/agent-file-upload'},
             {icon: 'tablerTools', label: 'Repair Queue', url: '/repair-queue'},
-            
+            {icon: 'tablerShieldCheck', label: 'AML/Screening Queue', url: '/aml-screening-queue'},
         ]
     },
     {
@@ -151,6 +151,8 @@ export const horizontalMenuItems: MenuItemType[] = [
             {icon: 'tablerChecklist', label: 'Authorization Queue', url: '/authorization-queue'},
             {icon: 'tablerX', label: 'Rejected Queue', url: '/rejected-queue'},
             {icon: 'tablerCircleCheck', label: 'Approved Queue', url: '/approved-queue'},
+            {icon: 'tablerDownload', label: 'Fetch Accounts', url: '/fetch-accounts'},
+            {icon: 'tablerCash', label: 'Coc Payout', url: '/coc-payout'},
         ]
     },
     {

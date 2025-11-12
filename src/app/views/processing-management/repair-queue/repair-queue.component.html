@@ -15,46 +15,52 @@
 
         <div class="card-body">
           <!-- Filters -->
-          <form [formGroup]="filterForm" class="mb-3">
-            <div class="row g-2 align-items-end">
-              <div class="col-md-2">
-                <label class="form-label">Agent</label>
-                <select class="form-select" formControlName="agentId">
-                  <option value="">All Agents</option>
-                  @for (a of agents; track a.id) {
-                    <option [value]="a.id">{{ a.name }}</option>
-                  }
-                </select>
+          <div class="rounded mb-2">
+            <form [formGroup]="filterForm">
+              <div class="row g-3">
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Agent</label>
+                  <select class="form-select" formControlName="agentId">
+                    <option value="">All Agents</option>
+                    @for (a of agents; track a.id) {
+                      <option [value]="a.id">{{ a.name }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Status</label>
+                  <select class="form-select" formControlName="status">
+                    <option value="">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Date From</label>
+                  <input type="date" class="form-control" formControlName="dateFrom" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Date To</label>
+                  <input type="date" class="form-control" formControlName="dateTo" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Search</label>
+                  <input type="text" class="form-control" formControlName="search" placeholder="Search by file name..." />
+                </div>
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                  <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
+                    <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                    Search
+                  </button>
+                  <button type="button" class="btn btn-dark" (click)="onClearFilters()">
+                    <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                    Clear
+                  </button>
+                </div>
               </div>
-              <div class="col-md-2">
-                <label class="form-label">Status</label>
-                <select class="form-select" formControlName="status">
-                  <option value="">All Status</option>
-                  <option value="Pending">Pending</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Completed">Completed</option>
-                </select>
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">Date From</label>
-                <input type="date" class="form-control" formControlName="dateFrom" />
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">Date To</label>
-                <input type="date" class="form-control" formControlName="dateTo" />
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">Search</label>
-                <input type="text" class="form-control" formControlName="search" placeholder="Search by file name..." />
-              </div>
-              <div class="col-md-2 d-grid">
-                <button type="button" class="btn submit-button" (click)="onSearch()">
-                  <ng-icon name="tablerSearch" class="me-1" size="16"></ng-icon>
-                  Search
-                </button>
-              </div>
-            </div>
-          </form>
+            </form>
+          </div>
 
           @if (isLoading) {
             <div class="text-center py-4">
@@ -67,38 +73,24 @@
               <table class="table table-bordered table-striped table-sm">
                 <thead class="table text-center">
                   <tr>
-                    <th class="fw-bold">RIN</th>
-                    <th class="fw-bold">Agent Name</th>
-                    <th class="fw-bold">Beneficiary Name</th>
-                    <th class="fw-bold">Amount</th>
-                    <th class="fw-bold">Error reason</th>
-                    <th class="fw-bold">Remarks</th>
+                    @for (h of tableHeaders; track h) {
+                      <th class="fw-bold text-nowrap">{{ h }}</th>
+                    }
                     <th class="text-center fw-bold">Actions</th>
                   </tr>
                 </thead>
                 <tbody class="table-group-divider text-center">
-                  @for (row of rows; track row.id) {
+                  @for (r of dataRows; track r.id) {
                     <tr>
-                      <td class="fw-semibold">{{ row.rin }}</td>
-                      <td>{{ row.agentName }}</td>
-                      <td>{{ row.beneficiaryName }}</td>
-                      <td>{{ row.amount }}</td>
-                      <td class="text-start">{{ row.errorReason }}</td>
-                      <td>
-                        <span class="badge"
-                          [ngClass]="{
-                            'bg-danger': row.remarks === 'Invalid Amount' || row.remarks === 'Rejected',
-                            'bg-warning': row.remarks === 'Missing Info' || row.remarks === 'Pending',
-                            'bg-success': row.remarks === 'Approved'
-                          }">{{ row.remarks }}</span>
-                      </td>
+                      @for (h of tableHeaders; track h) {
+                        <td>{{ r.obj?.[h] ?? '-' }}</td>
+                      }
                       <td class="text-center">
                         <div class="btn-group" role="group">
-                          <button type="button" class="btn btn-sm btn-outline-primary" title="Repair" (click)="repair(row)">
+                          <button type="button" class="btn btn-sm btn-outline-primary" title="Repair" (click)="onRepair(r.id)">
                             <ng-icon name="tablerTools" size="16"></ng-icon>
                           </button>
-                          
-                          <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="deleteItem(row)">
+                          <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">
                             <ng-icon name="tablerTrash" size="16"></ng-icon>
                           </button>
                         </div>
@@ -106,7 +98,7 @@
                     </tr>
                   } @empty {
                     <tr>
-                      <td colspan="8" class="text-center py-4">
+                      <td [attr.colspan]="(tableHeaders?.length || 1) + 1" class="text-center py-4">
                         <div class="text-muted">
                           <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
                           <p class="mb-0">No records found</p>

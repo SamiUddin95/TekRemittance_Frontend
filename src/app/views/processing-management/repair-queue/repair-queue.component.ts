@@ -32,6 +32,8 @@ export class RepairQueueListComponent implements OnInit {
   filterForm: FormGroup;
   
   rows: RepairQueueRow[] = [];
+  tableHeaders: string[] = [];
+  dataRows: Array<{ id: string; obj: any }> = [];
 
   PaginationInfo: any = { Page: 1, RowsPerPage: 10 };
   totalRecord = 0;
@@ -89,6 +91,24 @@ export class RepairQueueListComponent implements OnInit {
     this.loadRepairData(agentId);
   }
 
+  onClearFilters(): void {
+    // Reset form fields to defaults
+    this.filterForm.reset({
+      agentId: '',
+      status: '',
+      dateFrom: '',
+      dateTo: '',
+      search: ''
+    });
+
+    // Reset pagination and table state
+    this.PaginationInfo.Page = 1;
+    this.rows = [];
+    this.tableHeaders = [];
+    this.dataRows = [];
+    this.totalRecord = 0;
+  }
+
   private loadRepairData(agentId: string): void {
     this.isLoading = true;
     const pageNumber = this.PaginationInfo.Page;
@@ -98,15 +118,45 @@ export class RepairQueueListComponent implements OnInit {
         this.isLoading = false;
         if (response.status === 'success' && response.items) {
           this.rows = this.mapRepairItems(response.items);
+          // Build dynamic headers from dataJson keys
+          const parsedObjects: any[] = response.items.map((item: DisbursementData) => {
+            try { return JSON.parse(item.dataJson || '{}'); } catch { return {}; }
+          });
+          const headerSet = new Set<string>();
+          parsedObjects.forEach(o => Object.keys(o || {}).forEach(k => headerSet.add(k)));
+          // Ensure AgentName column exists and appears first
+          const headers = Array.from(headerSet);
+          const idx = headers.indexOf('AgentName');
+          if (idx === -1) {
+            headers.unshift('AgentName');
+          } else {
+            headers.splice(idx, 1);
+            headers.unshift('AgentName');
+          }
+          this.tableHeaders = headers;
+          // Build renderable data rows
+          const agentMap = new Map(this.agents.map(a => [a.id, a.name]));
+          this.dataRows = response.items.map((item: DisbursementData, idx: number) => {
+            const base = parsedObjects[idx] || {};
+            const agentName = agentMap.get(String(item.agentId)) || `Agent-${String(item.agentId).substring(0, 8)}`;
+            return {
+              id: item.id,
+              obj: { AgentName: agentName, ...base }
+            };
+          });
           this.totalRecord = response.totalCount;
         } else {
           this.rows = [];
+          this.tableHeaders = [];
+          this.dataRows = [];
           this.totalRecord = 0;
         }
       },
       error: () => {
         this.isLoading = false;
         this.rows = [];
+        this.tableHeaders = [];
+        this.dataRows = [];
         this.totalRecord = 0;
       }
     });
@@ -165,5 +215,20 @@ export class RepairQueueListComponent implements OnInit {
       console.log('Reject clicked for RIN:', row.rin);
       // Implement delete logic here
     }
+  }
+
+  // wrappers for dynamic table actions
+  private findRowById(id: string): RepairQueueRow | null {
+    return this.rows.find(r => r.id === id) || null;
+  }
+
+  onRepair(id: string): void {
+    const row = this.findRowById(id);
+    if (row) this.repair(row);
+  }
+
+  onReject(id: string): void {
+    const row = this.findRowById(id);
+    if (row) this.deleteItem(row);
   }
 }

@@ -61,6 +61,34 @@ export class DisbursementService {
         );
     }
 
+    // RemitReject: rejects a disbursement by XPin and UserId
+    remitReject(userId: string, xpin: string | number): Observable<any> {
+        const url = `${environment.apiUrl}/Disbursement/RemitReject`;
+        const body = { userId, xpin: String(xpin ?? '') };
+        return this.http.post<any>(url, body);
+    }
+
+    // RemitApprove: approves a disbursement by XPin and UserId
+    remitApprove(userId: string, xpin: string | number): Observable<any> {
+        const url = `${environment.apiUrl}/Disbursement/RemitApprove`;
+        const body = { userId, xpin: String(xpin ?? '') };
+        return this.http.post<any>(url, body);
+    }
+
+    // RemitRepair: repairs a rejected disbursement by XPin and UserId
+    remitRepair(userId: string, xpin: string | number): Observable<any> {
+        const url = `${environment.apiUrl}/Disbursement/RemitRepair`;
+        const body = { userId, xpin: String(xpin ?? '') };
+        return this.http.post<any>(url, body);
+    }
+
+    // RemitReverse: reverses a disbursement by XPin and UserId
+    remitReverse(userId: string, xpin: string | number): Observable<any> {
+        const url = `${environment.apiUrl}/Disbursement/RemitReverse`;
+        const body = { userId, xpin: String(xpin ?? '') };
+        return this.http.post<any>(url, body);
+    }
+
     getDataByAuthorize(agentId: string, pageNumber: number = 1, pageSize: number = 10): Observable<{
         items: DisbursementData[];
         totalCount: number;
