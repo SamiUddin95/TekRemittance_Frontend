@@ -43,7 +43,7 @@ export class ApproveUsersComponent implements OnInit {
     this.isLoading = true;
     if (params) this.lastFilterParams = params;
     const effectiveParams = this.lastFilterParams;
-    this.userService.getUsers(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage, effectiveParams).subscribe({
+    this.userService.getUnAuthorizedUsers(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage, effectiveParams).subscribe({
       next: (res) => { this.users = res.items; this.totalRecord = res.totalCount; this.isLoading = false; },
       error: () => { this.isLoading = false; }
     });

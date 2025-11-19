@@ -75,6 +75,13 @@ export class DisbursementService {
         return this.http.post<any>(url, body);
     }
 
+    // RemitAuthorize: authorizes a disbursement by XPin and UserId
+    remitAuthorize(userId: string, xpin: string | number): Observable<any> {
+        const url = `${environment.apiUrl}/Disbursement/RemitAuthorize`;
+        const body = { userId, xpin: String(xpin ?? '') };
+        return this.http.post<any>(url, body);
+    }
+
     // RemitRepair: repairs a rejected disbursement by XPin and UserId
     remitRepair(userId: string, xpin: string | number): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitRepair`;

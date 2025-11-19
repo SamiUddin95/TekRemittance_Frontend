@@ -85,12 +85,14 @@
                           <button type="button" class="btn btn-sm btn-outline-secondary" title="View" (click)="onView(r.id)">
                             <ng-icon name="tablerEye" size="16"></ng-icon>
                           </button>
-                          <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="onVerify(r.id)">
+                          <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="onVerify(r.id)">Disburse</button>
+                          <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">Reject</button>
+                          <!-- <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="onVerify(r.id)">
                             <ng-icon name="tablerCheck" size="16"></ng-icon>
                           </button>
                           <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">
                             <ng-icon name="tablerX" size="16"></ng-icon>
-                          </button>
+                          </button> -->
                         </div>
                       </td>
                     </tr>

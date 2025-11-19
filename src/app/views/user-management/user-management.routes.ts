@@ -8,6 +8,9 @@ export const USER_MANAGEMENT_ROUTES: Routes = [
       { path: 'add', loadComponent: () => import('./user-form/user-form.component').then(m => m.UserFormComponent) },
       { path: 'edit/:id', loadComponent: () => import('./user-form/user-form.component').then(m => m.UserFormComponent) },
       { path: 'approve', loadComponent: () => import('./approve-users/approve-users.component').then(m => m.ApproveUsersComponent) },
+      { path: 'groups', loadComponent: () => import('./group-list/group-list.component').then(m => m.GroupListComponent) },
+      { path: 'groups/add', loadComponent: () => import('./group-form/group-form.component').then(m => m.GroupFormComponent) },
+      { path: 'groups/edit/:id', loadComponent: () => import('./group-form/group-form.component').then(m => m.GroupFormComponent) },
     ]
   }
 ];

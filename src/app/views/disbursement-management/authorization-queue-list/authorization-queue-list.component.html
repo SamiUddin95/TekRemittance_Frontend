@@ -84,12 +84,14 @@
                           <button type="button" class="btn btn-sm btn-outline-secondary" title="View" (click)="onView(r.id)">
                             <ng-icon name="tablerEye" size="16"></ng-icon>
                           </button>
-                          <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="onDisburse(r.id)">
+                          <button type="button" class="btn btn-sm btn-outline-primary" title="Authorized" (click)="onDisburse(r.id)">Authorize</button>
+                          <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">Reject</button>
+                          <!-- <button type="button" class="btn btn-sm btn-outline-primary" title="Authorized" (click)="onDisburse(r.id)">
                             <ng-icon name="tablerCheck" size="16"></ng-icon>
                           </button>
                           <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">
                             <ng-icon name="tablerX" size="16"></ng-icon>
-                          </button>
+                          </button> -->
                         </div>
                       </td>
                     </tr>
@@ -136,7 +138,7 @@
             </div>
             <div class="col-md-6">
               <div class="text-muted">RIN</div>
-              <div class="fw-semibold">{{ selectedRow.rin }}</div>
+              <div class="fw-semibold">{{ selectedRow.xpin }}</div>
             </div>
             <div class="col-md-6">
               <div class="text-muted">Amount</div>

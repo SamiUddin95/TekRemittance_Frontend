@@ -12,7 +12,7 @@ import { AuthService } from '@/app/core/services/auth.service';
 
 interface AuthQueueRow {
   id: string;
-  rin: string;
+  xpin: string;
   agentName: string;
   beneficiaryName: string;
   amount: string;
@@ -161,7 +161,7 @@ export class AuthorizationQueueListComponent implements OnInit {
 
       return {
         id: item.id,
-        rin: dataJson.XPin || dataJson.Xpin || dataJson.xpin || '',
+        xpin: dataJson.XPin || dataJson.Xpin || dataJson.xpin || dataJson.XPIN ||'',
         agentName: `Agent-${item.agentId.substring(0, 8)}`,
         beneficiaryName: dataJson.AccountNumber || 'N/A',
         amount: dataJson.Amount || 'N/A',
@@ -202,7 +202,7 @@ export class AuthorizationQueueListComponent implements OnInit {
     if (!row) return;
     
     const userId = this.auth.getUserId();
-    const xpin = row?.rin;
+    const xpin = row?.xpin;
 
     if (!userId) {
       Swal.fire({
@@ -224,33 +224,33 @@ export class AuthorizationQueueListComponent implements OnInit {
 
     // Show confirmation dialog before proceeding
     Swal.fire({
-      title: 'Confirm Disbursement',
-      html: `Are you sure you want to disburse this remittance?<br><br><strong>XPin:</strong> ${xpin}`,
+      title: 'Confirm Authorization',
+      html: `Are you sure you want to authorize this remittance?<br><br><strong>XPin:</strong> ${xpin}`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, disburse!'
+      confirmButtonText: 'Yes, authorize!'
     }).then((result) => {
       if (result.isConfirmed) {
         this.isLoading = true;
-        this.disbursementService.remitApprove(userId, xpin).subscribe({
+        this.disbursementService.remitAuthorize(userId, xpin).subscribe({
           next: (res) => {
             this.isLoading = false;
-            const isSuccess = res?.isSuccess;
-            const message = res?.message || 'No message from server';
+            const status = res?.status;
+            const message = res?.errorMessage || 'Authorization completed successfully';
             
-            if (isSuccess) {
+            if (status === 'success') {
               Swal.fire({
                 icon: 'success',
-                title: 'Disbursement Successful',
+                title: 'Authorization Successful',
                 text: message,
                 confirmButtonText: 'OK'
               });
             } else {
               Swal.fire({
                 icon: 'warning',
-                title: 'Disbursement Failed',
+                title: 'Authorization Failed',
                 text: message,
                 confirmButtonText: 'OK'
               });
@@ -270,7 +270,7 @@ export class AuthorizationQueueListComponent implements OnInit {
               text: 'API call failed. Please try again.',
               confirmButtonText: 'OK'
             });
-            console.error('RemitApprove error', err);
+            console.error('RemitAuthorize error', err);
           }
         });
       }
@@ -282,7 +282,7 @@ export class AuthorizationQueueListComponent implements OnInit {
     if (!row) return;
     
     const userId = this.auth.getUserId();
-    const xpin = row?.rin;
+    const xpin = row?.xpin;
 
     if (!userId) {
       Swal.fire({

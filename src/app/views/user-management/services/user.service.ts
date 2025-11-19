@@ -57,6 +57,48 @@ export class UserService {
       );
   }
 
+  getUnAuthorizedUsers(page: number = 1, rowsPerPage: number = 10, params?: { [key: string]: any }): Observable<{
+    items: User[];
+    totalCount: number;
+    pageNumber: number;
+    pageSize: number;
+    totalPages: number;
+  }> {
+    let httpParams = new HttpParams({ fromObject: params ?? {} })
+      .set('pageNumber', String(page))
+      .set('pageSize', String(rowsPerPage));
+
+    return this.http
+      .get<any>(`${environment.apiUrl}/Users/UnAuthorizeUsers`, { params: httpParams })
+      .pipe(
+        map((resp) => {
+          const payload = resp?.data ?? resp;
+          const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
+          const users = (itemsRaw as any[]).map((r) => <User>{
+            id: r.id,
+            name: r.name,
+            email: r.email,
+            phone: r.phone,
+            employeeId: r.employeeId,
+            limitType: r.limit ?? r.limitType ?? 0,
+            loginName: r.loginName,
+            isActive: r.isActive,
+            isApproved: r.isApproved ?? false,
+            isSupervise: r.isSupervise,
+            createdAt: r.createdOn ? new Date(r.createdOn) : (r.createdAt ? new Date(r.createdAt) : undefined),
+            updatedAt: r.updatedOn ? new Date(r.updatedOn) : (r.updatedAt ? new Date(r.updatedAt) : undefined),
+          });
+          return {
+            items: users,
+            totalCount: payload?.totalCount ?? users.length,
+            pageNumber: payload?.pageNumber ?? page,
+            pageSize: payload?.pageSize ?? rowsPerPage,
+            totalPages: payload?.totalPages ?? 1,
+          };
+        })
+      );
+  }
+
   getUserById(id: string): Observable<User> {
     return this.http.get<any>(`${environment.apiUrl}/Users/${id}`).pipe(
       map((resp) => {

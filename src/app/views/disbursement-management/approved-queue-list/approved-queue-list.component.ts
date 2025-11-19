@@ -12,7 +12,7 @@ import { AuthService } from '@/app/core/services/auth.service';
 
 interface ApprovedRow {
   id: string;
-  rin: string;
+  xpin: string;
   agentName: string;
   beneficiaryName: string;
   amount: string;
@@ -173,7 +173,7 @@ export class ApprovedQueueListComponent implements OnInit {
 
       return {
         id: item.id,
-        rin: dataJson.XPin || dataJson.Xpin || dataJson.xpin || '',
+        xpin: dataJson.XPin || dataJson.Xpin || dataJson.xpin || dataJson.XPIN ||'',
         agentName: `Agent-${item.agentId.substring(0, 8)}`,
         beneficiaryName: dataJson.AccountNumber || 'N/A',
         amount: dataJson.Amount ? `$${dataJson.Amount}` : 'N/A',
@@ -187,7 +187,7 @@ export class ApprovedQueueListComponent implements OnInit {
 
   repair(row: ApprovedRow): void {
     const userId = this.auth.getUserId();
-    const xpin = row?.rin;
+    const xpin = row?.xpin;
 
     if (!userId) {
       Swal.fire({
@@ -264,7 +264,7 @@ export class ApprovedQueueListComponent implements OnInit {
 
   revert(row: ApprovedRow): void {
     const userId = this.auth.getUserId();
-    const xpin = row?.rin;
+    const xpin = row?.xpin;
 
     if (!userId) {
       Swal.fire({

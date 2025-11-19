@@ -2,89 +2,68 @@
   <app-page-title title="User Management" subTitle="Users"></app-page-title>
   <div class="row">
     <div class="col-12">
-
-      <div class="accordion" id="menuaccordion">
-        <div>
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <div class="d-flex w-100 align-items-center">
-                <button #filterToggler class="accordion-button d-flex no-accordion-caret flex-grow-1" type="button"
-                  (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed"
-                  aria-controls="collapsefilter">
-                  {{ 'USERS' }}
-                </button>
-
-                <button type="button" class="btn btn-link p-0 mb-1" title="Filter" (click)="isCollapsed = !isCollapsed"
-                  [style.marginInlineStart]="'auto'">
-                  <ng-icon style="color: orange;" [name]="islistFiltered ? 'tablerFilterFill' : 'tablerFilter'"
-                    [ngClass]="{ 'blink': islistFiltered }"></ng-icon>
-                </button>
-
-                <button style="width: 150px;" class="btn submit-button ms-2 me-2" (click)="addNewUser()">
-                  <ng-icon style="margin-bottom: 1px;" class="me-2 ms-1" name='tablerPlus'></ng-icon>
-                  <span class="me-1">{{ 'ADD USER' }}</span>
-                </button>
-              </div>
-            </h2>
-
-            <!-- Accordion Filter Section -->
-            <div id="collapsefilter" class="accordion-collapse" [ngbCollapse]="isCollapsed">
-              <div class="accordion-body">
-                <form [formGroup]="filterForm">
-                <div class="row align-items-end g-3">
-
-                  <div class="col-lg-4 col-md-6">
-                    <div class="form-group">
-                      <label for="employeeId" class="form-label fw-semibold">
-                        <ng-icon name="tablerId" class="me-1 gradient-icon" size="16"></ng-icon>
-                        Employee Id <span class="text-danger">*</span>
-                      </label>
-                      <input type="text" id="employeeId" class="form-control" formControlName="employeeId"
-                        maxlength="50" placeholder="Search employee id">
-                    </div>
-                  </div>
-
-                  <div class="col-lg-4 col-md-6">
-                    <div class="form-group">
-                      <label for="name" class="form-label fw-semibold">
-                        <ng-icon name="tablerUser" class="me-1 gradient-icon" size="16"></ng-icon>
-                        Name <span class="text-danger">*</span>
-                      </label>
-                      <input type="text" id="name" class="form-control" formControlName="name" maxlength="100"
-                        placeholder="Search name">
-                    </div>
-                  </div>
-
-                  <div class="col-lg-4 col-md-6">
-                    <div class="form-group">
-                      <label for="loginName" class="form-label fw-semibold">
-                        <ng-icon name="tablerUser" class="me-1 gradient-icon" size="16"></ng-icon>
-                        Login Name <span class="text-danger">*</span>
-                      </label>
-                      <input type="text" id="loginName" class="form-control" formControlName="loginName" maxlength="100"
-                        placeholder="Search login name">
-                    </div>
-                  </div>
-                  <!-- ✅ Button aligned to the right -->
-                  <div class="col-12 d-flex justify-content-end align-items-center gap-2">
-                    <button type="button" class="btn btn-dark px-4" (click)="onCancel()">
-                      Clear
-                    </button>
-                    <button type="button" class="btn submit-button px-4" (click)="filter()">
-                      <span class="me-1">{{ 'Filter' }}</span>
-                    </button>
-                  </div>
-
-                </div>
-                </form>
-              </div>
+      <div class="card shadow-sm">
+        <div class="card-header bg-light border-bottom">
+          <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+            <div class="d-flex align-items-center">
+              <ng-icon name="tablerUsers" class="me-2 gradient-icon" size="20"></ng-icon>
+              <h4 class="card-title mb-0 text-dark">Users</h4>
             </div>
-            <!-- End Accordion Filter Section -->
+            <button style="width: 150px;" class="btn submit-button ms-2" (click)="addNewUser()">
+              <ng-icon style="margin-bottom: 1px;" class="me-2 ms-1" name='tablerPlus'></ng-icon>
+              <span class="me-1">{{ 'ADD USER' }}</span>
+            </button>
           </div>
         </div>
+        <div class="card-body">
+          <!-- Filters (matching disbursement queue style) -->
+          <div class="rounded mb-3">
+            <form [formGroup]="filterForm">
+              <div class="row g-3 align-items-end">
 
-        <!-- User Table Section -->
-        <div class="card shadow-sm">
+                <div class="col-lg-4 col-md-3">
+                  <label for="employeeId" class="form-label fw-semibold">
+                    <ng-icon name="tablerId" class="me-1 gradient-icon" size="16"></ng-icon>
+                    Employee Id
+                  </label>
+                  <input type="text" id="employeeId" class="form-control" formControlName="employeeId"
+                    maxlength="50" placeholder="Search employee id" />
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                  <label for="name" class="form-label fw-semibold">
+                    <ng-icon name="tablerUser" class="me-1 gradient-icon" size="16"></ng-icon>
+                    Name
+                  </label>
+                  <input type="text" id="name" class="form-control" formControlName="name" maxlength="100"
+                    placeholder="Search name" />
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                  <label for="loginName" class="form-label fw-semibold">
+                    <ng-icon name="tablerUser" class="me-1 gradient-icon" size="16"></ng-icon>
+                    Login Name
+                  </label>
+                  <input type="text" id="loginName" class="form-control" formControlName="loginName" maxlength="100"
+                    placeholder="Search login name" />
+                </div>
+
+                <div class="col-md-12 d-flex align-items-end justify-content-end gap-2">
+                  <button type="button" class="btn submit-button" (click)="filter()">
+                    <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                    <span class="me-1">{{ 'Filter' }}</span>
+                  </button>
+                  <button type="button" class="btn btn-dark" (click)="onCancel()">
+                    <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                    Clear
+                  </button>
+                </div>
+
+              </div>
+            </form>
+          </div>
+
+          <!-- User Table Section -->
           @if (isLoading) {
           <div class="text-center py-4">
             <div class="spinner-border text-primary" role="status">
@@ -146,7 +125,6 @@
               </tbody>
             </table>
           </div>
-          
           <app-generic-pagination
             [totalItems]="totalRecord"
             [pageSize]="PaginationInfo.RowsPerPage"
@@ -155,8 +133,6 @@
           </app-generic-pagination>
           }
         </div>
-        <!-- End Table Section -->
-
       </div>
     </div>
   </div>

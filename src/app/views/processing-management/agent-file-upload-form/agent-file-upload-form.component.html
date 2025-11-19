@@ -25,10 +25,10 @@
               <button type="submit" class="btn submit-button" [disabled]="isSubmitting || !selectedFile">
                 @if (isSubmitting) {
                   <span class="spinner-border spinner-border-sm me-1" role="status"></span>
-                  Saving...
+                  Uploading...
                 } @else {
                   <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
-                  Save
+                  Upload
                 }
               </button>
             </div>

@@ -202,66 +202,63 @@
                       @case (2) {
                       <div class="step-header">
                         <div class="d-flex align-items-center">
-                          <!-- <ng-icon name="tablerSettings" class="me-2 gradient-icon" size="18"></ng-icon> -->
-                          <!-- <h6 class="mb-0">Operational Preferences</h6> -->
                           <div>
                             <h4 class="mb-0">Operational Preferences</h4>
                             <small class="text-muted">Set cut-off times and choose processing preferences.</small>
                           </div>
                         </div>
                       </div>
-                      <div class="row g-4 mt-2">
-                        <div class="col-lg-2">
-                          <label class="form-label fw-semibold">
+                      <div class="d-flex flex-wrap justify-content-start align-items-end gap-5 mt-3">
+                        <div class="d-flex flex-column" style="min-width: 220px;">
+                          <label class="form-label fw-semibold d-flex align-items-center mb-2">
                             <ng-icon name="tablerClock" class="me-1 gradient-icon" size="16"></ng-icon>
-                            Cut off Time Start
+                            <span>Cut off Time Start</span>
                           </label>
-                          <input class="form-control" type="time" formControlName="cutOffStart" />
+                          <div class="input-group">
+                            <input class="form-control" type="time" formControlName="cutOffStart" />
+                          </div>
                         </div>
-                        <div class="col-lg-2">
-                          <label class="form-label fw-semibold">
+                        <div class="d-flex flex-column" style="min-width: 220px;">
+                          <label class="form-label fw-semibold d-flex align-items-center mb-2">
                             <ng-icon name="tablerClock" class="me-1 gradient-icon" size="16"></ng-icon>
-                            Cut off Time End
+                            <span>Cut off Time End</span>
                           </label>
-                          <input class="form-control" type="time" formControlName="cutOffEnd" />
+                          <div class="input-group">
+                            <input class="form-control" type="time" formControlName="cutOffEnd" />
+                          </div>
+                          <small class="text-danger mt-1" *ngIf="isCutOffRangeInvalid()">
+                            Cut off time start must be less than cut off time end.
+                          </small>
                         </div>
-                        <div class="col-lg-3">
-                          <div>
-                            <label class="form-label fw-semibold">
-                              <ng-icon name="tablerHash" class="me-1 gradient-icon" size="16"></ng-icon>
-                              XPin Generation
-                            </label>
-                            <div class="d-flex gap-3">
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" formControlName="brnByApplication"
-                                  id="brnByApplication">
-                                <label for="brnByApplication" class="form-check-label">by Application</label>
-                              </div>
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" formControlName="brnByAgent"
-                                  id="brnByAgent">
-                                <label for="brnByAgent" class="form-check-label">by Agent</label>
-                              </div>
+                        <div class="d-flex flex-column">
+                          <label class="form-label fw-semibold d-flex align-items-center mb-2">
+                            <ng-icon name="tablerHash" class="me-1 gradient-icon" size="16"></ng-icon>
+                            <span>XPin Generation</span>
+                          </label>
+                          <div class="d-flex gap-4 flex-wrap">
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" formControlName="brnByApplication" id="brnByApplication">
+                              <label for="brnByApplication" class="form-check-label">by Application</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" formControlName="brnByAgent" id="brnByAgent">
+                              <label for="brnByAgent" class="form-check-label">by Agent</label>
                             </div>
                           </div>
                         </div>
-                        <div class="col-lg-3">
-                          <div>
-                            <label class="form-label fw-semibold">
-                              <ng-icon name="tablerSettings" class="me-1 gradient-icon" size="16"></ng-icon>
-                              Process
-                            </label>
-                            <div class="d-flex gap-3">
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" formControlName="autoProcess"
-                                  id="autoProcess">
-                                <label for="autoProcess" class="form-check-label">Auto Process</label>
-                              </div>
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" formControlName="manualProcess"
-                                  id="manualProcess">
-                                <label for="manualProcess" class="form-check-label">Manual Process</label>
-                              </div>
+                        <div class="d-flex flex-column">
+                          <label class="form-label fw-semibold d-flex align-items-center mb-2">
+                            <ng-icon name="tablerSettings" class="me-1 gradient-icon" size="16"></ng-icon>
+                            <span>Process</span>
+                          </label>
+                          <div class="d-flex gap-4 flex-wrap">
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" formControlName="autoProcess" id="autoProcess">
+                              <label for="autoProcess" class="form-check-label">Auto Process</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" formControlName="manualProcess" id="manualProcess">
+                              <label for="manualProcess" class="form-check-label">Manual Process</label>
                             </div>
                           </div>
                         </div>

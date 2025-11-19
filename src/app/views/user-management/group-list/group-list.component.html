@@ -1,0 +1,62 @@
+<div class="">
+  <app-page-title title="Security Groups" subTitle="Security"></app-page-title>
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light border-bottom">
+          <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+            <div class="d-flex align-items-center">
+              <ng-icon name="tablerTable" class="me-2 gradient-icon" size="20"></ng-icon>
+              <h4 class="card-title mb-0 text-dark">Security Groups</h4>
+            </div>
+            <button type="button" class="btn submit-button" (click)="addNewGroup()">
+              <ng-icon name="tablerPlus" class="me-1" size="16"></ng-icon>
+              Add Group
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="table-responsive" *ngIf="!isLoading; else loadingTpl">
+            <table class="table table-bordered table-striped table-sm">
+              <thead class="table text-center">
+                <tr>
+                  <th class="fw-bold">Group Name</th>
+                  <th class="fw-bold">Description</th>
+                  <th class="fw-bold">Users</th>
+                  <th class="fw-bold text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="table-group-divider text-center">
+                <tr *ngFor="let g of groups">
+                  <td class="text-break">{{ g.name }}</td>
+                  <td class="text-break">{{ g.description }}</td>
+                  <td>{{ g.usersCount || 0 }}</td>
+                  <td class="text-center">
+                    <div class="btn-group" role="group">
+                      <button type="button" class="btn btn-sm btn-outline-primary" title="Edit" (click)="editGroup(g.id)">
+                        <ng-icon name="tablerEdit" size="16"></ng-icon>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="groups.length === 0">
+                  <td colspan="4" class="text-center py-4">
+                    <div class="text-muted">
+                      <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                      <p class="mb-0">No groups found</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <ng-template #loadingTpl>
+            <div class="p-4 text-center text-muted">Loading...</div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -162,8 +162,11 @@ export const horizontalMenuItems: MenuItemType[] = [
         children: [
             {icon: 'tablerUsers', label: 'Users', url: '/users'},
             {icon: 'tablerUserOff', label: 'Un-Authorized Users', url: '/users/approve'},
+            {icon: 'tablerUsersGroup', label: 'Group', url: '/users/groups'},
+
         ]
     },
      
      
 ];
+

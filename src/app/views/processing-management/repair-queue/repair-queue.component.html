@@ -87,12 +87,14 @@
                       }
                       <td class="text-center">
                         <div class="btn-group" role="group">
-                          <button type="button" class="btn btn-sm btn-outline-primary" title="Repair" (click)="onRepair(r.id)">
+                          <button type="button" class="btn btn-sm btn-outline-primary" title="Edit" (click)="onRepair(r.id)">Edit</button>
+                          <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">Reject</button>
+                          <!-- <button type="button" class="btn btn-sm btn-outline-primary" title="Repair" (click)="onRepair(r.id)">
                             <ng-icon name="tablerTools" size="16"></ng-icon>
                           </button>
                           <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">
-                            <ng-icon name="tablerTrash" size="16"></ng-icon>
-                          </button>
+                            <ng-icon name="tablerX" size="16"></ng-icon>
+                          </button> -->
                         </div>
                       </td>
                     </tr>
@@ -130,7 +132,7 @@
         <div class="modal-header">
           <h5 class="modal-title">
             <ng-icon name="tablerTools" class="me-2" size="20"></ng-icon>
-            Repair Instruction: {{ selectedRow.rin }}
+            Repair Instruction: {{ selectedRow.xpin }}
           </h5>
           <button type="button" class="btn-close" (click)="closeRepair()"></button>
         </div>
@@ -152,7 +154,7 @@
             </div>
             <div class="col-md-4">
               <div class="text-muted">RIN</div>
-              <div class="fw-semibold">{{ selectedRow.rin }}</div>
+              <div class="fw-semibold">{{ selectedRow.xpin }}</div>
             </div>
             <div class="col-md-4">
               <div class="text-muted">Created On</div>

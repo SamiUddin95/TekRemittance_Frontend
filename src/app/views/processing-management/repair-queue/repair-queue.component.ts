@@ -12,7 +12,7 @@ import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loade
 
 interface RepairQueueRow {
   id: string;
-  rin: string;
+  xpin: string;
   agentName: string;
   beneficiaryName: string;
   amount: string;
@@ -176,7 +176,7 @@ export class RepairQueueListComponent implements OnInit {
             : 'Pending';
       return {
         id: item.id,
-        rin: String(data.XPin || `Row-${item.rowNumber}`),
+        xpin: data.XPin || data.Xpin || data.xpin || data.XPIN ||'',
         agentName: `Agent-${item.agentId.substring(0, 8)}`,
         beneficiaryName: data.AccountNumber || 'N/A',
         amount: data.Amount ? `$${String(data.Amount).trim()}` : 'N/A',
@@ -190,7 +190,7 @@ export class RepairQueueListComponent implements OnInit {
   repair(row: RepairQueueRow): void {
     this.repairVisible = false;
     this.selectedRow = null;
-    console.log('Repair clicked for RIN:', row.rin);
+    console.log('Repair clicked for RIN:', row.xpin);
     this.router.navigate(['/repair-instruction'], { state: { row } });
   }
 
@@ -200,19 +200,19 @@ export class RepairQueueListComponent implements OnInit {
   }
 
   saveRepair(): void {
-    console.log('Saving repair for RIN:', this.selectedRow?.rin);
+    console.log('Saving repair for RIN:', this.selectedRow?.xpin);
     // Implement save logic here
     this.closeRepair();
   }
 
   viewDetails(row: RepairQueueRow): void {
-    console.log('View details for RIN:', row.rin);
+    console.log('View details for RIN:', row.xpin);
     // Implement view details logic here
   }
 
   deleteItem(row: RepairQueueRow): void {
-    if (confirm(`Are you sure you want to reject RIN ${row.rin}?`)) {
-      console.log('Reject clicked for RIN:', row.rin);
+    if (confirm(`Are you sure you want to reject RIN ${row.xpin}?`)) {
+      console.log('Reject clicked for RIN:', row.xpin);
       // Implement delete logic here
     }
   }

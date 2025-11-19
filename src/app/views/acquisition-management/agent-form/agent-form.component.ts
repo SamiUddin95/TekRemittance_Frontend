@@ -371,6 +371,18 @@ export class AgentFormComponent implements OnInit {
             }
         }
         
+        // Special validation for Operational Preferences step (cut off time range)
+        if (this.currentStep === 2 && this.isCutOffRangeInvalid()) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Cut-Off Time',
+                text: 'Cut off time start must be less than cut off time end.',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#3b82f6'
+            });
+            return false;
+        }
+        
         // Special validation for Direct Integration step
         if (this.currentStep === 5) {
             const diCtrl = this.agentForm.get('directIntegration');
@@ -468,6 +480,11 @@ export class AgentFormComponent implements OnInit {
             }
         }
 
+        // Cross-field validation for cut off time range
+        if (this.isCutOffRangeInvalid()) {
+            return false;
+        }
+
         return true;
     }
 
@@ -524,5 +541,16 @@ export class AgentFormComponent implements OnInit {
             confirmButtonText: 'OK',
             confirmButtonColor: '#3b82f4'
         });
+    }
+
+    // Cross-field helper: ensures cutOffStart < cutOffEnd
+    isCutOffRangeInvalid(): boolean {
+        const start = this.agentForm.get('cutOffStart')?.value as string | null | undefined;
+        const end = this.agentForm.get('cutOffEnd')?.value as string | null | undefined;
+
+        if (!start || !end) return false;
+
+        // Both are in HH:mm format so string comparison is safe
+        return start >= end;
     }
 }
