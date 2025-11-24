@@ -260,7 +260,7 @@ export class DisbursementQueueListComponent implements OnInit {
             } else {
               Swal.fire({
                 icon: 'warning',
-                title: 'Disbursement Failed',
+                title: 'Disbursement Unauthorized',
                 text: message,
                 confirmButtonText: 'OK'
               });

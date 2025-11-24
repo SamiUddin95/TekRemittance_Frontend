@@ -16,8 +16,41 @@
                         </button>
                     </div>
                 </div>
-                
-                <!-- <div class="card-body"> -->
+
+                <div class="card-body">
+                    <div class="rounded mb-2">
+                        <form [formGroup]="filterForm">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">City Code</label>
+                                    <input type="text" class="form-control" formControlName="cityCode" placeholder="All City Codes" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">City Name</label>
+                                    <input type="text" class="form-control" formControlName="cityName" placeholder="All City Names" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Status</label>
+                                    <select class="form-select" formControlName="status">
+                                        <option value="">All Statuses</option>
+                                        <option value="true">Active</option>
+                                        <option value="false">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end gap-2">
+                                    <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
+                                        <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                                        Search
+                                    </button>
+                                    <button type="button" class="btn btn-dark" (click)="onClearFilters()">
+                                        <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
                     @if (isLoading) {
                         <app-skeleton-loader variant="table" [rows]="8" [cols]="4" ariaLabel="Loading cities table"></app-skeleton-loader>
                     } @else {
@@ -81,7 +114,7 @@
                             (pageChanged)="onCityPageChanged($event)">
                         </app-generic-pagination>
                     }
-                <!-- </div> -->
+                </div>
             </div>
         </div>
     </div>

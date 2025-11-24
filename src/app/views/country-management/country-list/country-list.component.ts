@@ -8,16 +8,18 @@ import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-country-list',
     standalone: true,
-    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
+    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent, ReactiveFormsModule],
     templateUrl: './country-list.component.html'
 })
 
 export class CountryListComponent implements OnInit {
     countries: Country[] = [];
+    allCountries: Country[] = [];
     currentPage = 1;
     totalPages = 1;
     totalItems = 0;
@@ -28,6 +30,7 @@ export class CountryListComponent implements OnInit {
         RowsPerPage: 10
     }
     isLoading = false;
+    filterForm!: FormGroup;
 
 private mapDtoToCountry(dto: any): Country {
         return {
@@ -42,10 +45,16 @@ private mapDtoToCountry(dto: any): Country {
 
     constructor(
         private countryService: CountryService,
-        private router: Router
+        private router: Router,
+        private fb: FormBuilder
     ) {}
 
     ngOnInit(): void {
+        this.filterForm = this.fb.group({
+            countryCode: [''],
+            countryName: [''],
+            status: ['']
+        });
         this.loadCountries();
     }
 
@@ -56,8 +65,9 @@ private mapDtoToCountry(dto: any): Country {
                 next: (response: any) => {
                     debugger
                     if(response.statusCode === 200  && response.items){
-                        this.countries = response.items.map((item: any) => this.mapDtoToCountry(item));
+                        this.allCountries = response.items.map((item: any) => this.mapDtoToCountry(item));
                         this.totalRecord = response.totalCount;
+                        this.applyFilters();
                         this.isLoading = false; 
                     }
                 this.isLoading = false;
@@ -70,6 +80,44 @@ private mapDtoToCountry(dto: any): Country {
             console.log(res);
             
             this.isLoading = false;
+    }
+
+    applyFilters(): void {
+        if (!this.allCountries) {
+            this.countries = [];
+            return;
+        }
+
+        const { countryCode, countryName, status } = this.filterForm?.value || {};
+
+        this.countries = this.allCountries.filter((country) => {
+            const matchesCode = countryCode
+                ? country.code?.toLowerCase().includes(countryCode.toLowerCase())
+                : true;
+
+            const matchesName = countryName
+                ? country.name?.toLowerCase().includes(countryName.toLowerCase())
+                : true;
+
+            const matchesStatus = status !== undefined && status !== null && status !== ''
+                ? country.isActive === (status === 'true')
+                : true;
+
+            return matchesCode && matchesName && matchesStatus;
+        });
+    }
+
+    onSearch(): void {
+        this.applyFilters();
+    }
+
+    onClearFilters(): void {
+        this.filterForm.reset({
+            countryCode: '',
+            countryName: '',
+            status: ''
+        });
+        this.applyFilters();
     }
 
     addNewCountry(): void {

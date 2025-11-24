@@ -1,10 +1,11 @@
 <div class="">
-    <app-page-title  title="Country Management" subTitle="Basic Setup"></app-page-title>
-    <div class="row mt-2">
+    <app-page-title title="Country Management" subTitle="Basic Setup"></app-page-title>
+    <div class="row">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-header bg-light border-bottom">
-                    <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+                    <div class="d-flex justify-content-between align-items-center col-12"
+                        style="margin-top: -5px; margin-bottom: -5px;">
                         <div class="d-flex align-items-center">
                             <ng-icon name="tablerList" class="me-2 gradient-icon" size="20"></ng-icon>
                             <h4 class="card-title mb-0 text-dark">Countries</h4>
@@ -15,82 +16,105 @@
                         </button>
                     </div>
                 </div>
-                
-                <!-- <div class="card-body"> -->
+                <div class="card-body">
+                    <div class="rounded mb-2">
+                        <form [formGroup]="filterForm">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Country Code</label>
+                                    <input type="text" class="form-control" formControlName="countryCode" placeholder="All Country Codes" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Country Name</label>
+                                    <input type="text" class="form-control" formControlName="countryName" placeholder="All Country Names" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Status</label>
+                                    <select class="form-select" formControlName="status">
+                                        <option value="">All Statuses</option>
+                                        <option value="true">Active</option>
+                                        <option value="false">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end gap-2">
+                                    <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
+                                        <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                                        Search
+                                    </button>
+                                    <button type="button" class="btn btn-dark" (click)="onClearFilters()">
+                                        <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                     @if (isLoading) {
-                        <app-skeleton-loader variant="table" [rows]="8" [cols]="4" ariaLabel="Loading countries table"></app-skeleton-loader>
+                    <app-skeleton-loader variant="table" [rows]="8" [cols]="4" ariaLabel="Loading countries table"></app-skeleton-loader>
                     } @else {
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped table-sm">
-                                <thead class="table text-center">
-                                    <tr>
-                                        <th class="fw-bold">
-                                            Country Code
-                                        </th>
-                                        <th class="fw-bold">
-                                            Country Name
-                                        </th>
-                                        <th class="fw-bold">
-                                            Status
-                                        </th>
-                                        <th class="text-center fw-bold">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="table-group-divider text-center">
-                                    @for (country of countries; track country.id) {
-                                        <tr>
-                                            <td>
-                                                <span class="fw-medium">{{ country.code }}</span>
-                                            </td>
-                                            <td>{{ country.name }}</td>
-                                            <td>
-                                                <span [class]="getStatusBadgeClass(country.isActive)">
-                                                    {{ getStatusText(country.isActive) }}
-                                                </span>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="btn-group" role="group">
-                                                    <button type="button" 
-                                                            class="btn btn-sm btn-outline-primary" 
-                                                            (click)="editCountry(country.id!)"
-                                                            title="Edit Country">
-                                                        <ng-icon name="tablerEdit" size="16"></ng-icon>
-                                                    </button>
-                                                    <button type="button" 
-                                                            class="btn btn-sm btn-outline-danger" 
-                                                            (click)="deleteCountry(country)"
-                                                            title="Delete Country">
-                                                        <ng-icon name="tablerTrash" size="16"></ng-icon>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    } @empty {
-                                        <tr>
-                                            <td colspan="4" class="text-center py-4">
-                                                <div class="text-muted">
-                                                    <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
-                                                    <p class="mb-0">No countries found</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead class="table text-center">
+                                <tr>
+                                    <th class="fw-bold">
+                                        Country Code
+                                    </th>
+                                    <th class="fw-bold">
+                                        Country Name
+                                    </th>
+                                    <th class="fw-bold">
+                                        Status
+                                    </th>
+                                    <th class="text-center fw-bold">
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider text-center">
+                                @for (country of countries; track country.id) {
+                                <tr>
+                                    <td>
+                                        <span class="fw-medium">{{ country.code }}</span>
+                                    </td>
+                                    <td>{{ country.name }}</td>
+                                    <td>
+                                        <span [class]="getStatusBadgeClass(country.isActive)">
+                                            {{ getStatusText(country.isActive) }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-primary"
+                                                (click)="editCountry(country.id!)" title="Edit Country">
+                                                <ng-icon name="tablerEdit" size="16"></ng-icon>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                (click)="deleteCountry(country)" title="Delete Country">
+                                                <ng-icon name="tablerTrash" size="16"></ng-icon>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                } @empty {
+                                <tr>
+                                    <td colspan="4" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                                            <p class="mb-0">No countries found</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
 
-                        <!-- Pagination -->
-                        <app-generic-pagination
-                    [totalItems]="totalRecord"
-                    [pageSize]="PaginationInfo.RowsPerPage"
-                    [currentPage]="PaginationInfo.Page"
-                    (pageChanged)="oncountryPageChanged($event)"
-                >
-                </app-generic-pagination>
+                    <!-- Pagination -->
+                    <app-generic-pagination [totalItems]="totalRecord" [pageSize]="PaginationInfo.RowsPerPage"
+                        [currentPage]="PaginationInfo.Page" (pageChanged)="oncountryPageChanged($event)">
+                    </app-generic-pagination>
                     }
-                <!-- </div> -->
+                </div>
             </div>
         </div>
     </div>

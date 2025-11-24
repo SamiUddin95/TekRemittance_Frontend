@@ -32,7 +32,30 @@ export class AgentFileUploadFormComponent {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const f = input.files && input.files[0];
-    this.selectedFile = f || undefined;
+
+    if (!f) {
+      this.selectedFile = undefined;
+      return;
+    }
+
+    const allowedExtensions = ['.xls', '.xlsx', '.csv', '.txt'];
+    const fileName = f.name.toLowerCase();
+    const isValid = allowedExtensions.some(ext => fileName.endsWith(ext));
+
+    if (!isValid) {
+      this.selectedFile = undefined;
+      if (input) {
+        input.value = '';
+      }
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid file type',
+        text: 'Only Excel (.xls, .xlsx), CSV (.csv), or Text (.txt) files are allowed.',
+      });
+      return;
+    }
+
+    this.selectedFile = f;
   }
 
   save(): void {
