@@ -8,28 +8,37 @@ import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-bank-list',
     standalone: true,
-    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
+    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent, ReactiveFormsModule],
     templateUrl: './bank-list.component.html'
 })
 export class BankListComponent implements OnInit {
     banks: Bank[] = [];
+    allBanks: Bank[] = [];
     totalRecord = 0;
     PaginationInfo: any = {
         Page: 1,
         RowsPerPage: 10
     };
     isLoading = false;
+    filterForm!: FormGroup;
 
     constructor(
         private bankService: BankService,
-        private router: Router
+        private router: Router,
+        private fb: FormBuilder
     ) {}
 
     ngOnInit(): void {
+        this.filterForm = this.fb.group({
+            bankCode: [''],
+            bankName: [''],
+            status: ['']
+        });
         this.loadBanks();
     }
 
@@ -38,8 +47,9 @@ export class BankListComponent implements OnInit {
         this.bankService.getBanks(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
             .subscribe({
                 next: (res) => {
-                    this.banks = res.items;
+                    this.allBanks = res.items;
                     this.totalRecord = res.totalCount;
+                    this.applyFilters();
                     this.isLoading = false;
                 },
                 error: (error) => {
@@ -87,6 +97,44 @@ export class BankListComponent implements OnInit {
     onBankPageChanged(page: number): void {
         this.PaginationInfo.Page = page;
         this.loadBanks();
+    }
+
+    applyFilters(): void {
+        if (!this.allBanks) {
+            this.banks = [];
+            return;
+        }
+
+        const { bankCode, bankName, status } = this.filterForm?.value || {};
+
+        this.banks = this.allBanks.filter((bank) => {
+            const matchesCode = bankCode
+                ? bank.code?.toLowerCase().includes(bankCode.toLowerCase())
+                : true;
+
+            const matchesName = bankName
+                ? bank.name?.toLowerCase().includes(bankName.toLowerCase())
+                : true;
+
+            const matchesStatus = status !== undefined && status !== null && status !== ''
+                ? bank.isActive === (status === 'true')
+                : true;
+
+            return matchesCode && matchesName && matchesStatus;
+        });
+    }
+
+    onSearch(): void {
+        this.applyFilters();
+    }
+
+    onClearFilters(): void {
+        this.filterForm.reset({
+            bankCode: '',
+            bankName: '',
+            status: ''
+        });
+        this.applyFilters();
     }
 
     getStatusBadgeClass(isActive: boolean): string {

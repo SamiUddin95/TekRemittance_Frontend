@@ -8,28 +8,37 @@ import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-city-list',
     standalone: true,
-    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
+    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent, ReactiveFormsModule],
     templateUrl: './city-list.component.html'
 })
 export class CityListComponent implements OnInit {
     cities: City[] = [];
+    allCities: City[] = [];
     totalRecord = 0;
     PaginationInfo: any = {
         Page: 1,
         RowsPerPage: 10
     };
     isLoading = false;
+    filterForm!: FormGroup;
 
     constructor(
         private cityService: CityService,
-        private router: Router
+        private router: Router,
+        private fb: FormBuilder
     ) {}
 
     ngOnInit(): void {
+        this.filterForm = this.fb.group({
+            cityCode: [''],
+            cityName: [''],
+            status: ['']
+        });
         this.loadCities();
     }
 
@@ -38,8 +47,9 @@ export class CityListComponent implements OnInit {
         this.cityService.getCities(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
             .subscribe({
                 next: (res) => {
-                    this.cities = res.items;
+                    this.allCities = res.items;
                     this.totalRecord = res.totalCount;
+                    this.applyFilters();
                     this.isLoading = false;
                 },
                 error: (error) => {
@@ -87,6 +97,44 @@ export class CityListComponent implements OnInit {
     onCityPageChanged(page: number): void {
         this.PaginationInfo.Page = page;
         this.loadCities();
+    }
+
+    applyFilters(): void {
+        if (!this.allCities) {
+            this.cities = [];
+            return;
+        }
+
+        const { cityCode, cityName, status } = this.filterForm?.value || {};
+
+        this.cities = this.allCities.filter((city) => {
+            const matchesCode = cityCode
+                ? city.code?.toLowerCase().includes(cityCode.toLowerCase())
+                : true;
+
+            const matchesName = cityName
+                ? city.name?.toLowerCase().includes(cityName.toLowerCase())
+                : true;
+
+            const matchesStatus = status !== undefined && status !== null && status !== ''
+                ? city.isActive === (status === 'true')
+                : true;
+
+            return matchesCode && matchesName && matchesStatus;
+        });
+    }
+
+    onSearch(): void {
+        this.applyFilters();
+    }
+
+    onClearFilters(): void {
+        this.filterForm.reset({
+            cityCode: '',
+            cityName: '',
+            status: ''
+        });
+        this.applyFilters();
     }
 
     getStatusBadgeClass(isActive: boolean): string {

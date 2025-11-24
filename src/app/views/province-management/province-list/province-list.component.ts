@@ -8,28 +8,37 @@ import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-province-list',
     standalone: true,
-    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
+    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent, ReactiveFormsModule],
     templateUrl: './province-list.component.html'
 })
 export class ProvinceListComponent implements OnInit {
     provinces: Province[] = [];
+    allProvinces: Province[] = [];
     totalRecord = 0;
     PaginationInfo: any = {
         Page: 1,
         RowsPerPage: 10
     };
     isLoading = false;
+    filterForm!: FormGroup;
 
     constructor(
         private provinceService: ProvinceService,
-        private router: Router
+        private router: Router,
+        private fb: FormBuilder
     ) {}
 
     ngOnInit(): void {
+        this.filterForm = this.fb.group({
+            provinceCode: [''],
+            provinceName: [''],
+            status: ['']
+        });
         this.loadProvinces();
     }
 
@@ -38,8 +47,9 @@ export class ProvinceListComponent implements OnInit {
         this.provinceService.getProvinces(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
             .subscribe({
                 next: (res) => {
-                    this.provinces = res.items;
+                    this.allProvinces = res.items;
                     this.totalRecord = res.totalCount;
+                    this.applyFilters();
                     this.isLoading = false;
                 },
                 error: (error) => {
@@ -87,6 +97,44 @@ export class ProvinceListComponent implements OnInit {
     onProvincePageChanged(page: number): void {
         this.PaginationInfo.Page = page;
         this.loadProvinces();
+    }
+
+    applyFilters(): void {
+        if (!this.allProvinces) {
+            this.provinces = [];
+            return;
+        }
+
+        const { provinceCode, provinceName, status } = this.filterForm?.value || {};
+
+        this.provinces = this.allProvinces.filter((province) => {
+            const matchesCode = provinceCode
+                ? province.code?.toLowerCase().includes(provinceCode.toLowerCase())
+                : true;
+
+            const matchesName = provinceName
+                ? province.name?.toLowerCase().includes(provinceName.toLowerCase())
+                : true;
+
+            const matchesStatus = status !== undefined && status !== null && status !== ''
+                ? province.isActive === (status === 'true')
+                : true;
+
+            return matchesCode && matchesName && matchesStatus;
+        });
+    }
+
+    onSearch(): void {
+        this.applyFilters();
+    }
+
+    onClearFilters(): void {
+        this.filterForm.reset({
+            provinceCode: '',
+            provinceName: '',
+            status: ''
+        });
+        this.applyFilters();
     }
 
     getStatusBadgeClass(isActive: boolean): string {
