@@ -5,264 +5,376 @@
                 <app-skeleton-loader variant="form" ariaLabel="Loading form"></app-skeleton-loader>
             } @else {
                 <app-page-title [title]="getPageTitle()" subTitle="Acquisition Management"></app-page-title>
-                
+
                 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
-                <!-- Basic Information Card -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light">
-                        <div class="d-flex align-items-center">
-                            <ng-icon name="tablerBuilding" class="me-2 gradient-icon" size="20"></ng-icon>
-                            <h5 class="mb-0 fw-semibold">Basic Information</h5>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <!-- Agent Selection -->
-                            <div class="col-md-6 col-lg-4">
-                                <label class="form-label fw-medium">
-                                    <ng-icon name="tablerUserCheck" class="me-1 gradient-icon" size="16"></ng-icon>
-                                    Agent <span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select" 
-                                    [class.is-invalid]="form.get('agentId')?.invalid && form.get('agentId')?.touched"
-                                    formControlName="agentId">
-                                    <option value="">-- Select Agent --</option>
-                                    <option *ngFor="let agent of agents" [value]="agent.id">{{ agent.name }}</option>
-                                </select>
-                                @if (form.get('agentId')?.invalid && form.get('agentId')?.touched) {
-                                    <div class="invalid-feedback">Please select an agent</div>
-                                }
-                            </div>
-
-                            <!-- Branch Code -->
-                            <div class="col-md-6 col-lg-4">
-                                <label class="form-label fw-medium">
-                                    <ng-icon name="tablerCode" class="me-1 gradient-icon" size="16"></ng-icon>
-                                    Branch Code <span class="text-danger">*</span>
-                                </label>
-                                <input type="text" class="form-control" 
-                                    [class.is-invalid]="form.get('code')?.invalid && form.get('code')?.touched"
-                                    formControlName="code" 
-                                    placeholder="Enter branch code" 
-                                    maxlength="20">
-                                @if (form.get('code')?.hasError('required') && form.get('code')?.touched) {
-                                    <div class="invalid-feedback">Branch code is required</div>
-                                }
-                            </div>
-
-                            <!-- Branch Name -->
-                            <div class="col-md-6 col-lg-4">
-                                <label class="form-label fw-medium">
-                                    <ng-icon name="tablerBuilding" class="me-1 gradient-icon" size="16"></ng-icon>
-                                    Branch Name <span class="text-danger">*</span>
-                                </label>
-                                <input type="text" class="form-control" 
-                                    [class.is-invalid]="form.get('name')?.invalid && form.get('name')?.touched"
-                                    formControlName="name" 
-                                    placeholder="Enter branch name" 
-                                    maxlength="100">
-                                @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
-                                    <div class="invalid-feedback">Branch name is required</div>
-                                }
-                            </div>
-
-                            <!-- Contact Person -->
-                            <div class="col-md-6 col-lg-4">
-                                <label class="form-label fw-medium">
-                                    <ng-icon name="tablerUser" class="me-1 gradient-icon" size="16"></ng-icon>
-                                    Contact Person <span class="text-danger">*</span>
-                                </label>
-                                <input type="text" class="form-control" 
-                                    [class.is-invalid]="form.get('contactPerson')?.invalid && form.get('contactPerson')?.touched"
-                                    formControlName="contactPerson" 
-                                    placeholder="Enter contact person name">
-                                @if (form.get('contactPerson')?.hasError('required') && form.get('contactPerson')?.touched) {
-                                    <div class="invalid-feedback">Contact person is required</div>
-                                }
-                            </div>
-
-                            <!-- Phone 1 -->
-                            <div class="col-md-6 col-lg-4">
-                                <label class="form-label fw-medium">
-                                    <ng-icon name="tablerPhone" class="me-1 gradient-icon" size="16"></ng-icon>
-                                    Phone 1 <span class="text-danger">*</span>
-                                </label>
-                                <input type="tel" class="form-control" 
-                                    [class.is-invalid]="form.get('phone1')?.invalid && form.get('phone1')?.touched"
-                                    formControlName="phone1" 
-                                    placeholder="e.g. +92 300 1234567">
-                                @if (form.get('phone1')?.hasError('required') && form.get('phone1')?.touched) {
-                                    <div class="invalid-feedback">Phone number is required</div>
-                                }
-                                @if (form.get('phone1')?.hasError('pattern') && form.get('phone1')?.touched) {
-                                    <div class="invalid-feedback">Please enter a valid phone number</div>
-                                }
-                            </div>
-
-                            <!-- Phone 2 -->
-                            <div class="col-md-6 col-lg-4">
-                                <label class="form-label fw-medium">
-                                    <ng-icon name="tablerPhone" class="me-1 gradient-icon" size="16"></ng-icon>
-                                    Phone 2
-                                </label>
-                                <input type="tel" class="form-control" 
-                                    [class.is-invalid]="form.get('phone2')?.invalid && form.get('phone2')?.touched"
-                                    formControlName="phone2" 
-                                    placeholder="e.g. +92 300 1234568">
-                                @if (form.get('phone2')?.hasError('pattern') && form.get('phone2')?.touched) {
-                                    <div class="invalid-feedback">Please enter a valid phone number</div>
-                                }
-                            </div>
-
-                            <!-- Fax -->
-                            <div class="col-md-6 col-lg-4">
-                                <label class="form-label fw-medium">
-                                    <ng-icon name="tablerPrinter" class="me-1 gradient-icon" size="16"></ng-icon>
-                                    Fax
-                                </label>  
-                                <input type="text" class="form-control" 
-                                    [class.is-invalid]="form.get('fax')?.invalid && form.get('fax')?.touched"
-                                    formControlName="fax" 
-                                    placeholder="e.g. +92 42 1234567">
-                            </div>
-
-                            <!-- Email -->
-                            <div class="col-md-6 col-lg-4">
-                                <label class="form-label fw-medium">
-                                    <ng-icon name="tablerMail" class="me-1 gradient-icon" size="16"></ng-icon>
-                                    Email
-                                </label>
-                                <input type="email" class="form-control" 
-                                    [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched"
-                                    formControlName="email" 
-                                    placeholder="e.g. branch@example.com">
-                                @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
-                                    <div class="invalid-feedback">Please enter a valid email address</div>
-                                }
-                            </div>
-                        </div>
-                    </div>
+                <div class="card shadow-sm">
+          <!-- <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0 text-dark">Agent Wizard</h5>
+                      <span class="badge badge-soft-success badge-label fs-xxs py-1">Exclusive</span>
+                    </div> -->
+          <div class="card-body">
+            <div class="ins-wizard">
+              <div class="row">
+                <div class="col-md-3">
+                  <ul class="nav flex-column wizard-bordered wizard-tabs nav-pills" role="tablist">
+                    @for (s of steps; track $index; let i = $index) {
+                    <li class="nav-item">
+                      <a href="javascript:void(0);" class="nav-link"
+                        [class]="i < currentStep ? 'wizard-item-done' : i === currentStep ? 'active' : ''"
+                        (click)="goToStep(i)">
+                        <span class="d-flex align-items-center">
+                          <ng-icon [name]="s.icon" class="fs-32"></ng-icon>
+                          <span class="flex-grow-1 ms-2 text-truncate">
+                            <span class="mb-0 lh-base d-block fw-semibold text-body fs-base">{{ s.title }}</span>
+                            <span class="fs-xxs mb-0">{{ s.subtitle }}</span>
+                          </span>
+                          <span class="ms-auto" *ngIf="i < currentStep || i === currentStep">
+                            @if (getStepValidationIcon(i)) {
+                            <ng-icon [name]="getStepValidationIcon(i)"
+                              [class]="getStepValidationIcon(i) === 'tablerCircleCheck' ? 'text-success' : 'text-danger'"
+                              size="16"></ng-icon>
+                            }
+                          </span>
+                        </span>
+                      </a>
+                    </li>
+                    }
+                  </ul>
                 </div>
-                <!-- Location Details Card -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light">
+                <div class="col-md-9">
+                  <div class="wizard-progress">
+                    <div class="small text-muted">Step {{ currentStep + 1 }} of {{ steps.length }}</div>
+                    <div class="bar">
+                      <span [style.width.%]="((currentStep + 1) / steps.length) * 100"></span>
+                    </div>
+                  </div>
+                  <div class="tab-content border border-dashed rounded p-4">
+                    @for (s of steps; track $index; let i = $index) {
+                    <div class="tab-pane fade" [class.show]="currentStep === i" [class.active]="currentStep === i">
+                      @switch (i) {
+                    @case (0) {
+
+<div class="step-header">
+  <div>
+    <h4 class="mb-0">Basic Information</h4>
+    <small class="text-muted">Provide basic branch details and contact information.</small>
+  </div>
+</div>
+
+<div class="row g-4 mt-2">
+
+  <!-- Agent Selection -->
+  <div class="col-lg-3">
+    <div class="form-group">
+      <label class="form-label fw-semibold">
+        <ng-icon name="tablerUserCheck" class="me-1 gradient-icon" size="16"></ng-icon>
+        Agent <span class="text-danger">*</span>
+      </label>
+      <select class="form-select" formControlName="agentId"
+        [class.is-invalid]="isFieldInvalid('agentId')">
+        <option value="">-- Select Agent --</option>
+        <option *ngFor="let a of agents" [value]="a.id">{{ a.name }}</option>
+      </select>
+
+    </div>
+  </div>
+
+  <!-- Branch Code -->
+  <div class="col-lg-3">
+    <div class="form-group">
+      <label class="form-label fw-semibold">
+        <ng-icon name="tablerCode" class="me-1 gradient-icon" size="16"></ng-icon>
+        Branch Code <span class="text-danger">*</span>
+      </label>
+      <input type="text" class="form-control"
+        [class.is-invalid]="isFieldInvalid('code')"
+        formControlName="code"
+        placeholder="Enter branch code" maxlength="20">
+      @if (isFieldInvalid('code')) {
+        <div class="invalid-feedback">{{ getFieldError('code') }}</div>
+      }
+    </div>
+  </div>
+
+  <!-- Branch Name -->
+  <div class="col-lg-3">
+    <div class="form-group">
+      <label class="form-label fw-semibold">
+        <ng-icon name="tablerBuilding" class="me-1 gradient-icon" size="16"></ng-icon>
+        Branch Name <span class="text-danger">*</span>
+      </label>
+      <input type="text" class="form-control"
+        [class.is-invalid]="isFieldInvalid('name')"
+        formControlName="name"
+        placeholder="Enter branch name" maxlength="100">
+      @if (isFieldInvalid('name')) {
+        <div class="invalid-feedback">{{ getFieldError('name') }}</div>
+      }
+    </div>
+  </div>
+  <!-- Phone 1 -->
+  <div class="col-lg-3">
+    <div class="form-group">
+      <label class="form-label fw-semibold">
+        <ng-icon name="tablerPhone" class="me-1 gradient-icon" size="16"></ng-icon>
+        Phone #1
+      </label>
+      <input type="text" class="form-control"
+        [class.is-invalid]="isFieldInvalid('phone1')"
+        formControlName="phone1"
+        placeholder="Enter phone 1">
+      @if (isFieldInvalid('phone1')) {
+        <div class="invalid-feedback">{{ getFieldError('phone1') }}</div>
+      }
+    </div>
+  </div>
+
+  <!-- Phone 2 -->
+  <div class="col-lg-3">
+    <div class="form-group">
+      <label class="form-label fw-semibold">
+        <ng-icon name="tablerPhone" class="me-1 gradient-icon" size="16"></ng-icon>
+        Phone #2
+      </label>
+      <input type="text" class="form-control"
+        [class.is-invalid]="isFieldInvalid('phone2')"
+        formControlName="phone2"
+        placeholder="Enter phone 2">
+    </div>
+  </div>
+
+  <!-- Fax -->
+  <div class="col-lg-3">
+    <div class="form-group">
+      <label class="form-label fw-semibold">
+        <ng-icon name="tablerPrinter" class="me-1 gradient-icon" size="16"></ng-icon>
+        Fax
+      </label>
+      <input type="text" class="form-control"
+        [class.is-invalid]="isFieldInvalid('fax')"
+        formControlName="fax"
+        placeholder="Enter fax number">
+    </div>
+  </div>
+
+  <!-- Email -->
+  <div class="col-lg-3">
+    <div class="form-group">
+      <label class="form-label fw-semibold">
+    <ng-icon name="tablerMail" class="me-1 gradient-icon" size="16"></ng-icon>
+    Email<span class="text-danger">*</span>
+      </label>
+ <input type="email"
+       id="email"
+       class="form-control"
+       [class.is-invalid]="form.get('email')?.touched && getFieldError('email')"
+       formControlName="email"
+       placeholder="Enter email">
+
+        @if (form.get('email')?.touched && getFieldError('email')) {
+        <div class="invalid-feedback">{{ getFieldError('email') }}</div>
+        }
+    </div>
+  </div>
+
+</div>
+
+<div class="wizard-actions d-flex justify-content-between mt-3">
+  <span></span>
+  <button type="button" class="btn submit-button" (click)="nextStep()">Next</button>
+</div>
+
+}
+
+                      @case (1) {
+  <div class="step-header">
+    <div class="d-flex align-items-center">
+      <div>
+        <h4 class="mb-0">Location Details</h4>
+        <small class="text-muted">Provide full address and select country, province, and city.</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-2">
+
+    <!-- Address (Textarea from Code 1 but fitted into Code 2 layout) -->
+    <div class="col-lg-6">
+      <label class="form-label fw-semibold">
+        <ng-icon name="tablerMapPin" class="me-1 gradient-icon" size="16"></ng-icon>
+        Address
+      </label>
+
+      <textarea class="form-control"
+        rows="2"
+        placeholder="Enter complete address"
+        formControlName="address"
+        maxlength="500"
+        [class.is-invalid]="form.get('address')?.invalid && form.get('address')?.touched">
+      </textarea>
+
+      @if (form.get('address')?.hasError('maxlength') && form.get('address')?.touched) {
+        <div class="invalid-feedback">Address cannot exceed 500 characters</div>
+      }
+    </div>
+
+    <!-- Country -->
+    <div class="col-lg-2">
+      <label class="form-label fw-semibold">
+        <ng-icon name="tablerWorld" class="me-1 gradient-icon" size="16"></ng-icon>
+        Country<span class="text-danger">*</span>
+      </label>
+      <select class="form-select" formControlName="countryId">
+        <option value="">-- Select Country --</option>
+        <option *ngFor="let c of countries" [value]="c.id">{{ c.name }}</option>
+      </select>
+        @if (isFieldInvalid('countryId')) {
+      <div class="invalid-feedback">{{ getFieldError('countryId') }}</div>
+    }
+    </div>
+
+    <!-- Province -->
+    <div class="col-lg-2">
+      <label class="form-label fw-semibold">
+        <ng-icon name="tablerMap" class="me-1 gradient-icon" size="16"></ng-icon>
+        Province/State<span class="text-danger">*</span>
+      </label>
+      <select class="form-select"
+        formControlName="provinceId"
+        [disabled]="!form.get('provinceId')?.value">
+        <option value="">-- Select Province/State --</option>
+        <option *ngFor="let p of provinces" [value]="p.id">{{ p.name }}</option>
+      </select>
+      @if (isFieldInvalid('provinceId')) {
+      <div class="invalid-feedback">{{ getFieldError('provinceId') }}</div>
+    }
+    </div>
+
+    <!-- City -->
+    <div class="col-lg-2">
+      <label class="form-label fw-semibold">
+        <ng-icon name="tablerBuilding" class="me-1 gradient-icon" size="16"></ng-icon>
+        City<span class="text-danger">*</span>
+      </label>
+      <select class="form-select"
+        formControlName="cityId"
+        [disabled]="!form.get('cityId')?.value">
+        <option value="">-- Select City --</option>
+        <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+      </select>
+
+    </div>
+
+  </div>
+
+  <div class="wizard-actions d-flex justify-content-between mt-3">
+    <button type="button" class="btn btn-dark" (click)="previousStep()">← Back</button>
+    <button type="button" class="btn submit-button" (click)="nextStep()">Next</button>
+  </div>
+}
+
+                      @case (2) {
+
+                      <div class="step-header">
                         <div class="d-flex align-items-center">
-                            <ng-icon name="tablerMapPin" class="me-2 gradient-icon" size="20"></ng-icon>
-                            <h5 class="mb-0 fw-semibold">Location Details</h5>
+                          <!-- <ng-icon name="tablerPlugConnected" class="me-2 gradient-icon" size="18"></ng-icon> -->
+                          <!-- <h6 class="mb-0">Acquisition Modes</h6> -->
+                          <div>
+                            <h4 class="mb-0">Acquisition Modes</h4>
+                            <small class="text-muted">Choose the channels allowed for acquiring transactions.</small>
+                          </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <!-- Address -->
-                            <div class="col-12">
-                                <label class="form-label fw-medium">
-                                    <ng-icon name="tablerMapPin" class="me-1 gradient-icon" size="16"></ng-icon>
-                                    Address
-                                </label>
-                                <textarea class="form-control" 
-                                    [class.is-invalid]="form.get('address')?.invalid && form.get('address')?.touched"
-                                    formControlName="address" 
-                                    rows="2" 
-                                    placeholder="Enter complete address"
-                                    maxlength="500"></textarea>
-                                @if (form.get('address')?.hasError('maxlength') && form.get('address')?.touched) {
-                                    <div class="invalid-feedback">Address cannot exceed 500 characters</div>
-                                }
-                            </div>
-
-                            <!-- Country -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-medium">
-                                    <ng-icon name="tablerWorld" class="me-1 gradient-icon" size="16"></ng-icon>
-                                    Country
-                                </label>
-                                <select class="form-select" formControlName="countryId">
-                                    <option value="">-- Select Country --</option>
-                                    <option *ngFor="let c of countries" [value]="c.id">{{ c.name }}</option>
-                                </select>
-                            </div>
-
-                            <!-- Province/State -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-medium">
-                                    <ng-icon name="tablerMap" class="me-1 gradient-icon" size="16"></ng-icon>
-                                    Province/State
-                                </label>
-                                <select class="form-select" formControlName="provinceId" [disabled]="!form.get('countryId')?.value">
-                                    <option value="">-- Select Province/State --</option>
-                                    <option *ngFor="let p of provinces" [value]="p.id">{{ p.name }}</option>
-                                </select>
-                            </div>
-
-                            <!-- City -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-medium">
-                                    <ng-icon name="tablerBuilding" class="me-1 gradient-icon" size="16"></ng-icon>
-                                    City
-                                </label>
-                                <select class="form-select" formControlName="cityId" [disabled]="!form.get('provinceId')?.value">
-                                    <option value="">-- Select City --</option>
-                                    <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-               <div class="card shadow-sm mt-3">
-                    <div class="card-header bg-light text-white">
-                        <div class="d-flex align-items-center">
-                            <ng-icon name="tablerPlugConnected" class="me-2 gradient-icon" size="20"></ng-icon>
-                            <h4 class="card-title mb-0 text-dark">Acquisition Modes</h4>
-                        </div>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="row g-3">
-                            <div class="col-lg-12 d-flex flex-wrap gap-4">
-                                <div class="form-check"><input class="form-check-input" type="checkbox" formControlName="isOnlineAllow" id="isOnlineAllow"><label class="form-check-label ms-2" for="isOnlineAllow">Is On Line Allow</label></div>
-                                <div class="form-check"><input class="form-check-input" type="checkbox" formControlName="isFileUploadAllow" id="isFileUploadAllow"><label class="form-check-label ms-2" for="isFileUploadAllow">Is File Upload Allow</label></div>
-                                <div class="form-check"><input class="form-check-input" type="checkbox" formControlName="isFtpAllow" id="isFtpAllow"><label class="form-check-label ms-2" for="isFtpAllow">Is FTP Allow</label></div>
-                                <div class="form-check"><input class="form-check-input" type="checkbox" formControlName="isEmailUploadAllow" id="isEmailUploadAllow"><label class="form-check-label ms-2" for="isEmailUploadAllow">Is Email Upload Allow</label></div>
-                                <div class="form-check"><input class="form-check-input" type="checkbox" formControlName="isWebServiceAllow" id="isWebServiceAllow"><label class="form-check-label ms-2" for="isWebServiceAllow">Is Web Service Allow</label></div>
-                                <div class="form-check"><input class="form-check-input" type="checkbox" formControlName="isBeneficiarySmsAllow" id="isBeneficiarySmsAllow"><label class="form-check-label ms-2" for="isBeneficiarySmsAllow">Is Beneficiary SMS Allow</label></div>
-                                <div class="form-check"><input class="form-check-input" type="checkbox" formControlName="isActive" id="isActive"><label class="form-check-label ms-2" for="isActive">Is Active</label></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Disbursement Modes Card -->
-               <div class="card shadow-sm mt-3">
-                    <div class="card-header bg-light text-white">
-                        <div class="d-flex align-items-center">
-                            <ng-icon name="tablerCurrencyDollar" class="me-2 gradient-icon" size="20"></ng-icon>
-                            <h4 class="card-title mb-0 text-dark">Disbursement Modes</h4>
-                        </div>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="col-lg-12 d-flex flex-wrap gap-4">
-                            <div class="form-check"><input class="form-check-input" type="checkbox" formControlName="isOtcAllow" id="isOtcAllow"><label class="form-check-label ms-2" for="isOtcAllow">Is COT Allow</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" formControlName="isDirectCreditAllow" id="isDirectCreditAllow"><label class="form-check-label ms-2" for="isDirectCreditAllow">Is Direct Credit Allow</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" formControlName="isOtherCreditAllow" id="isOtherCreditAllow"><label class="form-check-label ms-2" for="isOtherCreditAllow">Is Other Credit Allow</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" formControlName="isRemitterSmsAllow" id="isRemitterSmsAllow"><label class="form-check-label ms-2" for="isRemitterSmsAllow">Is Remitter SMS Allow</label></div>
-                        </div>
-                    </div>
-                     <div class="d-flex justify-content-end gap-2 mt-2 mb-2" style="margin-right: 18px;">
-                            <button type="button" class="btn btn-dark" (click)="onCancel()" [disabled]="isSubmitting">
-                                <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
-                                Back to List
-                            </button>
-                            <button type="submit" class="btn submit-button" (click)="onSubmit()">
-                                @if (isSubmitting) {
-                                    <span class="spinner-border spinner-border-sm me-1" role="status"></span>
-                                    Saving...
-                                } @else {
-                                    <ng-icon name="tablerDeviceFloppy" class="me-2" size="16"></ng-icon>
-                                    Save
-                                }
-                            </button>
                       </div>
+                      <div class="row g-3 mt-2">
+                        <div class="col-lg-12 d-flex flex-wrap gap-4">
+                          <div class="form-check"><input class="form-check-input" type="checkbox"
+                              formControlName="isOnlineAllow" id="isOnlineAllow"><label class="form-check-label ms-2"
+                              for="isOnlineAllow">Is On Line Allow</label></div>
+                          <div class="form-check"><input class="form-check-input" type="checkbox"
+                              formControlName="isFileUploadAllow" id="isFileUploadAllow"><label
+                              class="form-check-label ms-2" for="isFileUploadAllow">Is File Upload Allow</label></div>
+                          <div class="form-check"><input class="form-check-input" type="checkbox"
+                              formControlName="isFtpAllow" id="isFtpAllow"><label class="form-check-label ms-2"
+                              for="isFtpAllow">Is FTP Allow</label></div>
+                          <div class="form-check"><input class="form-check-input" type="checkbox"
+                              formControlName="isEmailUploadAllow" id="isEmailUploadAllow"><label
+                              class="form-check-label ms-2" for="isEmailUploadAllow">Is Email Upload Allow</label></div>
+                          <div class="form-check"><input class="form-check-input" type="checkbox"
+                              formControlName="isWebServiceAllow" id="isWebServiceAllow"><label
+                              class="form-check-label ms-2" for="isWebServiceAllow">Is Web Service Allow</label></div>
+                          <div class="form-check"><input class="form-check-input" type="checkbox"
+                              formControlName="isBeneficiarySmsAllow" id="isBeneficiarySmsAllow"><label
+                              class="form-check-label ms-2" for="isBeneficiarySmsAllow">Is Beneficiary SMS Allow</label>
+                          </div>
+                          <div class="form-check"><input class="form-check-input" type="checkbox"
+                              formControlName="isActive" id="isActive"><label class="form-check-label ms-2"
+                              for="isActive">Is Active</label></div>
+                        </div>
+                      </div>
+                      <div class="wizard-actions d-flex justify-content-between mt-3">
+                        <button type="button" class="btn btn-dark" (click)="previousStep()">← Back</button>
+                        <button type="button" class="btn submit-button" (click)="nextStep()">Next</button>
+                      </div>
+                      }
+                      @case (3) {
+                      <div class="step-header">
+                        <div class="d-flex align-items-center">
+                          <!-- <ng-icon name="tablerCurrencyDollar" class="me-2 gradient-icon" size="18"></ng-icon> -->
+                          <div>
+                            <h4 class="mb-0">Disbursement Modes</h4>
+                            <small class="text-muted">Choose how disbursements can be made.</small>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-12 d-flex flex-wrap gap-4 mt-2">
+                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                            formControlName="isOtcAllow" id="isOtcAllow"><label class="form-check-label ms-2"
+                            for="isOtcAllow">Is COT Allow</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                            formControlName="isDirectCreditAllow" id="isDirectCreditAllow"><label
+                            class="form-check-label ms-2" for="isDirectCreditAllow">Is Direct Credit Allow</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                            formControlName="isOtherCreditAllow" id="isOtherCreditAllow"><label
+                            class="form-check-label ms-2" for="isOtherCreditAllow">Is Other Credit Allow</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                            formControlName="isRemitterSmsAllow" id="isRemitterSmsAllow"><label
+                            class="form-check-label ms-2" for="isRemitterSmsAllow">Is Remitter SMS Allow</label></div>
+                      </div>
+                      <div class="wizard-actions d-flex justify-content-between mt-3">
+                        <button type="button" class="btn btn-dark" (click)="previousStep()">← Back</button>
+                        <button type="button" class="btn submit-button" (click)="nextStep()">Next</button>
+                      </div>
+                      }
+
+                        }
+                    </div>
+                    }
+
+                  </div>
+                  <!-- Global Form Actions - Outside Tabs -->
+                  <div class="card-footer border-top">
+                    <div class="d-flex justify-content-end gap-2">
+                      <button type="button" class="btn btn-dark" (click)="onCancel()" [disabled]="isSubmitting">
+                        <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
+                        Back to List
+                      </button>
+                      <button type="submit" class="btn submit-button">
+                        @if (isSubmitting) {
+                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                        Saving...
+                        } @else {
+                        <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                        Save
+                        }
+                      </button>
+                    </div>
+                  </div>
                 </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
               </form>
             }
         </div>

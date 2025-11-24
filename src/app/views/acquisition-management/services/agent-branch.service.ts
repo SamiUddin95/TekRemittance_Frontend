@@ -110,14 +110,21 @@ export class AgentBranchService {
     );
   }
 
-  createBranch(branch: Omit<Branch, 'id' | 'createdAt' | 'updatedAt'>): Observable<Branch> {
-    return this.http.post<Branch>(this.apiUrl, branch)
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
+createBranch(branch: Omit<Branch, 'createdAt' | 'updatedAt'> & { id: string, dto: any }): Observable<Branch> {
+  const branchWithIdAndDto = {
+    ...branch,
+    id: '00000000-0000-0000-0000-000000000000'
+  };
+
+  return this.http.post<Branch>(this.apiUrl, branchWithIdAndDto)
+    .pipe(
+      catchError(this.handleError)
+    );
+}
+
 
   updateBranch(id: string, branch: Partial<Branch>): Observable<Branch> {
+    debugger;
     return this.http.put<Branch>(`${this.apiUrl}/${id}`, branch)
       .pipe(
         catchError(this.handleError)
@@ -134,7 +141,7 @@ export class AgentBranchService {
   private handleError(error: any) {
     console.error('API Error:', error);
     let errorMessage = 'An error occurred';
-    
+
     if (error.error instanceof ErrorEvent) {
       // Client-side error
       errorMessage = `Error: ${error.error.message}`;
@@ -142,7 +149,7 @@ export class AgentBranchService {
       // Server-side error
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
-    
+
     return throwError(() => new Error(errorMessage));
   }
 }

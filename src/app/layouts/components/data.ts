@@ -40,12 +40,10 @@ export const menuItems: MenuItemType[] = [
         label: 'General Features',
         icon: 'tablerApps',
         isCollapsed: true,
-        // children: [
-        //     {icon: 'tablerWorld', label: 'Country Management', url: '/country-management'},
-        //     {icon: 'tablerMapPin', label: 'Province Management', url: '/province-management'},
-        //     {icon: 'tablerBuilding', label: 'City Management', url: '/city-management'},
-        //     {icon: 'tablerBuildingBank', label: 'Bank Management', url: '/bank-management'},
-        // ]
+        children: [
+              {icon: 'tablerFileDescription', label: 'Audit Logs', url: '/audit-logs'},
+
+        ]
     },
     {
         label: 'Acquisition Management',
@@ -64,7 +62,7 @@ export const menuItems: MenuItemType[] = [
         children: [
             {icon: 'tablerFileDescription', label: 'Upload Template', url: '/bulk-upload-template'},
             {icon: 'tablerCloudUpload', label: 'Agent File Upload', url: '/agent-file-upload'},
-            
+
         ]
     },
     {
@@ -88,9 +86,9 @@ export const menuItems: MenuItemType[] = [
             {icon: 'tablerUserCheck', label: 'Approve Users', url: '/users/approve'},
         ]
     },
-    
-  
-    
+
+
+
 ];
 
 export const horizontalMenuItems: MenuItemType[] = [
@@ -115,7 +113,7 @@ export const horizontalMenuItems: MenuItemType[] = [
         icon: 'tablerApps',
         isCollapsed: true,
         children: [
-            // {icon: 'tablerWorld', label: 'Country Management', url: '/country-management'},
+            {icon: 'tablerFileDescription', label: 'Audit Logs', url: '/audit-log'},
             // {icon: 'tablerMapPin', label: 'Province Management', url: '/province-management'},
             // {icon: 'tablerBuilding', label: 'City Management', url: '/city-management'},
             // {icon: 'tablerBuildingBank', label: 'Bank Management', url: '/bank-management'},
@@ -166,7 +164,7 @@ export const horizontalMenuItems: MenuItemType[] = [
 
         ]
     },
-     
-     
+
+
 ];
 

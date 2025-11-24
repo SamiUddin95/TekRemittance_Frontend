@@ -10,19 +10,14 @@ export const VIEWS_ROUTES: Routes = [
         path: '',
         loadChildren: () => import('./layouts/layout.routes').then((mod) => mod.LAYOUT_ROUTES)
     },
-     
-    
     {
         path: '',
         loadChildren: () => import('./pages/pages.route').then((mod) => mod.PAGES_ROUTES)
     },
-     
-     
     {
         path: '',
         loadChildren: () => import('./apps/apps.route').then((mod) => mod.APPS_ROUTES)
     },
-     
     {
         path: '',
         loadChildren: () => import('./icons/icons.route').then((mod) => mod.ICONS_ROUTES)
@@ -60,9 +55,12 @@ export const VIEWS_ROUTES: Routes = [
         loadChildren: () => import('./user-management/user-management.routes').then((mod) => mod.USER_MANAGEMENT_ROUTES)
     },
     {
+        path: '',
+        loadChildren: () => import('./general-feature/general-feature.routes').then((mod) => mod.GENERAL_FEATURE_ROUTES)
+    },
+    {
         path: 'widgets',
         component: WidgetsComponent,
         data: {title: "Widgets"},
     },
-   
 ];
