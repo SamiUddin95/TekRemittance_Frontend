@@ -75,6 +75,20 @@ export class BulkUploadTemplateFormComponent {
       error: () => {}
     });
 
+    // Conditionally require length only when fieldType is 'TextBox' (String)
+    const fieldTypeCtrl = this.fieldForm.get('fieldType');
+    const lengthCtrl = this.fieldForm.get('length');
+    fieldTypeCtrl?.valueChanges.subscribe((val) => {
+      if (!lengthCtrl) return;
+      if (val === 'TextBox') {
+        lengthCtrl.setValidators([Validators.required, Validators.min(1)]);
+      } else {
+        lengthCtrl.clearValidators();
+        lengthCtrl.setValue(0, { emitEvent: false });
+      }
+      lengthCtrl.updateValueAndValidity({ emitEvent: false });
+    });
+
     const state: any = history.state;
     if (state && state.template) {
       const t = state.template as {
@@ -300,6 +314,14 @@ export class BulkUploadTemplateFormComponent {
       startIndex: f.startIndex,
       length: f.length,
     });
+    // Ensure validators reflect the current fieldType after patch
+    const lengthCtrl2 = this.fieldForm.get('length');
+    if (this.fieldForm.get('fieldType')?.value === 'TextBox') {
+      lengthCtrl2?.setValidators([Validators.required, Validators.min(1)]);
+    } else {
+      lengthCtrl2?.clearValidators();
+    }
+    lengthCtrl2?.updateValueAndValidity({ emitEvent: false });
   }
 
   onDeleteField(f: { id?: string }): void {

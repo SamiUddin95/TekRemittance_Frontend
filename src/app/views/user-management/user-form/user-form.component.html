@@ -54,7 +54,7 @@
                   <div class="col-4"> 
                     <label for="phone" class="form-label fw-semibold">
                   <ng-icon name="tablerPhone" class="me-1 gradient-icon" size="16"></ng-icon>
-                  Phone <span class="text-danger">*</span>
+                  Phone
                 </label>
                 @if (getFieldError('phone')) { <div class="invalid-feedback">{{ getFieldError('phone') }}</div> }
                 </div>
@@ -79,6 +79,26 @@
                 <input type="text" id="employeeId" class="form-control form-control"
                   [class.is-invalid]="getFieldError('employeeId')" formControlName="employeeId" maxlength="50" placeholder="EMP-00123">
                 </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-8">
+              <div class="form-group">
+                <div class="col-12 d-flex">
+                  <div class="col-4"> 
+                    <label for="userType" class="form-label fw-semibold">
+                      <ng-icon name="tablerUsers" class="me-1 gradient-icon" size="16"></ng-icon>
+                      User Type <span class="text-danger">*</span>
+                    </label>
+                    @if (getFieldError('userType')) { <div class="invalid-feedback">{{ getFieldError('userType') }}</div> }
+                  </div>
+                  <div class="col-8">
+                    <select id="userType" class="form-select form-control" [class.is-invalid]="getFieldError('userType')" formControlName="userType">
+                      <option value="">Select user type</option>
+                      <option value="internalUser">Internal User</option>
+                      <option value="branchUser">Branch User</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>

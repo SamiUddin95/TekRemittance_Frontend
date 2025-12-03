@@ -21,7 +21,8 @@
                     }
 
                     @if (!item.isHeader && !item.isDivider) {
-                    <a  [routerLink]="item.url"
+                    <a  [routerLink]="item.label === 'Log Out' ? null : item.url"
+                       (click)="item.label === 'Log Out' ? onLogout($event) : null"
                        class="dropdown-item"
                        [class]="item.class">
                         <ng-icon [name]="item.icon" size="17"
