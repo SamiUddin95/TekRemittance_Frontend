@@ -70,34 +70,45 @@ export class AgentService {
         } as Agent;
     }
 
-    getAgents(page: number = 1, rowsPerPage: number = 10): Observable<{
-        items: Agent[];
-        totalCount: number;
-        pageNumber: number;
-        pageSize: number;
-        totalPages: number;
-        statusCode: number;
-        status: string;
-    }> {
-        const url = `${environment.apiUrl}/AcquisitionAgents?pageNumber=${page}&pageSize=${rowsPerPage}`;
-        return this.http.get<any>(url).pipe(
-            map((res) => {
-                const statusCode = res?.statusCode ?? res?.status ?? 200;
-                const status = res?.status ?? 'success';
-                const payload = res?.data ?? res;
-                const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
-                return {
-                    items: itemsRaw.map((d: any) => this.mapDtoToAgent(d)),
-                    totalCount: payload?.totalCount ?? itemsRaw.length,
-                    pageNumber: payload?.pageNumber ?? page,
-                    pageSize: payload?.pageSize ?? rowsPerPage,
-                    totalPages: payload?.totalPages ?? 1,
-                    statusCode,
-                    status,
-                };
-            })
-        );
-    }
+    getAgents(
+    page: number = 1,
+    rowsPerPage: number = 10,
+    code?: string,
+    agentname?: string,
+    status?: string
+): Observable<{
+    items: Agent[];
+    totalCount: number;
+    pageNumber: number;
+    pageSize: number;
+    totalPages: number;
+    statusCode: number;
+    status: string;
+}> {
+    let url = `${environment.apiUrl}/AcquisitionAgents?pageNumber=${page}&pageSize=${rowsPerPage}`;
+
+    if (code) url += `&code=${code}`;
+    if (agentname) url += `&agentname=${agentname}`;
+    if (status) url += `&status=${status}`;
+
+    return this.http.get<any>(url).pipe(
+        map((res) => {
+            const statusCode = res?.statusCode ?? res?.status ?? 200;
+            const statusRes = res?.status ?? 'success';
+            const payload = res?.data ?? res;
+            const itemsRaw = Array.isArray(payload?.items) ? payload.items : [];
+            return {
+                items: itemsRaw.map((d: any) => this.mapDtoToAgent(d)),
+                totalCount: payload?.totalCount ?? itemsRaw.length,
+                pageNumber: payload?.pageNumber ?? page,
+                pageSize: payload?.pageSize ?? rowsPerPage,
+                totalPages: payload?.totalPages ?? 1,
+                statusCode,
+                status: statusRes,
+            };
+        })
+    );
+}
 
     getAgentById(id: string): Observable<Agent | undefined> {
         const url = `${environment.apiUrl}/AcquisitionAgents/${id}`;

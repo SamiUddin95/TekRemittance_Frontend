@@ -23,7 +23,7 @@
                 <tr>
                   <th class="fw-bold">Group Name</th>
                   <th class="fw-bold">Description</th>
-                  <th class="fw-bold">Users</th>
+                  <th class="fw-bold">Status</th>
                   <th class="fw-bold text-center">Actions</th>
                 </tr>
               </thead>
@@ -31,12 +31,20 @@
                 <tr *ngFor="let g of groups">
                   <td class="text-break">{{ g.name }}</td>
                   <td class="text-break">{{ g.description }}</td>
-                  <td>{{ g.usersCount || 0 }}</td>
+                  <td><span [class]="getStatusBadgeClass(g.isActive)">
+                        {{ getStatusText(g.isActive) }}
+                        </span>
+                </td>
                   <td class="text-center">
                     <div class="btn-group" role="group">
                       <button type="button" class="btn btn-sm btn-outline-primary" title="Edit" (click)="editGroup(g.id)">
                         <ng-icon name="tablerEdit" size="16"></ng-icon>
                       </button>
+                      <button type="button" class="btn btn-sm btn-outline-danger"
+                                                (click)="deletegroup(g)" title="Delete Country">
+                                                <ng-icon name="tablerTrash" size="16"></ng-icon>
+                                            </button>
+
                     </div>
                   </td>
                 </tr>
@@ -51,6 +59,13 @@
               </tbody>
             </table>
           </div>
+
+           <app-generic-pagination
+            [totalItems]="totalRecord"
+            [pageSize]="PaginationInfo.RowsPerPage"
+            [currentPage]="PaginationInfo.Page"
+            (pageChanged)="onGroupPageChanged($event)">
+          </app-generic-pagination>
 
           <ng-template #loadingTpl>
             <div class="p-4 text-center text-muted">Loading...</div>

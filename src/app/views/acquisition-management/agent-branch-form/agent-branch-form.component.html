@@ -235,16 +235,14 @@
 
     <!-- Province -->
     <div class="col-lg-2">
-      <label class="form-label fw-semibold">
-        <ng-icon name="tablerMap" class="me-1 gradient-icon" size="16"></ng-icon>
-        Province/State<span class="text-danger">*</span>
-      </label>
-      <select class="form-select"
-        formControlName="provinceId"
-        [disabled]="!form.get('provinceId')?.value">
-        <option value="">-- Select Province/State --</option>
-        <option *ngFor="let p of provinces" [value]="p.id">{{ p.name }}</option>
-      </select>
+                          <label class="form-label fw-semibold">
+                            <ng-icon name="tablerMapPin" class="me-1 gradient-icon" size="16"></ng-icon>
+                            Province <span class="text-danger">*</span>
+                          </label>
+                          <select class="form-select" formControlName="provinceId">
+                            <option value="">Select Province</option>
+                            <option *ngFor="let p of provinces" [value]="p.id">{{ p.name }}</option>
+                          </select>
       @if (isFieldInvalid('provinceId')) {
       <div class="invalid-feedback">{{ getFieldError('provinceId') }}</div>
     }

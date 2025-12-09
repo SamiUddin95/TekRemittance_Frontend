@@ -58,29 +58,33 @@ private mapDtoToCountry(dto: any): Country {
         this.loadCountries();
     }
 
-    async loadCountries() {
-        this.isLoading = true;
-        const res =  await this.countryService.getCountries(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
-            .subscribe({
-                next: (response: any) => {
-                    debugger
-                    if(response.statusCode === 200  && response.items){
-                        this.allCountries = response.items.map((item: any) => this.mapDtoToCountry(item));
-                        this.totalRecord = response.totalCount;
-                        this.applyFilters();
-                        this.isLoading = false; 
-                    }
-                this.isLoading = false;
-                },
-                error: (error) => {
-                    console.error('Error loading countries:', error);
-                    this.isLoading = false;
-                }
-            });
-            console.log(res);
-            
+    loadCountries(): void {
+    this.isLoading = true;
+
+    const { countryCode, countryName, status } = this.filterForm.value;
+
+    this.countryService.getCountries(
+        this.PaginationInfo.Page,
+        this.PaginationInfo.RowsPerPage,
+        countryCode,
+        countryName,
+        status
+    ).subscribe({
+        next: (response: any) => {
+            if(response.statusCode === 200 && response.items) {
+                this.allCountries = response.items.map((item: any) => this.mapDtoToCountry(item));
+                this.totalRecord = response.totalCount;
+                this.countries = this.allCountries.filter(c => c.isActive);
+            }
             this.isLoading = false;
-    }
+        },
+        error: (err) => {
+            console.error('Error loading countries:', err);
+            this.isLoading = false;
+        }
+    });
+}
+
 
     applyFilters(): void {
         if (!this.allCountries) {
@@ -108,7 +112,7 @@ private mapDtoToCountry(dto: any): Country {
     }
 
     onSearch(): void {
-        this.applyFilters();
+        this.loadCountries();
     }
 
     onClearFilters(): void {
@@ -117,7 +121,7 @@ private mapDtoToCountry(dto: any): Country {
             countryName: '',
             status: ''
         });
-        this.applyFilters();
+        this.loadCountries();
     }
 
     addNewCountry(): void {

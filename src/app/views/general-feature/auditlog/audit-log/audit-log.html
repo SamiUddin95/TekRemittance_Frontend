@@ -1,64 +1,109 @@
 <div class="">
-    <app-page-title title="Audit Log" subTitle="General Feature"></app-page-title>
+    <app-page-title
+        title="Audit Log"
+        subTitle="General Feature"
+    ></app-page-title>
     <div class="row">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-header bg-light border-bottom">
-                    <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
-                    <div class="d-flex align-items-center">
-                <ng-icon name="tablerFileText" class="me-2 gradient-icon" size="20"></ng-icon>
-                <h4 class="card-title mb-0 text-dark">Audit Log Records</h4>
-                </div>
-
+                    <div class="d-flex justify-content-between align-items-center col-12"
+                        style="margin-top: -5px; margin-bottom: -5px">
+                        <div class="d-flex align-items-center">
+                            <ng-icon
+                                name="tablerFileText"
+                                class="me-2 gradient-icon"
+                                size="20"
+                            ></ng-icon>
+                            <h4 class="card-title mb-0 text-dark">
+                                Audit Log Records
+                            </h4>
+                        </div>
+                        <form
+                            [formGroup]="searchForm"
+                            class="d-flex align-items-center"
+                        >
+                            <div class="input-group">
+                                <input
+                                    type="text"
+                                    class="form-control border-start-1"
+                                    placeholder="Search Audit Logs..."
+                                    formControlName="searchText"
+                                />
+                            </div>
+                        </form>
                     </div>
                 </div>
                 @if (isLoading) {
-                    <app-skeleton-loader variant="table" [rows]="8" [cols]="5" ariaLabel="Loading agents table"></app-skeleton-loader>
+                <app-skeleton-loader
+                    variant="table"
+                    [rows]="8"
+                    [cols]="5"
+                    ariaLabel="Loading agents table"
+                ></app-skeleton-loader>
                 } @else {
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead class="table text-center">
-                                <tr>
-                                <th class="fw-bold">User</th>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-sm">
+                        <thead class="table text-center">
+                            <tr>
                                 <th class="fw-bold">Action</th>
+                                <th class="fw-bold">EntityName</th>
+                                <th class="fw-bold">User</th>
                                 <th class="fw-bold">Details</th>
                                 <th class="fw-bold">Device</th>
                                 <th class="fw-bold">IP Address</th>
                                 <th class="fw-bold">Timestamp</th>
-                                </tr>
-                            </thead>
-
-                            <tbody class="table-group-divider text-center">
-                                @for (log of auditLogs; track log.id) {
-                                <tr>
-                                <td>{{ log.user }}</td>
-                                <td>{{ log.action }}</td>
-                                <td>{{ log.details }}</td>
-                                <td>{{ log.device }}</td>
-                                <td>{{ log.ipAddress }}</td>
-                                <td>{{ log.timestamp }}</td>
-
-                                </tr>
-                                } @empty {
-                                <tr>
-                                <td colspan="6" class="text-center py-4">
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider text-center">
+                            <tr *ngFor="let log of filteredLogs;">
+                                <td>
+                                    <span class="badge bg-success">
+                                        {{ log.action }}
+                                    </span>
+                                </td>
+                                <td>{{ log.entityName }}</td>
+                                <td>
+                                    <span
+                                        style="
+                                            background: #e7f0ff;
+                                            color: #616161;
+                                            padding: 4px 10px;
+                                            border-radius: 20px;
+                                            font-weight: 600;
+                                            display: inline-block;"
+                                    >
+                                        {{ log.user }}
+                                    </span>
+                                </td>
+                                <td>{{ getAuditMessage(log.details) }}</td>
+                                <td>
+                                    <ng-icon
+                                        name="tablerDeviceLaptop"
+                                        size="18"
+                                    ></ng-icon>
+                                </td>
+                                <td>175.107.203.250</td>
+                                <td>{{ log.time | date:'medium' }}</td>
+                            </tr>
+                            <tr *ngIf="auditLogs.length === 0">
+                                <td colspan="7" class="text-center py-4">
                                     <div class="text-muted">
                                     <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
                                     <p class="mb-0">No Audit Log found</p>
                                     </div>
                                 </td>
-                                </tr>
-                                }
-                            </tbody>
-                            </table>
-
-                    </div>
-                    <app-generic-pagination
-                        [totalItems]="totalLogs"
-                        [pageSize]="PaginationInfo.RowsPerPage"
-                        [currentPage]="PaginationInfo.Page"
-                        (pageChanged)="onAgentPageChanged($event)">
-                    </app-generic-pagination>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <app-generic-pagination
+                    [totalItems]="totalLogs"
+                    [pageSize]="PaginationInfo.RowsPerPage"
+                    [currentPage]="PaginationInfo.Page"
+                    (pageChanged)="onAuditPageChanged($event)"
+                >
+                </app-generic-pagination>
                 }
             </div>
         </div>

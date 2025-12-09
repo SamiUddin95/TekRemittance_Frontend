@@ -90,7 +90,6 @@ export class AgentBranchService {
           fax: d.fax,
           email: d.email,
           address: d.address,
-          isActive: d.isActive ?? true,
           acquisitionModes: d.acquisitionModes,
           disbursementModes: d.disbursementModes,
           // booleans (optional downstream)
@@ -100,6 +99,7 @@ export class AgentBranchService {
           isEmailUploadAllow: String(d.acquisitionModes || '').toLowerCase().includes('isemailuploadallow'.toLowerCase()),
           isWebServiceAllow: String(d.acquisitionModes || '').toLowerCase().includes('iswebserviceallow'.toLowerCase()),
           isBeneficiarySmsAllow: String(d.acquisitionModes || '').toLowerCase().includes('isbeneficiarysmsallow'.toLowerCase()),
+          isActive: String(d.acquisitionModes || '').toLowerCase().includes('isActive'.toLowerCase()),
           isOtcAllow: String(d.disbursementModes || '').toLowerCase().includes('isotcallow'.toLowerCase()),
           isDirectCreditAllow: String(d.disbursementModes || '').toLowerCase().includes('isdirectcreditallow'.toLowerCase()),
           isOtherCreditAllow: String(d.disbursementModes || '').toLowerCase().includes('isothercreditallow'.toLowerCase()),

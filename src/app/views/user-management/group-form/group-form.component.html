@@ -23,29 +23,49 @@
         </div>
 
         <div class="card-body">
-          <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs mb-3">
+          <!-- <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs mb-3"> -->
+           <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" (navChange)="beforeTabChange($event)" class="nav-tabs mb-3">
             <li [ngbNavItem]="'info'">
               <button ngbNavLink>Info</button>
               <ng-template ngbNavContent>
-                <form [formGroup]="form" class="mt-3">
+                <form [formGroup]="Groupform" class="mt-3">
                   <div class="row mb-3">
-                    <label class="col-sm-3 col-form-label">Security Group Name</label>
+                    <label class="col-sm-3 col-form-label">Security Group Name<span class="text-danger">*</span></label>
                     <div class="col-sm-9">
-                      <input type="text" class="form-control" formControlName="name" placeholder="Enter group name" />
+                      <input type="text" class="form-control" formControlName="name" placeholder="Enter group name" [class.is-invalid]="getFieldError('name')" />
+                       <div *ngIf="getFieldError('name')" class="invalid-feedback">
+                        {{ getFieldError('name') }}
+                    </div>
                     </div>
                   </div>
                   <div class="row mb-3">
-                    <label class="col-sm-3 col-form-label">Description</label>
+                    <label class="col-sm-3 col-form-label">Description<span class="text-danger">*</span></label>
                     <div class="col-sm-9">
-                      <textarea rows="3" class="form-control" formControlName="description" placeholder="Enter description"></textarea>
+                      <textarea rows="3" class="form-control" formControlName="description" placeholder="Enter description"  [class.is-invalid]="getFieldError('description')"></textarea>
+                        <div *ngIf="getFieldError('description')" class="invalid-feedback">
+                        {{ getFieldError('description') }}
+                    </div>
                     </div>
                   </div>
+                  <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Is Active</label>
+                        <div class="col-sm-9">
+                        <div class="form-check form-switch">
+                            <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="isActive"
+                            formControlName="isActive">
+                        </div>
+                        </div>
+                    </div>
+
                 </form>
               </ng-template>
             </li>
 
-            <li [ngbNavItem]="'users'">
-              <button ngbNavLink>Users</button>
+            <li ngbNavItem="users">
+            <button ngbNavLink  [class.disabled]="isUsersTabDisabled">Users</button>
               <ng-template ngbNavContent>
                 <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
                   <h6 class="mb-0">Assigned Users</h6>
@@ -94,6 +114,16 @@
                             <button class="btn btn-link p-0 me-3" (click)="toggleSelectAllUsers()">
                               {{ selectAllUsers ? 'Unselect All' : 'Select All' }}
                             </button>
+                            <form [formGroup]="Groupform">
+                            <input
+                                type="text"
+                                class="form-control form-control-sm"
+                                placeholder="Search users..."
+                                formControlName="userSearchText"
+                                (input)="filterUsers()"
+                            />
+                            </form>
+
                           </div>
                         </div>
                         <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
@@ -108,7 +138,7 @@
                               </tr>
                             </thead>
                             <tbody class="table-group-divider text-center">
-                              <tr *ngFor="let u of allUsers">
+                              <tr *ngFor="let u of filteredUsers">
                                 <td>
                                   <input type="checkbox" class="form-check-input"
                                          [checked]="u.id && userSelections[u.id]"
@@ -117,7 +147,7 @@
                                 <td class="text-break">{{ u.name }}</td>
                                 <td class="text-break">{{ u.email }}</td>
                               </tr>
-                              <tr *ngIf="allUsers.length === 0">
+                              <tr *ngIf="filteredUsers.length === 0">
                                 <td colspan="3" class="text-center py-3">
                                   <div class="text-muted">
                                     <ng-icon name="tablerInbox" size="32" class="mb-2 d-block mx-auto"></ng-icon>
@@ -139,8 +169,8 @@
               </ng-template>
             </li>
 
-            <li [ngbNavItem]="'permissions'">
-              <button ngbNavLink>Security Group Permission</button>
+            <li ngbNavItem="permissions">
+  <button ngbNavLink   [class.disabled]="isPermissionsTabDisabled">Security Group Permission</button>
               <ng-template ngbNavContent>
                 <div class="mt-3">
                   <div class="card shadow border-0">

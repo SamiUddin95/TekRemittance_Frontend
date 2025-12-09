@@ -125,7 +125,7 @@ export class BankListComponent implements OnInit {
     }
 
     onSearch(): void {
-        this.applyFilters();
+        this.loadBanks();
     }
 
     onClearFilters(): void {
@@ -134,7 +134,7 @@ export class BankListComponent implements OnInit {
             bankName: '',
             status: ''
         });
-        this.applyFilters();
+        this.loadBanks();
     }
 
     getStatusBadgeClass(isActive: boolean): string {

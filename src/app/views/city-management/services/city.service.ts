@@ -25,38 +25,45 @@ export class CityService {
         } as City;
     }
 
-    getCities(page: number = 1, rowsPerPage: number = 100000): Observable<{
-        items: City[];
-        totalCount: number;
-        pageNumber: number;
-        pageSize: number;
-        totalPages: number;
-        statusCode: number;
-        status: string;
-    }> {
-        const url = `${environment.apiUrl}/BasicSetup/cities?pageNumber=${page}&pageSize=${rowsPerPage}`;
-        return this.http.get<any>(url).pipe(
-            map((res) => {
-                const statusCode = res?.statusCode ?? res?.status ?? 200;
-                const status = res?.status ?? 'success';
-                const payload = res?.data ?? res;
-                if (statusCode !== 200 || !payload) {
-                    throw new Error(`Failed to load cities (statusCode=${statusCode})`);
-                }
-                const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
-                return {
-                    items: itemsRaw.map((d: any) => this.mapDtoToCity(d)),
-                    totalCount: payload?.totalCount ?? itemsRaw.length,
-                    pageNumber: payload?.pageNumber ?? page,
-                    pageSize: payload?.pageSize ?? rowsPerPage,
-                    totalPages: payload?.totalPages ?? 1,
-                    statusCode,
-                    status,
-                };
-            }),
-            catchError((err) => throwError(() => err instanceof Error ? err : new Error('Error loading cities')))
-        );
-    }
+getCities(
+    page: number = 1,
+    rowsPerPage: number = 10,
+    cityCode?: string,
+    cityName?: string,
+    status?: string
+): Observable<{
+    items: City[];
+    totalCount: number;
+    pageNumber: number;
+    pageSize: number;
+    totalPages: number;
+    statusCode: number;
+    status: string;
+}> {
+    let url = `${environment.apiUrl}/BasicSetup/cities?pageNumber=${page}&pageSize=${rowsPerPage}`;
+    if (cityCode) url += `&cityCode=${cityCode}`;
+    if (cityName) url += `&cityName=${cityName}`;
+    if (status) url += `&status=${status}`;
+
+    return this.http.get<any>(url).pipe(
+        map((res) => {
+            const statusCode = res?.statusCode ?? 200;
+            const status = res?.status ?? 'success';
+            const payload = res?.data ?? res;
+            const itemsRaw = Array.isArray(payload?.items) ? payload.items : [];
+            return {
+                items: itemsRaw.map((d: any) => this.mapDtoToCity(d)),
+                totalCount: payload?.totalCount ?? itemsRaw.length,
+                pageNumber: payload?.pageNumber ?? page,
+                pageSize: payload?.pageSize ?? rowsPerPage,
+                totalPages: payload?.totalPages ?? 1,
+                statusCode,
+                status,
+            };
+        }),
+        catchError((err) => throwError(() => err instanceof Error ? err : new Error('Error loading cities')))
+    );
+}
 
     getCityById(id: string): Observable<City | undefined> {
         const url = `${environment.apiUrl}/BasicSetup/CitybyId/${id}`;
