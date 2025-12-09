@@ -8,14 +8,16 @@ import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
-
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 @Component({
     selector: 'app-agent-list',
     standalone: true,
-    imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
+    imports: [CommonModule, PageTitleComponent, NgIcon,ReactiveFormsModule, GenericPaginationComponent, SkeletonLoaderComponent],
     templateUrl: './agent-list.component.html'
 })
 export class AgentListComponent implements OnInit {
+
+    agentFilterForm: FormGroup;
     agents: Agent[] = [];
     PaginationInfo: any = { Page: 1, RowsPerPage: 10 };
     totalRecord = 0;
@@ -23,28 +25,43 @@ export class AgentListComponent implements OnInit {
 
     constructor(
         private agentService: AgentService,
-        private router: Router
-    ) {}
+        private router: Router,
+        private fb: FormBuilder
+    ) {
+        this.agentFilterForm = this.fb.group({
+            code: [''],
+            agentname: [''],
+            status: [''] // optional, e.g., 'Active'/'Inactive'
+        });
+    }
 
     ngOnInit(): void {
         this.loadAgents();
     }
 
     loadAgents(): void {
-        this.isLoading = true;
-        this.agentService.getAgents(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
-            .subscribe({
-                next: (res) => {
-                    this.agents = res.items;
-                    this.totalRecord = res.totalCount;
-                    this.isLoading = false;
-                },
-                error: (error) => {
-                    console.error('Error loading agents:', error);
-                    this.isLoading = false;
-                }
-            });
-    }
+    this.isLoading = true;
+    const filters = this.agentFilterForm.value;
+
+    this.agentService.getAgents(
+        this.PaginationInfo.Page,
+        this.PaginationInfo.RowsPerPage,
+        filters.code,
+        filters.agentname,
+        filters.status
+    ).subscribe({
+        next: (res) => {
+            this.agents = res.items;
+            this.totalRecord = res.totalCount;
+            this.isLoading = false;
+        },
+        error: (error) => {
+            console.error('Error loading agents:', error);
+            this.isLoading = false;
+        }
+    });
+}
+
 
     addNewAgent(): void {
         this.router.navigate(['/acquisition-management/add']);
@@ -91,6 +108,15 @@ export class AgentListComponent implements OnInit {
 
     onAgentPageChanged(page: number): void {
         this.PaginationInfo.Page = page;
+        this.loadAgents();
+    }
+
+       onClearFilters(): void {
+        this.agentFilterForm.reset({
+            code: '',
+            agentname: '',
+            status: ''
+        });
         this.loadAgents();
     }
 }

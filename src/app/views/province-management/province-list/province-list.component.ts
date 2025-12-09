@@ -43,21 +43,31 @@ export class ProvinceListComponent implements OnInit {
     }
 
     loadProvinces(): void {
-        this.isLoading = true;
-        this.provinceService.getProvinces(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
-            .subscribe({
-                next: (res) => {
-                    this.allProvinces = res.items;
-                    this.totalRecord = res.totalCount;
-                    this.applyFilters();
-                    this.isLoading = false;
-                },
-                error: (error) => {
-                    console.error('Error loading provinces:', error);
-                    this.isLoading = false;
-                }
-            });
-    }
+    this.isLoading = true;
+    const { provinceCode, provinceName, status } = this.filterForm.value;
+
+    this.provinceService.getProvinces(
+        this.PaginationInfo.Page,
+        this.PaginationInfo.RowsPerPage,
+        provinceCode,
+        provinceName,
+        status
+    ).subscribe({
+        next: (res) => {
+            if (res.statusCode === 200 && res.items) {
+                this.allProvinces = res.items;
+                this.provinces = this.allProvinces; // no need to filter frontend
+                this.totalRecord = res.totalCount;
+            }
+            this.isLoading = false;
+        },
+        error: (err) => {
+            console.error('Error loading provinces:', err);
+            this.isLoading = false;
+        }
+    });
+}
+
 
     addNewProvince(): void {
         this.router.navigate(['/province-management/add']);
@@ -125,7 +135,7 @@ export class ProvinceListComponent implements OnInit {
     }
 
     onSearch(): void {
-        this.applyFilters();
+        this.loadProvinces();
     }
 
     onClearFilters(): void {
@@ -134,7 +144,7 @@ export class ProvinceListComponent implements OnInit {
             provinceName: '',
             status: ''
         });
-        this.applyFilters();
+        this.loadProvinces();
     }
 
     getStatusBadgeClass(isActive: boolean): string {

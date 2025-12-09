@@ -23,40 +23,55 @@ export class CountryService {
         } as Country;
     }
 
-    getCountries(page: number = 1, rowsPerPage: number = 100000): Observable<{
-        items: Country[];
-        totalCount: number;
-        pageNumber: number;
-        pageSize: number;
-        totalPages: number;
-        statusCode: number;
-        status: string;
-    }> {
-        const url = `${environment.apiUrl}/BasicSetup/countries?pageNumber=${page}&pageSize=${rowsPerPage}`;
-        return this.http.get<any>(url).pipe(
-            map((res) => {
-                const statusCode = res?.statusCode ?? res?.status ?? 200;
-                const status = res?.status ?? 'success';
-                const payload = res?.data ?? res;
-                if (statusCode !== 200 || !payload) {
-                    throw new Error(`Failed to load countries (statusCode=${statusCode})`);
-                }
-                const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
-                return {
-                    items: itemsRaw.map((d: any) => this.mapDtoToCountry(d)),
-                    totalCount: payload?.totalCount ?? itemsRaw.length,
-                    pageNumber: payload?.pageNumber ?? page,
-                    pageSize: payload?.pageSize ?? rowsPerPage,
-                    totalPages: payload?.totalPages ?? 1,
-                    statusCode,
-                    status,
-                };
-            }),
-            catchError((err) => {
-                return throwError(() => err instanceof Error ? err : new Error('Error loading countries'));
-            })
-        );
-    }
+
+getCountries(
+    page: number = 1,
+    rowsPerPage: number = 10,
+    countryCode?: string,
+    countryName?: string,
+    status?: string
+): Observable<{
+    items: Country[];
+    totalCount: number;
+    pageNumber: number;
+    pageSize: number;
+    totalPages: number;
+    statusCode: number;
+    status: string;
+}> {
+    let url = `${environment.apiUrl}/BasicSetup/countries?pageNumber=${page}&pageSize=${rowsPerPage}`;
+    if (countryCode) url += `&countryCode=${countryCode}`;
+    if (countryName) url += `&countryName=${countryName}`;
+    if (status) url += `&status=${status}`;
+
+    return this.http.get<any>(url).pipe(
+        map((res) => {
+            const statusCode = res?.statusCode ?? res?.status ?? 200;
+            const status = res?.status ?? 'success';
+            const payload = res?.data ?? res;
+            if (statusCode !== 200 || !payload) {
+                throw new Error(`Failed to load countries (statusCode=${statusCode})`);
+            }
+            const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
+
+            // ✅ Important: Use 'any' for DTO to avoid c: any error
+            const items = itemsRaw.map((d: any) => this.mapDtoToCountry(d));
+
+            return {
+                items,
+                totalCount: payload?.totalCount ?? items.length,
+                pageNumber: payload?.pageNumber ?? page,
+                pageSize: payload?.pageSize ?? rowsPerPage,
+                totalPages: payload?.totalPages ?? 1,
+                statusCode,
+                status,
+            };
+        }),
+        catchError((err) => {
+            return throwError(() => err instanceof Error ? err : new Error('Error loading countries'));
+        })
+    );
+}
 
     getCountryById(id: string): Observable<Country | undefined> {
         const url = `${environment.apiUrl}/BasicSetup/countrybyId/${id}`;

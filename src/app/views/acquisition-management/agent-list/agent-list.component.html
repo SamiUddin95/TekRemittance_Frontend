@@ -1,77 +1,194 @@
 <div class="">
-    <app-page-title title="Acquisition Management" subTitle="Acquisition Agents"></app-page-title>
+    <app-page-title
+        title="Acquisition Management"
+        subTitle="Acquisition Agents"
+    ></app-page-title>
     <div class="row">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-header bg-light border-bottom">
-                    <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+                    <div
+                        class="d-flex justify-content-between align-items-center col-12"
+                        style="margin-top: -5px; margin-bottom: -5px"
+                    >
                         <div class="d-flex align-items-center">
-                            <ng-icon name="tablerUsers" class="me-2 gradient-icon" size="20"></ng-icon>
+                            <ng-icon
+                                name="tablerUsers"
+                                class="me-2 gradient-icon"
+                                size="20"
+                            ></ng-icon>
                             <h4 class="card-title mb-0 text-dark">Agents</h4>
                         </div>
-                        <button type="button" class="btn submit-button" (click)="addNewAgent()" >
-                            <ng-icon name="tablerPlus" class="me-1" size="16"></ng-icon>
+                        <button
+                            type="button"
+                            class="btn submit-button"
+                            (click)="addNewAgent()"
+                        >
+                            <ng-icon
+                                name="tablerPlus"
+                                class="me-1"
+                                size="16"
+                            ></ng-icon>
                             Add Acquisition Agent
                         </button>
                     </div>
                 </div>
+                <div class="card-body">
+                    <form [formGroup]="agentFilterForm" class="row g-2 mb-3">
+                        <div class="col-md-2">
+                            <label for="agentCode" class="form-label fw-semibold">Acquisition Agent Code</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                formControlName="code"
+                                placeholder="Agent Code"
+                            />
+                        </div>
+                        <div class="col-md-2">
+                            <label for="agentName" class="form-label fw-semibold">Acquisition Agent Name</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                formControlName="agentname"
+                                placeholder="Agent Name"
+                            />
+                        </div>
+                        <div class="col-md-2">
+                            <label for="agentStatus" class="form-label fw-semibold">Status</label>
+                            <select
+                                class="form-select"
+                                formControlName="status"
+                            >
+                                <option value="">All Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end gap-2">
+                            <button
+                                type="button"
+                                class="btn submit-button flex-fill"
+                                (click)="loadAgents()"
+                            >
+                                <ng-icon
+                                    name="tablerSearch"
+                                    size="16"
+                                    class="me-1"
+                                ></ng-icon>
+                                Search
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-dark"
+                                (click)="onClearFilters()"
+                            >
+                                <ng-icon
+                                    name="tablerX"
+                                    size="16"
+                                    class="me-1"
+                                ></ng-icon>
+                                Clear
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
                 @if (isLoading) {
-                    <app-skeleton-loader variant="table" [rows]="8" [cols]="5" ariaLabel="Loading agents table"></app-skeleton-loader>
+                <app-skeleton-loader
+                    variant="table"
+                    [rows]="8"
+                    [cols]="5"
+                    ariaLabel="Loading agents table"
+                ></app-skeleton-loader>
                 } @else {
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead class="table text-center">
-                                <tr>
-                                    <th class="fw-bold">Acquisition Agent Code</th>
-                                    <th class="fw-bold">Acquisition Agent Name</th>
-                                    <th class="fw-bold">Active Status</th>
-                                    <th class="fw-bold">Approval Status</th>
-                                    <th class="text-center fw-bold">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-group-divider text-center">
-                                @for (agent of agents; track agent.id) {
-                                    <tr>
-                                        <td><span class="fw-medium">{{ agent.code }}</span></td>
-                                        <td>{{ agent.name }}</td>
-                                        <td>
-                                            <span [class]="getStatusBadgeClass(agent.isActive)">
-                                                {{ getStatusText(agent.isActive) }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <input class="form-check-input" type="checkbox" [checked]="agent.approvalStatus" disabled>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="btn-group" role="group">
-                                                <button type="button" class="btn btn-sm btn-outline-primary" (click)="editAgent(agent.id!)" title="Edit Agent">
-                                                    <ng-icon name="tablerEdit" size="16"></ng-icon>
-                                                </button>
-                                                <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteAgent(agent)" title="Delete Agent">
-                                                    <ng-icon name="tablerTrash" size="16"></ng-icon>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                } @empty {
-                                    <tr>
-                                        <td colspan="5" class="text-center py-4">
-                                            <div class="text-muted">
-                                                <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
-                                                <p class="mb-0">No agents found</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                    <app-generic-pagination
-                        [totalItems]="totalRecord"
-                        [pageSize]="PaginationInfo.RowsPerPage"
-                        [currentPage]="PaginationInfo.Page"
-                        (pageChanged)="onAgentPageChanged($event)">
-                    </app-generic-pagination>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-sm">
+                        <thead class="table text-center">
+                            <tr>
+                                <th class="fw-bold">Acquisition Agent Code</th>
+                                <th class="fw-bold">Acquisition Agent Name</th>
+                                <th class="fw-bold">Active Status</th>
+                                <th class="fw-bold">Approval Status</th>
+                                <th class="text-center fw-bold">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider text-center">
+                            @for (agent of agents; track agent.id) {
+                            <tr>
+                                <td>
+                                    <span class="fw-medium">{{
+                                        agent.code
+                                    }}</span>
+                                </td>
+                                <td>{{ agent.name }}</td>
+                                <td>
+                                    <span
+                                        [class]="
+                                            getStatusBadgeClass(agent.isActive)
+                                        "
+                                    >
+                                        {{ getStatusText(agent.isActive) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        [checked]="agent.approvalStatus"
+                                        disabled
+                                    />
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-outline-primary"
+                                            (click)="editAgent(agent.id!)"
+                                            title="Edit Agent"
+                                        >
+                                            <ng-icon
+                                                name="tablerEdit"
+                                                size="16"
+                                            ></ng-icon>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            (click)="deleteAgent(agent)"
+                                            title="Delete Agent"
+                                        >
+                                            <ng-icon
+                                                name="tablerTrash"
+                                                size="16"
+                                            ></ng-icon>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            } @empty {
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <ng-icon
+                                            name="tablerInbox"
+                                            size="48"
+                                            class="mb-2 d-block mx-auto"
+                                        ></ng-icon>
+                                        <p class="mb-0">No agents found</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <app-generic-pagination
+                    [totalItems]="totalRecord"
+                    [pageSize]="PaginationInfo.RowsPerPage"
+                    [currentPage]="PaginationInfo.Page"
+                    (pageChanged)="onAgentPageChanged($event)"
+                >
+                </app-generic-pagination>
                 }
             </div>
         </div>

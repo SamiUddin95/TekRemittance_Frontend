@@ -42,22 +42,32 @@ export class CityListComponent implements OnInit {
         this.loadCities();
     }
 
-    loadCities(): void {
-        this.isLoading = true;
-        this.cityService.getCities(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
-            .subscribe({
-                next: (res) => {
-                    this.allCities = res.items;
-                    this.totalRecord = res.totalCount;
-                    this.applyFilters();
-                    this.isLoading = false;
-                },
-                error: (error) => {
-                    console.error('Error loading cities:', error);
-                    this.isLoading = false;
-                }
-            });
-    }
+ loadCities(): void {
+    this.isLoading = true;
+    const { cityCode, cityName, status } = this.filterForm.value;
+    let statusParam: string | undefined;
+    if (status === 'true') statusParam = 'Active';
+    else if (status === 'false') statusParam = 'Inactive';
+
+    this.cityService.getCities(
+      this.PaginationInfo.Page,
+      this.PaginationInfo.RowsPerPage,
+      cityCode ,
+      cityName ,
+      statusParam
+    ).subscribe({
+      next: (res) => {
+        this.allCities = res.items;
+        this.totalRecord = res.totalCount;
+        this.cities = this.allCities;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading cities:', err);
+        this.isLoading = false;
+      }
+    });
+  }
 
     addNewCity(): void {
         this.router.navigate(['/city-management/add']);
@@ -125,7 +135,7 @@ export class CityListComponent implements OnInit {
     }
 
     onSearch(): void {
-        this.applyFilters();
+        this.loadCities();
     }
 
     onClearFilters(): void {
@@ -134,7 +144,7 @@ export class CityListComponent implements OnInit {
             cityName: '',
             status: ''
         });
-        this.applyFilters();
+        this.loadCities();
     }
 
     getStatusBadgeClass(isActive: boolean): string {

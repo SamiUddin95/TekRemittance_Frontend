@@ -50,7 +50,7 @@ export class AgentBranchFormComponent implements OnInit {
   cities: Array<{ id: string; name: string; provinceId?: string }> = [];
 
   private stepFields: { [key: number]: string[] } = {
-        0: ['agent','code', 'name','email'],
+        0: ['agentId','code', 'name','email'],
         1: ['countryId', 'provinceId', 'cityId'],
         2: [],
         3: [],
@@ -68,7 +68,7 @@ export class AgentBranchFormComponent implements OnInit {
     private cityService: CityService
   ) {
     this.form = this.fb.group({
-      // Basic Information
+
       agentId: ['', [Validators.required]],
       code: ['', [Validators.required, Validators.maxLength(20)]],
       name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -76,7 +76,6 @@ export class AgentBranchFormComponent implements OnInit {
       phone1: [''],
       phone2: ['', [Validators.pattern('^[0-9-+()\s]*$'), Validators.maxLength(20)]],
       fax: ['', [Validators.maxLength(20)]],
-       //email: ['', [Validators.email, Validators.maxLength(255)]],
       email: ['', [Validators.required, emailValidator, Validators.maxLength(255)]],
 
       // Location Details
@@ -92,15 +91,13 @@ export class AgentBranchFormComponent implements OnInit {
       isEmailUploadAllow: [false],
       isWebServiceAllow: [false],
       isBeneficiarySmsAllow: [false],
+      isActive: [false],
 
       // Disbursement Modes
       isOtcAllow: [false],
       isDirectCreditAllow: [false],
       isOtherCreditAllow: [false],
-      isRemitterSmsAllow: [false],
-
-      // Status
-      isActive: [true],
+      isRemitterSmsAllow: [false]
     });
   }
 selectOnlyOne(selected: string) {
@@ -204,14 +201,10 @@ private loadBranch(id: string): void {
 this.isLoading = true;
 this.branchService.getBranchById(id).subscribe({
 next: (branch: any) => {
-console.log('Branch data loaded:', branch); // debug
-
-        // Patch all form values first
         this.form.patchValue({
             agentId: branch.agentId,
             code: branch.code,
             name: branch.name,
-            //contactPerson: branch.contactPerson || '',
             phone1: branch.phone1,
             phone2: branch.phone2 || '',
             fax: branch.fax || '',
@@ -230,11 +223,9 @@ console.log('Branch data loaded:', branch); // debug
             isDirectCreditAllow: branch.isDirectCreditAllow || false,
             isOtherCreditAllow: branch.isOtherCreditAllow || false,
             isRemitterSmsAllow: branch.isRemitterSmsAllow || false,
-             isActive: false,
-            //isActive: branch.isActive !== undefined ? branch.isActive : false,
-        });
+            isActive: branch.isActive || false,
 
-        // Load dependent dropdowns AFTER patchValue
+        });
         if (branch.countryId) this.loadProvinces(String(branch.countryId));
         if (branch.provinceId) this.loadCities(String(branch.provinceId));
 
@@ -258,7 +249,6 @@ console.log('Branch data loaded:', branch); // debug
 
 
 onSubmit(): void {
-    debugger;
 this.form.markAllAsTouched();
 
 
@@ -288,12 +278,14 @@ if (formValue.isFtpAllow) acq.push('IsFtpAllow');
 if (formValue.isEmailUploadAllow) acq.push('IsEmailUploadAllow');
 if (formValue.isWebServiceAllow) acq.push('IsWebServiceAllow');
 if (formValue.isBeneficiarySmsAllow) acq.push('IsBeneficiarySmsAllow');
+if (formValue.isActive) acq.push('IsActive');
 
 const disb: string[] = [];
 if (formValue.isOtcAllow) disb.push('IsOtcAllow');
 if (formValue.isDirectCreditAllow) disb.push('IsDirectCreditAllow');
 if (formValue.isOtherCreditAllow) disb.push('IsOtherCreditAllow');
 if (formValue.isRemitterSmsAllow) disb.push('IsRemitterSmsAllow');
+
 
 const branchData: any = {
     id: this.editId || null,
@@ -303,13 +295,13 @@ const branchData: any = {
     cityId: formValue.cityId || null,
     code: trim(formValue.code),
     name: trim(formValue.name),
+    agentName: formValue.name,
     agentBranchName: trim(formValue.name),
     phone1: trim(formValue.phone1),
     phone2: trim(formValue.phone2),
     fax: trim(formValue.fax),
     email: trim(formValue.email),
     address: trim(formValue.address),
-    isActive: !!formValue.isActive,
     acquisitionModes: acq.length ? acq.join(',') : 'None',
     disbursementModes: disb.length ? disb.join(',') : 'None'
 };
@@ -374,6 +366,7 @@ saveObservable.subscribe({
             'isWebServiceAllow',
             'isBeneficiarySmsAllow',
             'isActive'
+
         ]);
 
         this.setupExclusiveGroup([
@@ -402,7 +395,7 @@ saveObservable.subscribe({
   }
 
   getPageTitle(): string {
-        return this.isEditMode ? 'Edit Bank Branch' : 'Add New Bank Branch';
+        return this.isEditMode ? 'Edit Branch' : 'Add New Branch';
     }
 
        currentStep = 0;

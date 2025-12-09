@@ -23,38 +23,52 @@ export class ProvinceService {
         } as Province;
     }
 
-    getProvinces(page: number = 1, rowsPerPage: number = 100000): Observable<{
-        items: Province[];
-        totalCount: number;
-        pageNumber: number;
-        pageSize: number;
-        totalPages: number;
-        statusCode: number;
-        status: string;
-    }> {
-        const url = `${environment.apiUrl}/BasicSetup/provinces?pageNumber=${page}&pageSize=${rowsPerPage}`;
-        return this.http.get<any>(url).pipe(
-            map((res) => {
-                const statusCode = res?.statusCode ?? res?.status ?? 200;
-                const status = res?.status ?? 'success';
-                const payload = res?.data ?? res;
-                if (statusCode !== 200 || !payload) {
-                    throw new Error(`Failed to load provinces (statusCode=${statusCode})`);
-                }
-                const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
-                return {
-                    items: itemsRaw.map((d: any) => this.mapDtoToProvince(d)),
-                    totalCount: payload?.totalCount ?? itemsRaw.length,
-                    pageNumber: payload?.pageNumber ?? page,
-                    pageSize: payload?.pageSize ?? rowsPerPage,
-                    totalPages: payload?.totalPages ?? 1,
-                    statusCode,
-                    status,
-                };
-            }),
-            catchError((err) => throwError(() => err instanceof Error ? err : new Error('Error loading provinces')))
-        );
-    }
+    getProvinces(
+    page: number = 1,
+    rowsPerPage: number = 10,
+    provinceCode?: string,
+    provinceName?: string,
+    status?: string
+): Observable<{
+    items: Province[];
+    totalCount: number;
+    pageNumber: number;
+    pageSize: number;
+    totalPages: number;
+    statusCode: number;
+    status: string;
+}> {
+    let url = `${environment.apiUrl}/BasicSetup/provinces?pageNumber=${page}&pageSize=${rowsPerPage}`;
+
+    if (provinceCode) url += `&provinceCode=${provinceCode}`;
+    if (provinceName) url += `&provinceName=${provinceName}`;
+    if (status) url += `&status=${status}`;
+
+    return this.http.get<any>(url).pipe(
+        map((res) => {
+            const statusCode = res?.statusCode ?? res?.status ?? 200;
+            const statusText = res?.status ?? 'success';
+            const payload = res?.data ?? res;
+
+            if (statusCode !== 200 || !payload) {
+                throw new Error(`Failed to load provinces (statusCode=${statusCode})`);
+            }
+
+            const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
+            return {
+                items: itemsRaw.map((d: any) => this.mapDtoToProvince(d)),
+                totalCount: payload?.totalCount ?? itemsRaw.length,
+                pageNumber: payload?.pageNumber ?? page,
+                pageSize: payload?.pageSize ?? rowsPerPage,
+                totalPages: payload?.totalPages ?? 1,
+                statusCode,
+                status: statusText,
+            };
+        }),
+        catchError((err) => throwError(() => err instanceof Error ? err : new Error('Error loading provinces')))
+    );
+}
+
 
     getProvinceById(id: string): Observable<Province | undefined> {
         const url = `${environment.apiUrl}/BasicSetup/provincebyId/${id}`;
