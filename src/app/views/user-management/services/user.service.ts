@@ -38,6 +38,7 @@ export class UserService {
             email: r.email,
             phone: r.phone,
             employeeId: r.employeeId,
+            userType: r.userType ?? r.UserType,
             limitType: r.limit ?? r.limitType ?? 0,
             loginName: r.loginName,
             isActive: r.isActive,
@@ -109,6 +110,7 @@ export class UserService {
           email: r.email,
           phone: r.phone,
           employeeId: r.employeeId,
+          userType: r.userType ?? r.UserType,
           limitType: r.limit ?? r.limitType ?? 0,
           loginName: r.loginName,
           isActive: r.isActive,
@@ -129,6 +131,8 @@ export class UserService {
         email: user.email,
         phone: user.phone,
         employeeId: user.employeeId,
+        userType: (user as any).userType,
+        UserType: (user as any).userType,
         limit: (user as any).limitType ?? 0,
         loginName: user.loginName,
         isActive: user.isActive,
@@ -136,6 +140,11 @@ export class UserService {
       },
       password: (user as any).password,
     };
+    // Some backends validate top-level fields too; include both casings if required
+    if ((user as any).userType !== undefined) {
+      body.userType = (user as any).userType;
+      body.UserType = (user as any).userType;
+    }
     return this.http.post<any>(`${environment.apiUrl}/Users`, body);
   }
 
@@ -146,6 +155,8 @@ export class UserService {
       email: user.email,
       phone: user.phone,
       employeeId: user.employeeId,
+      userType: (user as any).userType,
+      UserType: (user as any).userType,
       limit: (user as any).limitType ?? 0,
       loginName: user.loginName,
       isActive: user.isActive,

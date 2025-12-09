@@ -55,27 +55,39 @@
         <div class="col-md-7">
           <div class="info-card p-3 rounded-3 shadow-sm h-100">
             <h6 class="fw-semibold mb-3 border-bottom pb-2">Search Result</h6>
-            <div class="row g-2 small">
-              <div class="col-6 text-muted" style="font-size: 16px; font-weight: bold;">Tracking Number:</div>
-              <div class="col-6 fw-semibold" style="font-size: 16px; font-weight: bold;">{{ searchResult.trackingNumber }}</div>
+            <!-- Transaction -->
+            <div class="mb-3">
+              <div class="fw-semibold border-start border-3 ps-2 mb-2">Transaction</div>
+              <div class="row g-2 small">
+                <div class="col-6 text-muted" style="font-size: 16px; font-weight: bold;">Tracking Number:</div>
+                <div class="col-6 fw-semibold" style="font-size: 16px; font-weight: bold;">{{ searchResult.trackingNumber }}</div>
+                <div class="col-6 text-muted" style="font-size: 16px; font-weight: bold;">RIN:</div>
+                <div class="col-6 fw-semibold" style="font-size: 16px; font-weight: bold;">{{ searchResult.rin }}</div>
+                <div class="col-6 text-muted" style="font-size: 16px; font-weight: bold;">Amount:</div>
+                <div class="col-6 fw-semibold text-success" style="font-size: 16px; font-weight: bold;">{{ searchResult.amount }}</div>
+              </div>
+            </div>
 
-              <div class="col-6 text-muted" style="font-size: 16px; font-weight: bold;">RIN:</div>
-              <div class="col-6 fw-semibold" style="font-size: 16px; font-weight: bold;">{{ searchResult.rin }}</div>
+            <!-- Remitter -->
+            <div class="mb-3">
+              <div class="fw-semibold border-start border-3 ps-2 mb-2">Remitter</div>
+              <div class="row g-2 small">
+                <div class="col-6 text-muted" style="font-size: 16px; font-weight: bold;">Name:</div>
+                <div class="col-6 fw-semibold" style="font-size: 16px; font-weight: bold;">{{ searchResult.name }}</div>
+                <div class="col-6 text-muted" style="font-size: 16px; font-weight: bold;">CNIC/Passport:</div>
+                <div class="col-6 fw-semibold" style="font-size: 16px; font-weight: bold;">{{ searchResult.cnicPassport }}</div>
+                <div class="col-6 text-muted" style="font-size: 16px; font-weight: bold;">Contact No:</div>
+                <div class="col-6 fw-semibold" style="font-size: 16px; font-weight: bold;">{{ searchResult.contactNo }}</div>
+              </div>
+            </div>
 
-              <div class="col-6 text-muted"  style="font-size: 16px; font-weight: bold;">Beneficiary Name:</div>
-              <div class="col-6 fw-semibold" style="font-size: 16px; font-weight: bold;">{{ searchResult.beneficiaryName }}</div>
-
-              <div class="col-6 text-muted" style="font-size: 16px; font-weight: bold;">Name:</div>
-              <div class="col-6 fw-semibold" style="font-size: 16px; font-weight: bold;">{{ searchResult.name }}</div>
-
-              <div class="col-6 text-muted" style="font-size: 16px; font-weight: bold;">CNIC/Passport:</div>
-              <div class="col-6 fw-semibold" style="font-size: 16px; font-weight: bold;">{{ searchResult.cnicPassport }}</div>
-
-              <div class="col-6 text-muted" style="font-size: 16px; font-weight: bold;">Amount:</div>
-              <div class="col-6 fw-semibold text-success" style="font-size: 16px; font-weight: bold;">{{ searchResult.amount }}</div>
-
-              <div class="col-6 text-muted" style="font-size: 16px; font-weight: bold;">Contact No:</div>
-              <div class="col-6 fw-semibold" style="font-size: 16px; font-weight: bold;">{{ searchResult.contactNo }}</div>
+            <!-- Beneficiary -->
+            <div>
+              <div class="fw-semibold border-start border-3 ps-2 mb-2">Beneficiary</div>
+              <div class="row g-2 small">
+                <div class="col-6 text-muted"  style="font-size: 16px; font-weight: bold;">Beneficiary Name:</div>
+                <div class="col-6 fw-semibold" style="font-size: 16px; font-weight: bold;">{{ searchResult.beneficiaryName }}</div>
+              </div>
             </div>
           </div>
         </div>

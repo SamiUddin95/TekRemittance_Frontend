@@ -23,4 +23,15 @@ export class UserProfileComponent {
   constructor(private auth: AuthService) {
     this.displayName = this.auth.getName();
   }
+
+  onLogout(event: Event) {
+    event.preventDefault();
+    const obs = this.auth.logout();
+    if (obs) {
+      obs.subscribe({
+        next: () => {},
+        error: () => {}
+      });
+    }
+  }
 }

@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
             .subscribe(data => {
                 if (data['title']) {
                     this.titleService.setTitle(data['title'] +
-                        ' | INSPINIA - Angular Responsive Bootstrap 5 Admin Dashboard');
+                        ' | TEK-REMIT');
                 }
             });
     }

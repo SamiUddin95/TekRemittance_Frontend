@@ -4,6 +4,7 @@ export interface User {
   email: string;
   phone: string;
   employeeId: string;
+  userType?: string;
   limitType: number;
   loginName: string;
   password?: string;
