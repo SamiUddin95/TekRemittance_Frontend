@@ -26,7 +26,7 @@ export class FaviconService {
         this.faviconElement.href = url;
     }
 
-    setFaviconWithBadge(content: string | number, color: string = '#f03d25', baseFaviconUrl: string = '/favicon.ico'): void {
+    setFaviconWithBadge(content: string | number, color: string = '#f03d25', baseFaviconUrl: string = '/assets/images/favicon.ico'): void {
         const size = 64;
         const badgeSize = size * 0.6;
         const canvas = document.createElement('canvas');
@@ -64,7 +64,7 @@ export class FaviconService {
         };
     }
 
-    resetFavicon(defaultUrl: string = '/favicon.ico'): void {
+    resetFavicon(defaultUrl: string = '/assets/images/favicon.icon'): void {
         this.setFavicon(defaultUrl);
     }
 }

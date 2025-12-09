@@ -4,6 +4,7 @@ import * as tablerIcons from '@ng-icons/tabler-icons';
 import * as tablerIconsFill from '@ng-icons/tabler-icons/fill';
 import {provideIcons} from '@ng-icons/core';
 import {Title} from '@angular/platform-browser';
+import { FaviconService } from './core/services/favicon.service';
 import {filter, map, mergeMap} from 'rxjs/operators';
 
 @Component({
@@ -17,8 +18,11 @@ export class AppComponent implements OnInit {
     private titleService = inject(Title)
     private router = inject(Router)
     private activatedRoute = inject(ActivatedRoute)
+    private faviconService = inject(FaviconService)
 
     ngOnInit(): void {
+        // Force favicon to TEK-REMIT icon to avoid browser fallback to /favicon.ico (public)
+        this.faviconService.resetFavicon('/assets/images/favicon.icon');
         this.router.events
             .pipe(
                 filter(event => event instanceof NavigationEnd),

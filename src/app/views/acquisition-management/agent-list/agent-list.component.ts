@@ -74,7 +74,7 @@ export class AgentListComponent implements OnInit {
                     },
                     error: (error) => {
                         console.error('Error deleting agent:', error);
-                        Swal.fire('Error!', 'Failed to delete agent.', 'error');
+                        Swal.fire('Error!', 'Agent could not be deleted.', 'error');
                     }
                 });
             }
