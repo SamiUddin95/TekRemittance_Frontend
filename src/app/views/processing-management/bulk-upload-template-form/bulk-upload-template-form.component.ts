@@ -89,6 +89,21 @@ export class BulkUploadTemplateFormComponent {
       lengthCtrl.updateValueAndValidity({ emitEvent: false });
     });
 
+      const fixLengthCtrl = this.form.get('fixLength');
+  const fieldDelimiterCtrl = this.form.get('fieldDelimiter');
+
+  fixLengthCtrl?.valueChanges.subscribe(val => {
+    if (val) {
+      fieldDelimiterCtrl?.setValue(false, { emitEvent: false });
+    }
+  });
+
+  fieldDelimiterCtrl?.valueChanges.subscribe(val => {
+    if (val) {
+      fixLengthCtrl?.setValue(false, { emitEvent: false });
+    }
+  });
+
     const state: any = history.state;
     if (state && state.template) {
       const t = state.template as {

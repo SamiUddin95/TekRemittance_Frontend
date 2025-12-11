@@ -80,6 +80,7 @@ export class AgentAccountsFormComponent implements OnInit {
       const selectedAgentName = this.agents.find(a => a.id === v.agentId)?.name || '';
       this.accountsService.updateAccountById({
         id: this.editId,
+         agentId: v.agentId,
         agentAccountName: v.accountTitle, // using title as account display name
         accountNumber: (v.accountNumber),
         agentName: selectedAgentName,

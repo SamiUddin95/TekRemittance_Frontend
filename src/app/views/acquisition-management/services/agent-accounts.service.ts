@@ -104,7 +104,7 @@ export class AgentAccountsService {
     );
   }
 
-  updateAccountById(payload: { id: string; agentAccountName: string; accountNumber: any; agentName: string; approve: boolean; accountTitle: string; accountType: string; isActive: boolean; }): Observable<AgentAccount> {
+  updateAccountById(payload: { id: string; agentId: string;   agentAccountName: string; accountNumber: any; agentName: string; approve: boolean; accountTitle: string; accountType: string; isActive: boolean; }): Observable<AgentAccount> {
     const url = `${environment.apiUrl}/AcquisitionAgentAccount/updatebyid`;
     const nowIso = new Date().toISOString();
     const body = {
