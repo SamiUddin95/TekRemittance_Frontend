@@ -27,9 +27,16 @@ export interface AgentAccount {
 export class AgentAccountsService {
   constructor(private http: HttpClient) {}
 
-  getAccounts(pageNumber: number, pageSize: number): Observable<{ items: AgentAccount[]; totalCount: number; pageNumber: number; pageSize: number; totalPages: number; statusCode: number; status: string; }>
-  {
-    const url = `${environment.apiUrl}/AcquisitionAgentAccount?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+getAccounts(pageNumber: number, pageSize: number, filters: any): Observable<any>  {
+    let url = `${environment.apiUrl}/AcquisitionAgentAccount?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+     if (filters.accountNumber)
+    url += `&accountNumber=${filters.accountNumber}`;
+
+  if (filters.agentName)
+    url += `&agentName=${filters.agentName}`;
+
+  if (filters.status)
+    url += `&status=${filters.status}`;
     return this.http.get<any>(url).pipe(
       map((res) => {
         const d = res?.data ?? res ?? {};
@@ -53,6 +60,44 @@ export class AgentAccountsService {
       })
     );
   }
+
+//   getAccounts(pageNumber: number, pageSize: number, filters: any): Observable<any> {
+
+//   let url = `${environment.apiUrl}/AcquisitionAgentAccount?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+
+//   if (filters.accountNumber)
+//     url += `&accountNumber=${filters.accountNumber}`;
+
+//   if (filters.agentName)
+//     url += `&agentName=${filters.agentName}`;
+
+//   if (filters.status)
+//     url += `&status=${filters.status}`;
+
+//   return this.http.get<any>(url).pipe(
+//     map((res) => {
+//       const d = res?.data ?? res ?? {};
+
+//       const items: AgentAccount[] = (d.items ?? []).map((x: AgentAccountItemDto) => ({
+//         id: x.id,
+//         accountName: (x as any).accountTitle ?? x.agentAccountName ?? '',
+//         accountNumber: String(x.accountNumber ?? ''),
+//         agentName: x.agentName,
+//         isActive: !!x.isActive,
+//       }));
+
+//       return {
+//         items,
+//         totalCount: Number(d.totalCount ?? 0),
+//         pageNumber: Number(d.pageNumber ?? pageNumber),
+//         pageSize: Number(d.pageSize ?? pageSize),
+//         totalPages: Number(d.totalPages ?? 1),
+//         statusCode: Number(res?.statusCode ?? 200),
+//         status: String(res?.status ?? 'success')
+//       };
+//     })
+//   );
+// }
 
   createAccount(payload: { agentId: string; accountNumber: string; accountTitle: string; accountType: string; isActive: boolean; approve?: boolean; agentName?: string }): Observable<AgentAccount> {
     const url = `${environment.apiUrl}/AcquisitionAgentAccount`;

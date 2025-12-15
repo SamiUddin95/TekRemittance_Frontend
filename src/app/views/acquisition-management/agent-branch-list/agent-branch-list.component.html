@@ -15,6 +15,63 @@
             </button>
           </div>
         </div>
+        <div class="card-body">
+                    <form [formGroup]="agentFilterForm" class="row g-2 mb-3">
+                        <div class="col-md-2">
+                            <label for="agentCode" class="form-label fw-semibold">Acquisition Agent Branch Code</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                formControlName="code"
+                                placeholder="Agent Branch Code"
+                            />
+                        </div>
+                        <div class="col-md-2">
+                            <label for="agentName" class="form-label fw-semibold">Acquisition Agent Name</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                formControlName="agentname"
+                                placeholder="Agent Name"
+                            />
+                        </div>
+                        <div class="col-md-2">
+                              <label for="agentName" class="form-label fw-semibold">Acquisition Agent Branch Name</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                formControlName="agentbranchname"
+                                placeholder="Agent Branch Name"
+                            />
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end gap-2">
+                            <button
+                                type="button"
+                                class="btn submit-button flex-fill"
+                                (click)="onSearch()"
+                            >
+                                <ng-icon
+                                    name="tablerSearch"
+                                    size="16"
+                                    class="me-1"
+                                ></ng-icon>
+                                Search
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-dark"
+                                (click)="onClearFilters()"
+                            >
+                                <ng-icon
+                                    name="tablerX"
+                                    size="16"
+                                    class="me-1"
+                                ></ng-icon>
+                                Clear
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
         @if (isLoading) {
           <app-skeleton-loader variant="table" [rows]="8" [cols]="6" ariaLabel="Loading branches table"></app-skeleton-loader>

@@ -34,42 +34,51 @@ export class AgentBranchService {
 
   constructor(private http: HttpClient) {}
 
-  getBranches(page: number = 1, pageSize: number = 10): Observable<PaginatedResponse<Branch>> {
-    const params = {
-      pageNumber: page.toString(),
-      pageSize: pageSize.toString()
-    } as const;
 
-    return this.http.get<any>(this.apiUrl, { params }).pipe(
-      map((resp: any) => {
-        const d = resp?.data ?? {};
-        const itemsRaw = Array.isArray(d?.items) ? d.items : [];
-        const items: Branch[] = itemsRaw.map((it: any) => ({
-          id: String(it.id),
-          code: String(it.code ?? ''),
-          name: String(it.agentBranchName ?? it.name ?? ''),
-          agentId: String(it.agentId ?? ''),
-          agentName: String(it.agentName ?? ''),
-          contactPerson: String(it.contactPerson ?? ''),
-          phone: String(it.phone1 ?? it.phone ?? ''),
-          address: String(it.address ?? ''),
-          isActive: Boolean(it.isActive ?? true),
-          createdAt: String(it.createdOn ?? ''),
-          updatedAt: String(it.updatedOn ?? ''),
-          // not provided by API; keep for UI compatibility
-          approvalStatus: Boolean(it.approvalStatus ?? false) as any,
-        }));
-        return {
-          items,
-          totalCount: d.totalCount ?? items.length,
-          page: d.pageNumber ?? page,
-          pageSize: d.pageSize ?? pageSize,
-          totalPages: d.totalPages ?? 0
-        } as PaginatedResponse<Branch>;
-      }),
-      catchError(this.handleError)
-    );
-  }
+  getBranches(pageNumber: number = 1, pageSize: number = 10, filters: any = {}): Observable<any> {
+  let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+
+  if (filters.code)
+    url += `&code=${filters.code}`;
+
+  if (filters.agentname)
+    url += `&agentName=${filters.agentname}`;
+
+  if (filters.agentbranchname)
+    url += `&agentBranchName=${filters.agentbranchname}`;
+
+  return this.http.get<any>(url).pipe(
+    map((res) => {
+      const d = res?.data ?? res ?? {};
+
+      const items: Branch[] = (d.items ?? []).map((x: any) => ({
+        id: x.id,
+        code: String(x.code ?? ''),
+        name: String(x.agentBranchName ?? x.name ?? ''),
+        agentId: String(x.agentId ?? ''),
+        agentName: String(x.agentName ?? ''),
+        contactPerson: String(x.contactPerson ?? ''),
+        phone: String(x.phone1 ?? x.phone ?? ''),
+        address: String(x.address ?? ''),
+        isActive: !!x.isActive,
+        createdAt: String(x.createdOn ?? ''),
+        updatedAt: String(x.updatedOn ?? ''),
+        approvalStatus: !!x.approvalStatus
+      }));
+
+      return {
+        items,
+        totalCount: Number(d.totalCount ?? 0),
+        pageNumber: Number(d.pageNumber ?? pageNumber),
+        pageSize: Number(d.pageSize ?? pageSize),
+        totalPages: Number(d.totalPages ?? 1),
+        statusCode: Number(res?.statusCode ?? 200),
+        status: String(res?.status ?? 'success')
+      };
+    })
+  );
+}
+
 
   getBranchById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(

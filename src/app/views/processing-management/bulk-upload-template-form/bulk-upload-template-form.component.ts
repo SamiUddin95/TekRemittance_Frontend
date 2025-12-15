@@ -139,7 +139,38 @@ export class BulkUploadTemplateFormComponent {
         length: Number(f.length ?? 0),
       })).sort((a: { order: number }, b: { order: number }) => a.order - b.order);
     }
+
+
+this.form.get('fixLength')?.valueChanges.subscribe(isFixed => {
+  const fieldOrderCtrl = this.fieldForm.get('fieldOrder');
+  const startIndexCtrl = this.fieldForm.get('startIndex');
+  const lengthCtrl = this.fieldForm.get('length');
+
+  if (isFixed) {
+    fieldOrderCtrl?.clearValidators();
+    fieldOrderCtrl?.setValue(null, { emitEvent: false });
+
+    startIndexCtrl?.setValidators([Validators.required, Validators.min(0)]);
+    lengthCtrl?.setValidators([Validators.required, Validators.min(1)]);
+  } else {
+    fieldOrderCtrl?.setValidators([Validators.required]);
+
+    startIndexCtrl?.clearValidators();
+    lengthCtrl?.clearValidators();
   }
+
+  fieldOrderCtrl?.updateValueAndValidity({ emitEvent: false });
+  startIndexCtrl?.updateValueAndValidity({ emitEvent: false });
+  lengthCtrl?.updateValueAndValidity({ emitEvent: false });
+});
+
+
+  }
+
+  get isFixLength(): boolean {
+  return !!this.form.get('fixLength')?.value;
+}
+
 
   save(): void {
     if (this.form.invalid || this.isSubmitting) return;

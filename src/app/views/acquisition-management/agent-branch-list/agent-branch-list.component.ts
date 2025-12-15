@@ -7,6 +7,9 @@ import Swal from 'sweetalert2';
 import { AgentBranchService } from '../services/agent-branch.service';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+
 
 interface Branch {
   id: string;
@@ -20,10 +23,13 @@ interface Branch {
 @Component({
   selector: 'app-agent-branch-list',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
+  imports: [CommonModule, PageTitleComponent, FormsModule,
+  ReactiveFormsModule, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
   templateUrl: './agent-branch-list.component.html'
 })
 export class AgentBranchListComponent implements OnInit {
+      agentFilterForm: FormGroup;
+
   branches: Branch[] = [];
   totalRecord = 0;
   PaginationInfo: any = {
@@ -31,30 +37,64 @@ export class AgentBranchListComponent implements OnInit {
     RowsPerPage: 10
   };
   isLoading = false;
+ 
 
   constructor(
     private branchService: AgentBranchService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private fb: FormBuilder
+
+  ) {
+     this.agentFilterForm = this.fb.group({
+            code: [''],
+            agentname: [''],
+            agentbranchname: [''] 
+        });
+  }
 
   ngOnInit(): void {
     this.loadBranches();
   }
-
-  loadBranches(): void {
+  onSearch(): void{
     this.isLoading = true;
-    this.branchService.getBranches(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage).subscribe({
-      next: (res: any) => {
-        this.branches = res.items || [];
-        this.totalRecord = res.totalCount || 0;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading branches:', err);
-        this.isLoading = false;
-      }
-    });
+    const filters = this.agentFilterForm.value;
+    this.loadBranches();
   }
+  onClearFilters(): void{
+     this.agentFilterForm.reset({
+            code: '',
+            agentname: '',
+            agentbranchname: ''
+        });
+        this.loadBranches();
+  }
+
+
+loadBranches(): void {
+  this.isLoading = true;
+  const filters = this.agentFilterForm.value;
+
+  this.branchService.getBranches(
+    this.PaginationInfo.Page,
+    this.PaginationInfo.RowsPerPage,
+    {
+      code: filters.code,
+      agentname: filters.agentname,
+      agentbranchname: filters.agentbranchname
+    }
+  ).subscribe({
+    next: (res) => {
+      this.branches = res.items;
+      this.totalRecord = res.totalCount;
+      this.isLoading = false;
+    },
+    error: (error) => {
+      console.error('Error loading branches:', error);
+      this.isLoading = false;
+    }
+  });
+}
+
 
   addNewBranch(): void {
     this.router.navigate(['/agent-branches/add']);

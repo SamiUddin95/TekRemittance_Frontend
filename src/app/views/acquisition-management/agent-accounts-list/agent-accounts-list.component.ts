@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PageTitleComponent } from '@app/components/page-title.component';
 import { NgIcon } from '@ng-icons/core';
@@ -7,6 +8,9 @@ import { GenericPaginationComponent } from '@/app/shared/generic-pagination/gene
 import { AgentAccountsService } from '../services/agent-accounts.service';
 import Swal from 'sweetalert2';
 import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
+import { FormBuilder, ReactiveFormsModule} from '@angular/forms';
+
+
 
 interface AccountRow {
   id: string;
@@ -20,37 +24,56 @@ interface AccountRow {
 @Component({
   selector: 'app-agent-accounts-list',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
+  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent,
+    ReactiveFormsModule, SkeletonLoaderComponent],
   templateUrl: './agent-accounts-list.component.html'
 })
 export class AgentAccountsListComponent implements OnInit {
+
+  agentaccountFilterForm: FormGroup;
+
   rows: AccountRow[] = [];
   isLoading = false;
   PaginationInfo: any = { Page: 1, RowsPerPage: 10 };
   totalRecord = 0;
 
-  constructor(private router: Router, private accountsService: AgentAccountsService) {}
+  constructor(private router: Router, private accountsService: AgentAccountsService,private fb: FormBuilder) {
+     this.agentaccountFilterForm = this.fb.group({
+      accountNumber: [''],
+      agentName: [''],
+      status: ['']
+    });
+
+  }
 
   ngOnInit(): void {
     this.loadAccounts();
   }
 
+
+  onClearFilters(): void{
+ this.agentaccountFilterForm.reset({
+            accountNumber: '',
+            agentName: '',
+            status: ''
+        });
+        this.loadAccounts();
+  }
+  
+  onSearch(): void {
+        this.loadAccounts();
+    }
+
   loadAccounts(): void {
     this.isLoading = true;
-    this.accountsService.getAccounts(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
+      const filters = this.agentaccountFilterForm.value;
+    this.accountsService.getAccounts(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage,filters)
       .subscribe({
-        next: (res) => {
-          this.rows = res.items.map((x) => ({
-            id: x.id,
-            accountName: x.accountName,
-            accountNumber: x.accountNumber,
-            agentName: x.agentName,
-            active: x.isActive,
-            approve: x.approve,
-          }));
-          this.totalRecord = res.totalCount;
-          this.isLoading = false;
-        },
+         next: (res) => {
+      this.rows = res.items;
+      this.totalRecord = res.totalCount;
+      this.isLoading = false;
+    },
         error: (err) => {
           console.error('Error loading accounts:', err);
           this.isLoading = false;
@@ -93,4 +116,12 @@ export class AgentAccountsListComponent implements OnInit {
     this.PaginationInfo.Page = page;
     this.loadAccounts();
   }
+
+     getStatusBadgeClass(isActive: boolean | undefined): string {
+        return isActive ? 'badge bg-success' : 'badge bg-danger';
+    }
+
+    getStatusText(isActive: boolean | undefined): string {
+        return isActive ? 'Active' : 'Inactive';
+    }
 }

@@ -176,10 +176,30 @@
                         <input type="text" class="form-control" [value]="form.get('name')?.value" readonly>
                         <input type="hidden" formControlName="fieldTemplateName" [value]="form.get('name')?.value">
                       </div>
-                      <div class="col-md-2">
-                        <label class="form-label">Field Order <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" placeholder="e.g., 1" formControlName="fieldOrder" />
-                      </div>
+                      @if (!isFixLength) {
+                       <div class="col-md-2">
+                       <label class="form-label">Field Order <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control"
+                         placeholder="e.g., 1"
+                        formControlName="fieldOrder" />
+                          </div>
+                            } 
+                          @if (isFixLength) {
+                       <div class="col-md-2">
+                      <label class="form-label">Start Point <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control"
+                           placeholder="e.g., 1"
+                           formControlName="startIndex" />
+                       </div>
+
+                       <div class="col-md-2">
+                       <label class="form-label">Length<span class="text-danger">*</span></label>
+                        <input type="number" class="form-control"
+                        placeholder="e.g., 10"
+                         formControlName="length" />
+                              </div>
+                            }
+
                       <div class="col-md-3">
                         <label class="form-label">Field Name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" placeholder="e.g., Pr1_PrincipalBankCode" formControlName="fieldName" />
