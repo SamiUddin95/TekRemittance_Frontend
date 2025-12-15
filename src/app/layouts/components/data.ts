@@ -150,7 +150,7 @@ export const horizontalMenuItems: MenuItemType[] = [
             {icon: 'tablerX', label: 'Rejected Queue', url: '/rejected-queue'},
             {icon: 'tablerCircleCheck', label: 'Approved Queue', url: '/approved-queue'},
             {icon: 'tablerDownload', label: 'Fetch Accounts', url: '/fetch-accounts'},
-            {icon: 'tablerCash', label: 'Coc Payout', url: '/coc-payout'},
+            {icon: 'tablerCash', label: 'COC Payout', url: '/coc-payout'},
         ]
     },
     {

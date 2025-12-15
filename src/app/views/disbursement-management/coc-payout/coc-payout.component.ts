@@ -5,6 +5,7 @@ import { NgIcon } from '@ng-icons/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { AgentService } from '@/app/views/acquisition-management/services/agent.service';
+import { CountUpModule } from "ngx-countup";
 
 interface SearchResult {
   trackingNumber: string;
@@ -14,6 +15,8 @@ interface SearchResult {
   cnicPassport: string;
   amount: string;
   contactNo: string;
+  accountNumber: string;
+  accountTitle?: string;
 }
 
 interface Denomination {
@@ -25,7 +28,7 @@ interface Denomination {
 @Component({
   selector: 'app-coc-payout',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, ReactiveFormsModule],
+  imports: [CommonModule, PageTitleComponent, NgIcon, ReactiveFormsModule, CountUpModule],
   templateUrl: './coc-payout.component.html'
 })
 export class CocPayoutComponent implements OnInit {
@@ -42,7 +45,10 @@ export class CocPayoutComponent implements OnInit {
     name: 'Waji Khan',
     cnicPassport: '42289-8549975-8',
     amount: '1000 USD',
-    contactNo: '0335-8777985'
+    contactNo: '0335-8777985',
+    accountNumber: '1234567890123',
+    accountTitle: 'Waji Khan'
+    
   };
 
   // Denominations array
