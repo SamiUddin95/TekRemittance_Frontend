@@ -47,7 +47,7 @@ export class TemplateService {
     return this.http.delete<void>(url);
   }
 
-  getTemplates(page: number = 1, rowsPerPage: number = 10): Observable<{
+  getTemplates(page: number = 1, rowsPerPage: number = 10,filters: any = {}): Observable<{
     items: TemplateListItem[];
     totalCount: number;
     pageNumber: number;
@@ -56,7 +56,16 @@ export class TemplateService {
     statusCode: number;
     status: string;
   }> {
-    const url = `${environment.apiUrl}/AgentFileTemplates?pageNumber=${page}&pageSize=${rowsPerPage}`;
+    let url = `${environment.apiUrl}/AgentFileTemplates?pageNumber=${page}&pageSize=${rowsPerPage}`;
+    if (filters.name)
+  url += `&name=${filters.name}`;
+
+if (filters.agentName)
+  url += `&agentName=${filters.agentName}`;
+
+if (filters.sheetName)
+  url += `&sheetName=${filters.sheetName}`;
+
     return this.http.get<any>(url).pipe(
       map((res) => {
         const statusCode = res?.statusCode ?? res?.status ?? 200;

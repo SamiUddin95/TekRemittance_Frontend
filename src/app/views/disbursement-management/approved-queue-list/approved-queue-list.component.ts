@@ -47,11 +47,10 @@ export class ApprovedQueueListComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private agentService: AgentService, private disbursementService: DisbursementService, private auth: AuthService) {
     this.filterForm = this.fb.group({
-      agentId: [''],
-      mode: [''],
-      status: [''],
-      date: [''],
-      search: ['']
+     agentId: [''],
+      xpin: [''],
+      accountnumber: [''],
+      date: ['']
     });
   }
 
@@ -72,33 +71,43 @@ export class ApprovedQueueListComponent implements OnInit {
     }
   }
 
+
   onSearch(): void {
-    console.log('Search button clicked');
-    const agentId = this.filterForm.get('agentId')?.value;
-    console.log('Selected agent ID:', agentId);
-    
-    if (agentId) {
-      this.PaginationInfo.Page = 1; // Reset to first page for new search
-      this.loadApprovedData(agentId);
-    } else {
-      console.log('No agent selected');
-      Swal.fire({
-        icon: 'warning',
-        title: 'Agent required',
-        text: 'Please select the Agent first',
-        confirmButtonText: 'OK'
-      });
-    }
+  console.log('Search button clicked');
+
+  const formValues = this.filterForm.value;
+  const agentId = formValues.agentId?.trim();
+
+  if (!agentId) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Agent required',
+      text: 'Please select the Agent first',
+      confirmButtonText: 'OK'
+    });
+    return;
   }
+
+  // Filters collect karo
+  const filters = {
+    xpin: formValues.xpin?.trim() || undefined,
+    accountNumber: formValues.accountnumber?.trim() || undefined,
+    date: formValues.date || undefined
+  };
+
+  console.log('Searching Approved Data - Agent:', agentId, 'Filters:', filters);
+
+  this.PaginationInfo.Page = 1;
+  this.loadApprovedData(agentId, filters);
+} 
 
   onClearFilters(): void {
     // Reset form fields to defaults
     this.filterForm.reset({
       agentId: '',
-      mode: '',
-      status: '',
-      date: '',
-      search: ''
+      xpin: '',
+      accountnumber: '',
+      date: ''
     });
 
     // Reset pagination and table state
@@ -109,41 +118,47 @@ export class ApprovedQueueListComponent implements OnInit {
     this.totalRecord = 0;
   }
 
-  private loadApprovedData(agentId: string): void {
-    console.log('Loading approved data for agent:', agentId);
-    this.isLoading = true;
-    const pageNumber = this.PaginationInfo.Page;
-    const pageSize = this.PaginationInfo.RowsPerPage;
-    
-    console.log('Making API call with params:', { agentId, pageNumber, pageSize });
-    
-    this.disbursementService.getDataByApproved(agentId, pageNumber, pageSize).subscribe({
+private loadApprovedData(
+  agentId: string,
+  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+): void {
+  console.log('Loading approved data for agent:', agentId, 'with filters:', filters);
+  this.isLoading = true;
+  const pageNumber = this.PaginationInfo.Page;
+  const pageSize = this.PaginationInfo.RowsPerPage;
+  this.disbursementService
+    .getDataByApproved(agentId, pageNumber, pageSize, filters)
+    .subscribe({
       next: (response) => {
         console.log('API response received:', response);
         this.isLoading = false;
+
         if (response.status === 'success' && response.items) {
           this.rows = this.mapApprovedDataToRows(response.items);
-          // Build dynamic headers from dataJson keys
+
+          // Dynamic headers from dataJson
           const parsedObjects: any[] = response.items.map((item: DisbursementData) => {
             try { return JSON.parse(item.dataJson || '{}'); } catch { return {}; }
           });
+
           const headerSet = new Set<string>();
           parsedObjects.forEach(o => Object.keys(o || {}).forEach(k => headerSet.add(k)));
-          // Ensure AgentName column exists
+
           const headersArr = Array.from(headerSet);
           if (!headersArr.includes('AgentName')) {
             headersArr.unshift('AgentName');
           }
           this.tableHeaders = headersArr;
-          // Build renderable rows with AgentName merged
+
+          // Data rows with AgentName
           this.dataRows = response.items.map((item: DisbursementData, idx: number) => {
             const obj = parsedObjects[idx] || {};
             const agentName = (this.agents.find(a => a.id?.toLowerCase() === item.agentId?.toLowerCase())?.name)
               || `Agent-${(item.agentId || '').substring(0, 8)}`;
             return { id: item.id, obj: { AgentName: agentName, ...obj } };
           });
+
           this.totalRecord = response.totalCount;
-          console.log('Dynamic headers:', this.tableHeaders);
         } else {
           this.rows = [];
           this.tableHeaders = [];
@@ -160,7 +175,8 @@ export class ApprovedQueueListComponent implements OnInit {
         this.totalRecord = 0;
       }
     });
-  }
+} 
+
 
   private mapApprovedDataToRows(items: DisbursementData[]): ApprovedRow[] {
     return items.map(item => {

@@ -14,9 +14,37 @@
               Add Template
             </button>
           </div>
-        </div>
-
+        </div>     
         <div class="card-body">
+          <div class="rounded mb-2">
+                        <form [formGroup]="agentaccountFilterForm">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Name</label>
+                                    <input type="text" class="form-control" formControlName="name" placeholder="Templates Name" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Agent Name</label>
+                                    <input type="text" class="form-control" formControlName="agentName" placeholder="Agent Names" />
+                                </div>
+                                 <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Sheet Name</label>
+                                    <input type="text" class="form-control" formControlName="sheetName" placeholder="Sheet Names" />
+                                </div>
+                              
+                                <div class="col-md-2 d-flex align-items-end gap-2">
+                                    <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
+                                        <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                                        Search
+                                    </button>
+                                    <button type="button" class="btn btn-dark" (click)="onClearFilters()">
+                                        <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
           @if (isLoading) {
             <app-skeleton-loader variant="table" [rows]="8" [cols]="7" ariaLabel="Loading templates table"></app-skeleton-loader>
           } @else {

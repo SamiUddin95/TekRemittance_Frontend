@@ -17,6 +17,31 @@
         </div>
 
         <div class="card-body">
+            <div class="rounded mb-2">
+                        <form [formGroup]="agentaccountFilterForm">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Template Name</label>
+                                    <input type="text" class="form-control" formControlName="templatename" placeholder="Templates Name" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">File Name</label>
+                                    <input type="text" class="form-control" formControlName="filename" placeholder="Files Names" />
+                                </div>
+                                
+                                <div class="col-md-2 d-flex align-items-end gap-2">
+                                    <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
+                                        <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                                        Search
+                                    </button>
+                                    <button type="button" class="btn btn-dark" (click)="onClearFilters()">
+                                        <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
           @if (isLoading) {
             <app-skeleton-loader variant="table" [rows]="8" [cols]="7" ariaLabel="Loading files table"></app-skeleton-loader>
           } @else {
@@ -24,7 +49,7 @@
               <table class="table table-bordered table-striped table-sm">
                 <thead class="table text-center">
                   <tr>
-                    <th class="fw-bold">Template Id</th>
+                    <th class="fw-bold">Template Name</th>
                     <th class="fw-bold">File Name</th>
                     <th class="fw-bold">Status</th>
                     <th class="fw-bold">Error message</th>
@@ -36,7 +61,7 @@
                 <tbody class="table-group-divider text-center">
                   @for (row of rows; track row.id) {
                     <tr>
-                      <td>{{ row.templateId }}</td>
+                      <td>{{ row.templateName  }}</td>
                       <td class="text-break">{{ row.fileName }}</td>
                       <td>
                         <span class="badge" 

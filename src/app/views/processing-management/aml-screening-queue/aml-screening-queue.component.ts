@@ -49,10 +49,8 @@ export class AmlScreeningQueueComponent implements OnInit {
   constructor(private fb: FormBuilder, private agentService: AgentService, private amlScreeningService: AmlScreeningService) {
     this.filterForm = this.fb.group({
       agentId: [''],
-      status: [''],
-      dateFrom: [''],
-      dateTo: [''],
-      search: ['']
+      xpin: [''],
+      accountnumber: ['']
     });
   }
 
@@ -100,10 +98,8 @@ export class AmlScreeningQueueComponent implements OnInit {
     // Reset form fields to defaults
     this.filterForm.reset({
       agentId: '',
-      status: '',
-      dateFrom: '',
-      dateTo: '',
-      search: ''
+      xpin: '',
+      accountnumber: ''
     });
 
     // Reset pagination and table state

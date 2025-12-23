@@ -42,6 +42,7 @@ export class BankFormComponent implements OnInit {
     }
 
     createForm(): FormGroup {
+        debugger
         return this.fb.group({
             code: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
             name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
@@ -49,7 +50,7 @@ export class BankFormComponent implements OnInit {
             website: ['', [Validators.maxLength(255)]],
             phoneNo: ['', [Validators.maxLength(20)]],
             description: ['', [Validators.maxLength(500)]],
-            isActive: [true]
+            isActive: [false]
         });
     }
 

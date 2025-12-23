@@ -11,15 +11,26 @@ export interface AgentUploadedFile {
   errorMessage?: string;
   rowCount: number;
   processAt?: string;
+  templateName?: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AgentFileUploadService {
   constructor(private http: HttpClient) {}
 
-  getFiles(page: number = 1, rowsPerPage: number = 10): Observable<{ items: AgentUploadedFile[]; totalCount: number; pageNumber: number; pageSize: number; totalPages: number; statusCode: number; status: string; }> {
-    const url = `${environment.apiUrl}/AgentFileUploads`;
-    const params = new HttpParams().set('pageNumber', page).set('pageSize', rowsPerPage);
+  getFiles(page: number = 1, rowsPerPage: number = 10,filters: any = {}): Observable<{ items: AgentUploadedFile[]; totalCount: number; pageNumber: number; pageSize: number; totalPages: number; statusCode: number; status: string; }> {
+    let url = `${environment.apiUrl}/AgentFileUploads`;
+  let params = new HttpParams()
+  .set('pageNumber', page)
+  .set('pageSize', rowsPerPage);
+
+if (filters.templatename?.trim()) {
+  params = params.set('templatename', filters.templatename.trim());
+}
+if (filters.filename?.trim()) {
+  params = params.set('filename', filters.filename.trim());
+}
+
     return this.http.get<any>(url, { params }).pipe(
       map((res) => {
         const statusCode = res?.statusCode ?? res?.status ?? 200;
@@ -30,6 +41,7 @@ export class AgentFileUploadService {
           items: itemsRaw.map((d: any) => ({
             id: String(d.id ?? d.fileId ?? ''),
             templateId: String(d.templateId ?? d.fileTemplateId ?? ''),
+            templateName: String(d.templateName ?? d.fileTemplateName ?? ''),
             fileName: String(d.fileName ?? d.name ?? ''),
             status: String(d.status ?? d.fileStatus ?? ''),
             errorMessage: d.errorMessage ?? d.errors ?? '',

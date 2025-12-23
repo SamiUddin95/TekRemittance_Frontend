@@ -60,7 +60,7 @@ export class CityFormComponent implements OnInit {
             name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
             countryId: ['', [Validators.required]],
             provinceId: ['', [Validators.required]],
-            isActive: [true]
+            isActive: [false]
         });
     }
 

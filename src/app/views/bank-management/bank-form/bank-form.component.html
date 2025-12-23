@@ -189,8 +189,9 @@
                                                 Saving...
                                             } @else {
                                                 <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
-                                                Save Bank
+                                                 {{ isEditMode ? 'Update Bank' : 'Save Bank' }}
                                             }
+                                           
                                         </button>
                                     </div>
                                 </div>

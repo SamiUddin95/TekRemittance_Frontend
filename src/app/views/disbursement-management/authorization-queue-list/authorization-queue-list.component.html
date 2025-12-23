@@ -25,27 +25,20 @@
                       <option [value]="a.id">{{ a.name }}</option>
                     }
                   </select>
+               </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">XPin</label>
+                  <input type="text" class="form-control" formControlName="xpin" placeholder="XPin" />
+                </div>
+                  <div class="col-md-2">
+                  <label class="form-label fw-semibold">Account Number</label>
+                  <input type="text" class="form-control" formControlName="accountnumber" placeholder="Account Number" />
                 </div>
                 <div class="col-md-2">
-                  <label class="form-label fw-semibold">Mode</label>
-                  <input type="text" class="form-control" formControlName="mode" placeholder="Select Mode" />
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label fw-semibold">Status</label>
-                  <select class="form-select" formControlName="status">
-                    <option value="Pending">Pending</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Rejected">Rejected</option>
-                  </select>
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label fw-semibold">Date</label>
+                  <label class="form-label fw-semibold">Date </label>
                   <input type="date" class="form-control" formControlName="date" />
                 </div>
-                <div class="col-md-2">
-                  <label class="form-label fw-semibold">Search</label>
-                  <input type="text" class="form-control" formControlName="search" placeholder="Search by RIN or Beneficiary" />
-                </div>
+               
                 <div class="col-md-2 d-flex align-items-end gap-2">
                   <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
                     <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>

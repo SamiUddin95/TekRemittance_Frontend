@@ -50,11 +50,9 @@ export class DisbursementQueueListComponent implements OnInit {
   constructor(private fb: FormBuilder, private agentService: AgentService, private disbursementService: DisbursementService, private auth: AuthService) {
     this.filterForm = this.fb.group({
       agentId: [''],
-      mode: [''],
-      status: [''],
-      dateFrom: [''],
-      dateTo: [''],
-      search: ['']
+      xpin: [''],
+      accountnumber: [''],
+      date: ['']
     });
   }
 
@@ -79,35 +77,42 @@ export class DisbursementQueueListComponent implements OnInit {
       this.loadDisbursementData(agentId);
     }
   }
-
   onSearch(): void {
-    console.log('Search button clicked');
-    const agentId = this.filterForm.get('agentId')?.value;
-    console.log('Selected agent ID:', agentId);
-    
-    if (agentId) {
-      this.PaginationInfo.Page = 1; // Reset to first page for new search
-      this.loadDisbursementData(agentId);
-    } else {
-      console.log('No agent selected');
-      Swal.fire({
-        icon: 'warning',
-        title: 'Agent required',
-        text: 'Please select the Agent first',
-        confirmButtonText: 'OK'
-      });
-    }
+  console.log('Search button clicked');
+
+  const formValues = this.filterForm.value;
+  const agentId = formValues.agentId?.trim();
+
+  if (!agentId) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Agent required',
+      text: 'Please select the Agent first',
+      confirmButtonText: 'OK'
+    });
+    return;
   }
+
+  // Filters collect karo — empty strings ko ignore karne ke liye
+  const filters = {
+    xpin: formValues.xpin?.trim() || undefined,
+    accountNumber: formValues.accountnumber?.trim() || undefined,
+    date: formValues.date || undefined  // date empty ho to undefined
+  };
+
+  console.log('Searching with Agent:', agentId, 'Filters:', filters);
+
+  this.PaginationInfo.Page = 1; // Nayi search → page 1
+  this.loadDisbursementData(agentId, filters);
+}
 
   onClearFilters(): void {
     // Reset form fields to defaults
     this.filterForm.reset({
       agentId: '',
-      mode: '',
-      status: '',
-      dateFrom: '',
-      dateTo: '',
-      search: ''
+      xpin: '',
+      accountnumber: '',
+      date: ''
     });
 
     // Reset pagination and table state
@@ -117,37 +122,41 @@ export class DisbursementQueueListComponent implements OnInit {
     this.dataRows = [];
     this.totalRecord = 0;
   }
+private loadDisbursementData(
+  agentId: string,
+  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+): void {
+  console.log('Loading data for agent:', agentId, 'with filters:', filters);
+  this.isLoading = true;
 
-  private loadDisbursementData(agentId: string): void {
-    console.log('Loading disbursement data for agent:', agentId);
-    this.isLoading = true;
-    const pageNumber = this.PaginationInfo.Page;
-    const pageSize = this.PaginationInfo.RowsPerPage;
-    
-    console.log('Making API call with params:', { agentId, pageNumber, pageSize });
-    
-    this.disbursementService.getDataByAgent(agentId, pageNumber, pageSize).subscribe({
+  const pageNumber = this.PaginationInfo.Page;
+  const pageSize = this.PaginationInfo.RowsPerPage;
+
+  this.disbursementService
+    .getDataByAgent(agentId, pageNumber, pageSize, filters)
+    .subscribe({
       next: (response) => {
-        console.log('API response received:', response);
+        console.log('API response:', response);
         this.isLoading = false;
+
         if (response.status === 'success' && response.items) {
           this.rows = this.mapDisbursementDataToRows(response.items);
-          // Build dynamic headers from dataJson keys
+
+          // Dynamic headers logic (same as before)
           const parsedObjects: any[] = response.items.map((item: DisbursementData) => {
             try { return JSON.parse(item.dataJson || '{}'); } catch { return {}; }
           });
           const headerSet = new Set<string>();
           parsedObjects.forEach(o => Object.keys(o || {}).forEach(k => headerSet.add(k)));
-          // ensure AgentName appears as a dynamic column (if not already in dataJson)
           const headersArr = Array.from(headerSet);
           if (!headersArr.includes('AgentName')) {
             headersArr.unshift('AgentName');
           }
           this.tableHeaders = headersArr;
-          // Build renderable data rows preserving id and status for actions
+
+          // Data rows with AgentName
           this.dataRows = response.items.map((item: DisbursementData, idx: number) => {
             const obj = parsedObjects[idx] || {};
-            // add AgentName field
             const agentName = (this.agents.find(a => a.id?.toLowerCase() === item.agentId?.toLowerCase())?.name)
               || `Agent-${(item.agentId || '').substring(0, 8)}`;
             return {
@@ -156,8 +165,8 @@ export class DisbursementQueueListComponent implements OnInit {
               obj: { AgentName: agentName, ...obj }
             };
           });
+
           this.totalRecord = response.totalCount;
-          console.log('Dynamic headers:', this.tableHeaders);
         } else {
           this.rows = [];
           this.tableHeaders = [];
@@ -169,12 +178,13 @@ export class DisbursementQueueListComponent implements OnInit {
         console.error('API error:', error);
         this.isLoading = false;
         this.rows = [];
-        this.tableHeaders = [];
-        this.dataRows = [];
-        this.totalRecord = 0;
+          this.tableHeaders = [];
+          this.dataRows = [];
+          this.totalRecord = 0;
       }
     });
-  }
+}
+
 
   private mapDisbursementDataToRows(items: DisbursementData[]): QueueRow[] {
     return items.map(item => {

@@ -51,7 +51,7 @@ export class ProvinceFormComponent implements OnInit {
             code: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
             name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
             countryId: ['', [Validators.required]],
-            isActive: [true]
+            isActive: [false]
         });
     }
 

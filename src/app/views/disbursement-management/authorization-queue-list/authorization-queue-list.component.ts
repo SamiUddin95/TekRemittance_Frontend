@@ -50,43 +50,51 @@ export class AuthorizationQueueListComponent implements OnInit {
   constructor(private fb: FormBuilder, private agentService: AgentService, private disbursementService: DisbursementService, private auth: AuthService) {
     this.filterForm = this.fb.group({
       agentId: [''],
-      mode: [''],
-      status: ['Pending'],
-      date: [''],
-      search: ['']
+      xpin: [''],
+      accountnumber: [''],
+      date: ['']
     });
   }
 
   ngOnInit(): void { this.loadAgents(); }
 
+
   onSearch(): void {
-    console.log('Search button clicked');
-    const agentId = this.filterForm.get('agentId')?.value;
-    console.log('Selected agent ID:', agentId);
-    
-    if (agentId) {
-      this.PaginationInfo.Page = 1; // Reset to first page for new search
-      this.loadDisbursementData(agentId);
-    } else {
-      console.log('No agent selected');
-      // Show message to user that they need to select an agent first
-      Swal.fire({
-        icon: 'warning',
-        title: 'Agent required',
-        text: 'Please select the Agent first',
-        confirmButtonText: 'OK'
-      });
-    }
+  console.log('Search button clicked');
+
+  const formValues = this.filterForm.value;
+  const agentId = formValues.agentId?.trim();
+
+  if (!agentId) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Agent required',
+      text: 'Please select the Agent first',
+      confirmButtonText: 'OK'
+    });
+    return;
   }
+
+  // Filters collect karo (empty fields ignore karne ke liye)
+  const filters = {
+    xpin: formValues.xpin?.trim() || undefined,
+    accountNumber: formValues.accountnumber?.trim() || undefined,
+    date: formValues.date || undefined
+  };
+
+  console.log('Searching for Agent:', agentId, 'with filters:', filters);
+
+  this.PaginationInfo.Page = 1;
+  this.loadDisbursementData(agentId, filters);
+}
 
   onClearFilters(): void {
     // Reset form fields to defaults
     this.filterForm.reset({
       agentId: '',
-      mode: '',
-      status: 'Pending',
-      date: '',
-      search: ''
+      xpin: '',
+      accountnumber: '',
+      date: ''
     });
 
     // Reset pagination and table state
@@ -97,41 +105,50 @@ export class AuthorizationQueueListComponent implements OnInit {
     this.totalRecord = 0;
   }
 
-  private loadDisbursementData(agentId: string): void {
-    console.log('Loading disbursement data for agent:', agentId);
-    this.isLoading = true;
-    const pageNumber = this.PaginationInfo.Page;
-    const pageSize = this.PaginationInfo.RowsPerPage;
-    
-    console.log('Making API call with params:', { agentId, pageNumber, pageSize });
-    
-    this.disbursementService.getDataByAuthorize(agentId, pageNumber, pageSize).subscribe({
+
+  private loadDisbursementData(
+  agentId: string,
+  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+): void {
+  console.log('Loading data for agent:', agentId, 'with filters:', filters);
+  this.isLoading = true;
+
+  const pageNumber = this.PaginationInfo.Page;
+  const pageSize = this.PaginationInfo.RowsPerPage;
+
+  this.disbursementService
+    .getDataByAuthorize(agentId, pageNumber, pageSize, filters)
+    .subscribe({
       next: (response) => {
         console.log('API response received:', response);
         this.isLoading = false;
+
         if (response.status === 'success' && response.items) {
           this.rows = this.mapDisbursementDataToRows(response.items);
-          // Build dynamic headers from dataJson keys
+
+          // Dynamic headers from dataJson
           const parsedObjects: any[] = response.items.map((item: DisbursementData) => {
             try { return JSON.parse(item.dataJson || '{}'); } catch { return {}; }
           });
+
           const headerSet = new Set<string>();
           parsedObjects.forEach(o => Object.keys(o || {}).forEach(k => headerSet.add(k)));
-          // Ensure AgentName column exists
+
           const headersArr = Array.from(headerSet);
           if (!headersArr.includes('AgentName')) {
             headersArr.unshift('AgentName');
           }
           this.tableHeaders = headersArr;
-          // Build renderable rows with AgentName merged
+
+          // Data rows with AgentName
           this.dataRows = response.items.map((item: DisbursementData, idx: number) => {
             const obj = parsedObjects[idx] || {};
             const agentName = (this.agents.find(a => a.id?.toLowerCase() === item.agentId?.toLowerCase())?.name)
               || `Agent-${(item.agentId || '').substring(0, 8)}`;
             return { id: item.id, obj: { AgentName: agentName, ...obj } };
           });
+
           this.totalRecord = response.totalCount;
-          console.log('Dynamic headers:', this.tableHeaders);
         } else {
           this.rows = [];
           this.tableHeaders = [];
@@ -148,7 +165,7 @@ export class AuthorizationQueueListComponent implements OnInit {
         this.totalRecord = 0;
       }
     });
-  }
+}
 
   private mapDisbursementDataToRows(items: DisbursementData[]): AuthQueueRow[] {
     return items.map(item => {

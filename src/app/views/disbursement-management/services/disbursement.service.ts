@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '@/environments/environment';
 
@@ -32,34 +32,34 @@ export interface DisbursementResponse {
 export class DisbursementService {
     constructor(private http: HttpClient) { }
 
-    getDataByAgent(agentId: string, pageNumber: number = 1, pageSize: number = 50): Observable<{
-        items: DisbursementData[];
-        totalCount: number;
-        pageNumber: number;
-        pageSize: number;
-        totalPages: number;
-        statusCode: number;
-        status: string;
-    }> {
-        const url = `${environment.apiUrl}/Disbursement/GetDataByAgent?agentId=${agentId}&pageNumber=${pageNumber}&pageSize=${pageSize}`;
-        return this.http.get<any>(url).pipe(
-            map((res) => {
-                const statusCode = res?.statusCode ?? res?.status ?? 200;
-                const status = res?.status ?? 'success';
-                const payload = res?.data ?? res;
-                const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
-                return {
-                    items: itemsRaw,
-                    totalCount: payload?.totalCount ?? itemsRaw.length,
-                    pageNumber: payload?.pageNumber ?? pageNumber,
-                    pageSize: payload?.pageSize ?? pageSize,
-                    totalPages: payload?.totalPages ?? 1,
-                    statusCode,
-                    status,
-                };
-            })
-        );
-    }
+    getDataByAgent(
+  agentId: string,
+  pageNumber: number = 1,
+  pageSize: number = 50,
+  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+): Observable<any> {
+  let url = `${environment.apiUrl}/Disbursement/GetDataByAgent?agentId=${agentId}&pageNumber=${pageNumber}&pageSize=${pageSize}`;
+
+  if (filters.xpin) url += `&xpin=${filters.xpin}`;
+  if (filters.accountNumber) url += `&accountNumber=${filters.accountNumber}`;
+  if (filters.date) url += `&date=${filters.date}`;
+
+  return this.http.get<any>(url).pipe(
+    map(res => {
+      const payload = res?.data ?? res;
+      const itemsRaw = Array.isArray(payload?.items) ? payload.items : [];
+      return {
+        items: itemsRaw,
+        totalCount: payload?.totalCount ?? itemsRaw.length,
+        pageNumber: payload?.pageNumber ?? pageNumber,
+        pageSize: payload?.pageSize ?? pageSize,
+        totalPages: payload?.totalPages ?? 1,
+        status: res?.status ?? 'success'
+      };
+    })
+  );
+}
+
 
     // RemitReject: rejects a disbursement by XPin and UserId
     remitReject(userId: string, xpin: string | number): Observable<any> {
@@ -96,92 +96,162 @@ export class DisbursementService {
         return this.http.post<any>(url, body);
     }
 
-    getDataByAuthorize(agentId: string, pageNumber: number = 1, pageSize: number = 10): Observable<{
-        items: DisbursementData[];
-        totalCount: number;
-        pageNumber: number;
-        pageSize: number;
-        totalPages: number;
-        statusCode: number;
-        status: string;
-    }> {
-        const url = `${environment.apiUrl}/Disbursement/GetDataByAuthorize/${agentId}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
-        return this.http.get<any>(url).pipe(
-            map((res) => {
-                const statusCode = res?.statusCode ?? res?.status ?? 200;
-                const status = res?.status ?? 'success';
-                const payload = res?.data ?? res;
-                const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
-                return {
-                    items: itemsRaw,
-                    totalCount: payload?.totalCount ?? itemsRaw.length,
-                    pageNumber: payload?.pageNumber ?? pageNumber,
-                    pageSize: payload?.pageSize ?? pageSize,
-                    totalPages: payload?.totalPages ?? 1,
-                    statusCode,
-                    status,
-                };
-            })
-        );
-    }
 
-    getDataByReject(agentId: string, pageNumber: number = 1, pageSize: number = 10): Observable<{
-        items: DisbursementData[];
-        totalCount: number;
-        pageNumber: number;
-        pageSize: number;
-        totalPages: number;
-        statusCode: number;
-        status: string;
-    }> {
-        const url = `${environment.apiUrl}/Disbursement/GetDataByReject/${agentId}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
-        return this.http.get<any>(url).pipe(
-            map((res) => {
-                const statusCode = res?.statusCode ?? res?.status ?? 200;
-                const status = res?.status ?? 'success';
-                const payload = res?.data ?? res;
-                const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
-                return {
-                    items: itemsRaw,
-                    totalCount: payload?.totalCount ?? itemsRaw.length,
-                    pageNumber: payload?.pageNumber ?? pageNumber,
-                    pageSize: payload?.pageSize ?? pageSize,
-                    totalPages: payload?.totalPages ?? 1,
-                    statusCode,
-                    status,
-                };
-            })
-        );
-    }
+getDataByAuthorize(
+  agentId: string,
+  pageNumber: number = 1,
+  pageSize: number = 10,
+  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+): Observable<{
+  items: DisbursementData[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  statusCode: number;
+  status: string;
+}> {
+  let params = new HttpParams()
+    .set('pageNumber', pageNumber.toString())
+    .set('pageSize', pageSize.toString());
 
-    getDataByApproved(agentId: string, pageNumber: number = 1, pageSize: number = 10): Observable<{
-        items: DisbursementData[];
-        totalCount: number;
-        pageNumber: number;
-        pageSize: number;
-        totalPages: number;
-        statusCode: number;
-        status: string;
-    }> {
-        const url = `${environment.apiUrl}/Disbursement/GetDataByApproved/${agentId}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
-        return this.http.get<any>(url).pipe(
-            map((res) => {
-                const statusCode = res?.statusCode ?? res?.status ?? 200;
-                const status = res?.status ?? 'success';
-                const payload = res?.data ?? res;
-                const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
-                return {
-                    items: itemsRaw,
-                    totalCount: payload?.totalCount ?? itemsRaw.length,
-                    pageNumber: payload?.pageNumber ?? pageNumber,
-                    pageSize: payload?.pageSize ?? pageSize,
-                    totalPages: payload?.totalPages ?? 1,
-                    statusCode,
-                    status,
-                };
-            })
-        );
-    }
+  // Add optional filters only if they exist
+  if (filters.xpin) {
+    params = params.set('xpin', filters.xpin);
+  }
+  if (filters.accountNumber) {
+    params = params.set('accountNumber', filters.accountNumber);
+  }
+  if (filters.date) {
+    params = params.set('date', filters.date); // agar backend mein 'edate' hai to yahan 'edate' likh dena
+  }
+
+  const url = `${environment.apiUrl}/Disbursement/GetDataByAuthorize/${agentId}`;
+
+  return this.http.get<any>(url, { params }).pipe(
+    map((res) => {
+      const statusCode = res?.statusCode ?? res?.status ?? 200;
+      const status = res?.status ?? 'success';
+      const payload = res?.data ?? res;
+      const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
+
+      return {
+        items: itemsRaw,
+        totalCount: payload?.totalCount ?? itemsRaw.length,
+        pageNumber: payload?.pageNumber ?? pageNumber,
+        pageSize: payload?.pageSize ?? pageSize,
+        totalPages: payload?.totalPages ?? 1,
+        statusCode,
+        status,
+      };
+    })
+  );
+}
+
+
+getDataByReject(
+  agentId: string,
+  pageNumber: number = 1,
+  pageSize: number = 10,
+  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+): Observable<{
+  items: DisbursementData[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  statusCode: number;
+  status: string;
+}> {
+  let params = new HttpParams()
+    .set('pageNumber', pageNumber.toString())
+    .set('pageSize', pageSize.toString());
+
+  if (filters.xpin) {
+    params = params.set('xpin', filters.xpin);
+  }
+  if (filters.accountNumber) {
+    params = params.set('accountNumber', filters.accountNumber);
+  }
+  if (filters.date) {
+    params = params.set('date', filters.date); // agar backend mein 'edate' hai to 'edate' kar dena
+  }
+
+  const url = `${environment.apiUrl}/Disbursement/GetDataByReject/${agentId}`;
+
+  return this.http.get<any>(url, { params }).pipe(
+    map((res) => {
+      const statusCode = res?.statusCode ?? res?.status ?? 200;
+      const status = res?.status ?? 'success';
+      const payload = res?.data ?? res;
+      const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
+
+      return {
+        items: itemsRaw,
+        totalCount: payload?.totalCount ?? itemsRaw.length,
+        pageNumber: payload?.pageNumber ?? pageNumber,
+        pageSize: payload?.pageSize ?? pageSize,
+        totalPages: payload?.totalPages ?? 1,
+        statusCode,
+        status,
+      };
+    })
+  );
+}
+
+  
+
+getDataByApproved(
+  agentId: string,
+  pageNumber: number = 1,
+  pageSize: number = 10,
+  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+): Observable<{
+  items: DisbursementData[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  statusCode: number;
+  status: string;
+}> {
+  let params = new HttpParams()
+    .set('pageNumber', pageNumber.toString())
+    .set('pageSize', pageSize.toString());
+
+  if (filters.xpin) {
+    params = params.set('xpin', filters.xpin);
+  }
+  if (filters.accountNumber) {
+    params = params.set('accountNumber', filters.accountNumber);
+  }
+  if (filters.date) {
+    params = params.set('date', filters.date); // agar backend mein 'edate' hai to yahan 'edate' kar dena
+  }
+
+  const url = `${environment.apiUrl}/Disbursement/GetDataByApproved/${agentId}`;
+
+  return this.http.get<any>(url, { params }).pipe(
+    map((res) => {
+      const statusCode = res?.statusCode ?? res?.status ?? 200;
+      const status = res?.status ?? 'success';
+      const payload = res?.data ?? res;
+      const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
+
+      return {
+        items: itemsRaw,
+        totalCount: payload?.totalCount ?? itemsRaw.length,
+        pageNumber: payload?.pageNumber ?? pageNumber,
+        pageSize: payload?.pageSize ?? pageSize,
+        totalPages: payload?.totalPages ?? 1,
+        statusCode,
+        status,
+      };
+    })
+  );
+}
+
+
 
     getDataByRepair(agentId: string, pageNumber: number = 1, pageSize: number = 10): Observable<{
         items: DisbursementData[];

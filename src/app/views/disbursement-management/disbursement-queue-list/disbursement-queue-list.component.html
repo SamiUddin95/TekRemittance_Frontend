@@ -27,21 +27,18 @@
                   </select>
                 </div>
                 <div class="col-md-2">
-                  <label class="form-label fw-semibold">Mode</label>
-                  <input type="text" class="form-control" formControlName="mode" placeholder="All Modes" />
+                  <label class="form-label fw-semibold">XPin</label>
+                  <input type="text" class="form-control" formControlName="xpin" placeholder="XPin" />
+                </div>
+                  <div class="col-md-2">
+                  <label class="form-label fw-semibold">Account Number</label>
+                  <input type="text" class="form-control" formControlName="accountnumber" placeholder="Account Number" />
                 </div>
                 <div class="col-md-2">
-                  <label class="form-label fw-semibold">Status</label>
-                  <input type="text" class="form-control" formControlName="status" placeholder="All Statuses" />
+                  <label class="form-label fw-semibold">Date </label>
+                  <input type="date" class="form-control" formControlName="date" />
                 </div>
-                <div class="col-md-2">
-                  <label class="form-label fw-semibold">Date From</label>
-                  <input type="date" class="form-control" formControlName="dateFrom" />
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label fw-semibold">Date To</label>
-                  <input type="date" class="form-control" formControlName="dateTo" />
-                </div>
+               
                 <div class="col-md-2 d-flex align-items-end gap-2">
                   <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
                     <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>

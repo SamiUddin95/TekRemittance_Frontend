@@ -27,7 +27,7 @@
                                             type="text" 
                                             id="code"
                                             class="form-control form-control"
-                                            [class.is-invalid]="getFieldError('code')"
+                                            [class.is-invalid]="isFieldInvalid('code')"
                                             formControlName="code"
                                             placeholder="e.g., DEUTDEFFXXX"
                                             maxlength="20">
@@ -51,7 +51,7 @@
                                             type="text" 
                                             id="name"
                                             class="form-control form-control"
-                                            [class.is-invalid]="getFieldError('name')"
+                                             [class.is-invalid]="isFieldInvalid('name')"
                                             formControlName="name"
                                             placeholder="e.g., Germany"
                                             maxlength="100">

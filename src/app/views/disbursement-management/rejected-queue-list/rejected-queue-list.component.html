@@ -27,20 +27,16 @@
                   </select>
                 </div>
                 <div class="col-md-2">
-                  <label class="form-label fw-semibold">Mode</label>
-                  <input type="text" class="form-control" formControlName="mode" placeholder="All Modes" />
+                  <label class="form-label fw-semibold">XPin</label>
+                  <input type="text" class="form-control" formControlName="xpin" placeholder="XPin" />
+                </div>
+                  <div class="col-md-2">
+                  <label class="form-label fw-semibold">Account Number</label>
+                  <input type="text" class="form-control" formControlName="accountnumber" placeholder="Account Number" />
                 </div>
                 <div class="col-md-2">
-                  <label class="form-label fw-semibold">Status</label>
-                  <input type="text" class="form-control" formControlName="status" placeholder="All Statuses" />
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label fw-semibold">Date</label>
+                  <label class="form-label fw-semibold">Date </label>
                   <input type="date" class="form-control" formControlName="date" />
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label fw-semibold">Search</label>
-                  <input type="text" class="form-control" formControlName="search" placeholder="Search by RIN, Beneficiary..." />
                 </div>
                 <div class="col-md-2 d-flex align-items-end gap-2">
                   <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">

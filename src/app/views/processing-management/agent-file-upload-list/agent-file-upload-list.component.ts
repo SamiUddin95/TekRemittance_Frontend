@@ -7,8 +7,12 @@ import { GenericPaginationComponent } from '@/app/shared/generic-pagination/gene
 import { AgentFileUploadService, AgentUploadedFile } from '@/app/views/processing-management/services/agent-file-upload.service';
 import Swal from 'sweetalert2';
 import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+
 
 interface FileRow {
+templateName: any;
   id: string;
   templateId: string;
   fileName: string;
@@ -21,10 +25,15 @@ interface FileRow {
 @Component({
   selector: 'app-agent-file-upload-list',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
+  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent, ReactiveFormsModule],
   templateUrl: './agent-file-upload-list.component.html'
 })
 export class AgentFileUploadListComponent implements OnInit {
+  
+
+   agentaccountFilterForm: FormGroup;
+
+
   rows: FileRow[] = [];
   isLoading = false;
   PaginationInfo: any = { Page: 1, RowsPerPage: 10 };
@@ -40,20 +49,41 @@ export class AgentFileUploadListComponent implements OnInit {
   previewPageSize = 10;
   previewTotalCount = 0;
   previewTotalPages = 1;
+// agentaccountFilterForm: any;
 
-  constructor(private router: Router, private service: AgentFileUploadService) {}
+  constructor(private router: Router, private service: AgentFileUploadService,private fb: FormBuilder) {
+this.agentaccountFilterForm = this.fb.group({
+  templatename: [''],
+  filename: ['']
+});
+
+  }
 
   ngOnInit(): void {
     this.loadFiles();
   }
+  onClearFilters(): void {
+     this.agentaccountFilterForm.reset({
+            templatename: '',
+            filename: ''
+        });
+        this.loadFiles();
+  }
+
+  onSearch(): void {
+    this.loadFiles();
+  }
+
 
   loadFiles(): void {
     this.isLoading = true;
-    this.service.getFiles(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage).subscribe({
+    const filters = this.agentaccountFilterForm.value;
+    this.service.getFiles(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage,filters).subscribe({
       next: (res: { items: AgentUploadedFile[]; totalCount: number; pageNumber: number; pageSize: number; totalPages: number; statusCode: number; status: string; }) => {
         this.rows = res.items.map((x: AgentUploadedFile) => ({
           id: x.id,
           templateId: x.templateId,
+          templateName: x.templateName,
           fileName: x.fileName,
           status: x.status,
           errorMessage: x.errorMessage,

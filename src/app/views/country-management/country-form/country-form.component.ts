@@ -34,6 +34,10 @@ export class CountryFormComponent implements OnInit {
     
 
     ngOnInit(): void {
+
+         if (!this.route.snapshot.params['id']) {
+        this.countryForm.patchValue({ isActive: false });
+    }
         this.route.params.subscribe(params => {
             if (params['id']) {
                 this.isEditMode = true;
@@ -47,7 +51,7 @@ export class CountryFormComponent implements OnInit {
         return this.fb.group({
             code: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
             name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-            isActive: [true]
+            isActive: [false]
         });
     }
 
@@ -91,6 +95,11 @@ export class CountryFormComponent implements OnInit {
             this.markFormGroupTouched();
         }
     }
+    isFieldInvalid(fieldName: string): boolean {
+    const field = this.countryForm.get(fieldName);
+    return !!(field && field.invalid && (field.touched || field.dirty));
+}
+
 
     createCountry(countryData: Omit<Country, 'id'>): void {
         this.countryService.addCountry(countryData).subscribe({
@@ -143,6 +152,12 @@ export class CountryFormComponent implements OnInit {
         if (field?.errors) {
             if (field.errors['required']) {
                 return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`;
+            }
+             if (field.errors['minlength']) {
+                return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} must be at least ${field.errors['minlength'].requiredLength} characters`;
+            }
+            if (field.errors['maxlength']) {
+                return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} cannot exceed ${field.errors['maxlength'].requiredLength} characters`;
             }
             // if (field.errors['minlength']) {
             //     return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`;

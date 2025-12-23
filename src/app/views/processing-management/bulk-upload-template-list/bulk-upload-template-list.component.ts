@@ -8,6 +8,11 @@ import { TemplateService, TemplateListItem } from '@/app/views/processing-manage
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
+// import { FormGroup } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
+
+
 
 interface TemplateRow {
   id: string;
@@ -23,24 +28,50 @@ interface TemplateRow {
 @Component({
   selector: 'app-bulk-upload-template-list',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent],
+  imports: [CommonModule, PageTitleComponent, NgIcon, GenericPaginationComponent, SkeletonLoaderComponent, CommonModule,
+  ReactiveFormsModule],
   templateUrl: './bulk-upload-template-list.component.html'
 })
 export class BulkUploadTemplateListComponent implements OnInit {
+
+ agentaccountFilterForm: FormGroup;
+
   rows: TemplateRow[] = [];
   isLoading = false;
   PaginationInfo: any = { Page: 1, RowsPerPage: 10 };
   totalRecord = 0;
+ 
 
-  constructor(private router: Router, private templateService: TemplateService) {}
+  constructor(private router: Router, private templateService: TemplateService, private fb: FormBuilder) {
+this.agentaccountFilterForm = this.fb.group({
+  name: [''],
+  agentName: [''],
+  sheetName: ['']
+});
+
+
+  }
 
   ngOnInit(): void {
     this.loadTemplates();
   }
+onSearch(): void {
+  this.loadTemplates();
+}
+
+  onClearFilters(): void{
+ this.agentaccountFilterForm.reset({
+            name: '',
+            agentName: '',
+            sheetName: ''
+        });
+        this.loadTemplates();
+  }
 
   loadTemplates(): void {
     this.isLoading = true;
-    this.templateService.getTemplates(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage)
+          const filters = this.agentaccountFilterForm.value;
+    this.templateService.getTemplates(this.PaginationInfo.Page, this.PaginationInfo.RowsPerPage,filters)
       .subscribe({
         next: (res) => {
           this.rows = (res.items as TemplateListItem[]).map((t) => ({

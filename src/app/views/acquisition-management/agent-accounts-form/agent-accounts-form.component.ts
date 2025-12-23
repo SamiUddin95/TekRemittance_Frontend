@@ -71,7 +71,17 @@ export class AgentAccountsFormComponent implements OnInit {
   }
 
   fetch(): void {}
+  private markFormGroupTouched(): void {
+  Object.keys(this.form.controls).forEach(key => {
+    this.form.get(key)?.markAsTouched();
+  });
+}
+
   save(): void {
+     if (this.form.invalid || this.isSubmitting) {
+    this.markFormGroupTouched();
+    return;
+  }
     if (this.form.invalid || this.isSubmitting) return;
     this.isSubmitting = true;
     const v = this.form.value as { agentId: string; accountNumber: string; accountTitle: string; type: string; isActive: boolean };
