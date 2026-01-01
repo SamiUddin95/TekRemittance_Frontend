@@ -80,24 +80,44 @@ export class ProvinceService {
         );
     }
 
-    addProvince(province: Omit<Province, 'id'>): Observable<Province> {
-        const url = `${environment.apiUrl}/BasicSetup/CreateProvince`;
-        const nowIso = new Date().toISOString();
-        const payload = {
-            id: crypto?.randomUUID ? crypto.randomUUID() : undefined,
-            provinceCode: province.code,
-            provinceName: province.name,
-            isActive: province.isActive,
-            createdBy: '',
-            updatedBy: '',
-            createdOn: nowIso,
-            updatedOn: nowIso,
-            countryId: province.countryId,
-        };
-        return this.http.post<any>(url, payload).pipe(
-            map((res) => this.mapDtoToProvince(res?.data ?? res))
-        );
-    }
+    // addProvince(province: Omit<Province, 'id'>): Observable<Province> {
+    //     const url = `${environment.apiUrl}/BasicSetup/CreateProvince`;
+    //     const nowIso = new Date().toISOString();
+    //     const payload = {
+    //         id: crypto?.randomUUID ? crypto.randomUUID() : undefined,
+    //         provinceCode: province.code,
+    //         provinceName: province.name,
+    //         isActive: province.isActive,
+    //         createdBy: '',
+    //         updatedBy: '',
+    //         createdOn: nowIso,
+    //         updatedOn: nowIso,
+    //         countryId: province.countryId,
+    //     };
+    //     return this.http.post<any>(url, payload).pipe(
+    //         map((res) => this.mapDtoToProvince(res?.data ?? res))
+    //     );
+    // }
+addProvince(province: Omit<Province, 'id'>): Observable<Province> {
+    const url = `${environment.apiUrl}/BasicSetup/createProvince`;
+    const nowIso = new Date().toISOString();
+    const payload = {
+        id: crypto?.randomUUID ? crypto.randomUUID() : undefined,
+        provinceCode: province.code,
+        provinceName: province.name,
+        countryId: province.countryId,
+        isActive: province.isActive,
+        createdBy: '',
+        updatedBy: '',
+        createdOn: nowIso,
+        updatedOn: nowIso
+    };
+    return this.http.post<any>(url, payload).pipe(
+        map(res => this.mapDtoToProvince(res?.data ?? res)),
+        catchError(err => throwError(() => err)) // Forward error to component
+    );
+}
+
 
     updateProvince(id: string, province: Partial<Province>): Observable<Province> {
         const url = `${environment.apiUrl}/BasicSetup/updateProvince`;

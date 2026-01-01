@@ -114,19 +114,54 @@ export class ProvinceFormComponent implements OnInit {
         }
     }
 
+    // createProvince(provinceData: Omit<Province, 'id'>): void {
+    //     this.provinceService.addProvince(provinceData).subscribe({
+    //         next: (province) => {
+    //             Swal.fire('Success!', 'Province has been created successfully.', 'success');
+    //             this.router.navigate(['/province-management']);
+    //         },
+    //         error: (error) => {
+    //             console.error('Error creating province:', error);
+    //             Swal.fire('Error!', 'Failed to create province.', 'error');
+    //             this.isSubmitting = false;
+    //         }
+    //     });
+    // }
     createProvince(provinceData: Omit<Province, 'id'>): void {
-        this.provinceService.addProvince(provinceData).subscribe({
-            next: (province) => {
-                Swal.fire('Success!', 'Province has been created successfully.', 'success');
-                this.router.navigate(['/province-management']);
-            },
-            error: (error) => {
-                console.error('Error creating province:', error);
-                Swal.fire('Error!', 'Failed to create province.', 'error');
-                this.isSubmitting = false;
+    this.isSubmitting = true;
+
+    this.provinceService.addProvince(provinceData).subscribe({
+        next: (province) => {
+            Swal.fire('Success!', 'Province has been created successfully.', 'success');
+            this.router.navigate(['/province-management']);
+            this.isSubmitting = false;
+        },
+        error: (err) => {
+            console.error('Error creating province:', err);
+
+            let message = 'Failed to create province.';
+
+            // Safely extract backend message
+            if (err?.error) {
+                if (typeof err.error === 'object' && err.error.errorMessage) {
+                    message = err.error.errorMessage;
+                } else if (typeof err.error === 'string') {
+                    message = err.error;
+                }
             }
-        });
-    }
+
+            // Check for duplicate province
+            if (message.toLowerCase().includes('province name already exists')) {
+                Swal.fire('Warning!', 'Province already exists.', 'warning');
+            } else {
+                Swal.fire('Error!', message, 'error');
+            }
+
+            this.isSubmitting = false;
+        }
+    });
+}
+
 
     updateProvince(provinceData: Partial<Province>): void {
         if (!this.provinceId) return;

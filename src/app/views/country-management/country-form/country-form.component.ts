@@ -101,19 +101,42 @@ export class CountryFormComponent implements OnInit {
 }
 
 
-    createCountry(countryData: Omit<Country, 'id'>): void {
-        this.countryService.addCountry(countryData).subscribe({
-            next: (country) => {
-                Swal.fire('Success!', 'Country has been created successfully.', 'success');
-                this.router.navigate(['/country-management']);
-            },
-            error: (error) => {
-                console.error('Error creating country:', error);
-                Swal.fire('Error!', 'Failed to create country.', 'error');
-                this.isSubmitting = false;
+
+createCountry(countryData: Omit<Country, 'id'>): void {
+    this.isSubmitting = true;
+
+    this.countryService.addCountry(countryData).subscribe({
+        next: (country) => {
+            Swal.fire('Success!', 'Country has been created successfully.', 'success');
+            this.router.navigate(['/country-management']);
+            this.isSubmitting = false;
+        },
+        error: (err) => {
+            console.error('Error creating country:', err);
+
+            let message = 'Failed to create country.';
+
+            // Safely extract backend message
+            if (err?.error) {
+                if (typeof err.error === 'object' && err.error.errorMessage) {
+                    message = err.error.errorMessage;
+                } else if (typeof err.error === 'string') {
+                    message = err.error;
+                }
             }
-        });
-    }
+
+            // Check for duplicate country
+            if (message.toLowerCase().includes('country name already exists')) {
+                Swal.fire('Warning!', 'Country already exists.', 'warning');
+            } else {
+                Swal.fire('Error!', message, 'error');
+            }
+
+            this.isSubmitting = false;
+        }
+    });
+}
+
 
     updateCountry(countryData: Partial<Country>): void {
         if (!this.countryId) return;

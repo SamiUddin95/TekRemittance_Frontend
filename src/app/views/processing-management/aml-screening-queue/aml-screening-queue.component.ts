@@ -50,7 +50,8 @@ export class AmlScreeningQueueComponent implements OnInit {
     this.filterForm = this.fb.group({
       agentId: [''],
       xpin: [''],
-      accountnumber: ['']
+      accountnumber: [''],
+      date: ['']
     });
   }
 
@@ -99,7 +100,8 @@ export class AmlScreeningQueueComponent implements OnInit {
     this.filterForm.reset({
       agentId: '',
       xpin: '',
-      accountnumber: ''
+      accountnumber: '',
+      date: ''
     });
 
     // Reset pagination and table state
@@ -110,62 +112,132 @@ export class AmlScreeningQueueComponent implements OnInit {
     this.totalRecord = 0;
   }
 
-  private loadAmlScreeningData(agentId: string): void {
-    console.log('Loading AML screening data for agent:', agentId);
-    this.isLoading = true;
-    const pageNumber = this.PaginationInfo.Page;
-    const pageSize = this.PaginationInfo.RowsPerPage;
+  // private loadAmlScreeningData(agentId: string): void {
+  //   console.log('Loading AML screening data for agent:', agentId);
+  //   this.isLoading = true;
+  //   const pageNumber = this.PaginationInfo.Page;
+  //   const pageSize = this.PaginationInfo.RowsPerPage;
     
-    console.log('Making API call with params:', { agentId, pageNumber, pageSize });
+  //   console.log('Making API call with params:', { agentId, pageNumber, pageSize });
     
-    this.amlScreeningService.getDataByAgent(agentId, pageNumber, pageSize).subscribe({
+  //   this.amlScreeningService.getDataByAgent(agentId, pageNumber, pageSize).subscribe({
+  //     next: (response: any) => {
+  //       console.log('API response received:', response);
+  //       this.isLoading = false;
+  //       if (response.status === 'success' && response.items)
+  //          {
+  //         this.rows = this.mapAmlScreeningDataToRows(response.items);
+  //         // Build dynamic headers from dataJson keys
+  //         const parsedObjects: any[] = response.items.map((item: AmlScreeningData) => {
+  //           try { return JSON.parse(item.dataJson || '{}'); } catch { return {}; }
+  //         });
+  //         const headerSet = new Set<string>();
+  //         parsedObjects.forEach(o => Object.keys(o || {}).forEach(k => headerSet.add(k)));
+  //         // ensure AgentName appears as a dynamic column (if not already in dataJson)
+  //         const headersArr = Array.from(headerSet);
+  //         if (!headersArr.includes('AgentName')) {
+  //           headersArr.unshift('AgentName');
+  //         }
+  //         this.tableHeaders = headersArr;
+  //         // Build renderable data rows preserving id and status for actions
+  //         this.dataRows = response.items.map((item: AmlScreeningData, idx: number) => {
+  //           const obj = parsedObjects[idx] || {};
+  //           // add AgentName field
+  //           const agentName = (this.agents.find(a => a.id?.toLowerCase() === item.agentId?.toLowerCase())?.name)
+  //             || `Agent-${(item.agentId || '').substring(0, 8)}`;
+  //           return {
+  //             id: item.id,
+  //             obj: { AgentName: agentName, ...obj }
+  //           };
+  //         });
+  //         this.totalRecord = response.totalCount;
+  //         console.log('Dynamic headers:', this.tableHeaders);
+  //       } else {
+  //         this.rows = [];
+  //         this.tableHeaders = [];
+  //         this.dataRows = [];
+  //         this.totalRecord = 0;
+  //       }
+  //     },
+  //     error: (error: any) => {
+  //       console.error('API error:', error);
+  //       this.isLoading = false;
+  //       this.rows = [];
+  //       this.tableHeaders = [];
+  //       this.dataRows = [];
+  //       this.totalRecord = 0;
+  //     }
+  //   });
+  // }
+
+private loadAmlScreeningData(agentId: string): void {
+
+  this.isLoading = true;
+
+  const pageNumber = this.PaginationInfo.Page;
+  const pageSize = this.PaginationInfo.RowsPerPage;
+
+  const accountnumber = this.filterForm.get('accountnumber')?.value;
+  const xpin = this.filterForm.get('xpin')?.value;
+  const date = this.filterForm.get('date')?.value;
+
+  this.amlScreeningService
+    .getDataByAgent(agentId, pageNumber, pageSize, accountnumber, xpin, date)
+    .subscribe({
       next: (response: any) => {
-        console.log('API response received:', response);
+
         this.isLoading = false;
-        if (response.status === 'success' && response.items) {
-          this.rows = this.mapAmlScreeningDataToRows(response.items);
-          // Build dynamic headers from dataJson keys
-          const parsedObjects: any[] = response.items.map((item: AmlScreeningData) => {
-            try { return JSON.parse(item.dataJson || '{}'); } catch { return {}; }
+
+       
+        if (response.status === 'success' && response.data?.items) {
+
+          const items = response.data.items;
+
+          this.rows = this.mapAmlScreeningDataToRows(items);
+
+          const parsedObjects = items.map((item: AmlScreeningData) => {
+            try { 
+              return JSON.parse(item.dataJson || '{}'); 
+            } catch { 
+              return {}; 
+            }
           });
+
           const headerSet = new Set<string>();
-          parsedObjects.forEach(o => Object.keys(o || {}).forEach(k => headerSet.add(k)));
-          // ensure AgentName appears as a dynamic column (if not already in dataJson)
-          const headersArr = Array.from(headerSet);
-          if (!headersArr.includes('AgentName')) {
-            headersArr.unshift('AgentName');
-          }
-          this.tableHeaders = headersArr;
-          // Build renderable data rows preserving id and status for actions
-          this.dataRows = response.items.map((item: AmlScreeningData, idx: number) => {
-            const obj = parsedObjects[idx] || {};
-            // add AgentName field
-            const agentName = (this.agents.find(a => a.id?.toLowerCase() === item.agentId?.toLowerCase())?.name)
-              || `Agent-${(item.agentId || '').substring(0, 8)}`;
-            return {
-              id: item.id,
-              obj: { AgentName: agentName, ...obj }
-            };
-          });
-          this.totalRecord = response.totalCount;
-          console.log('Dynamic headers:', this.tableHeaders);
+          parsedObjects.forEach((o:any) =>
+            Object.keys(o).forEach(k => headerSet.add(k))
+          );
+
+          this.tableHeaders = Array.from(headerSet);
+
+          this.dataRows = items.map((item: AmlScreeningData, idx: number) => ({
+            id: item.id,
+            obj: parsedObjects[idx]
+          }));
+
+          this.totalRecord = response.data.totalCount;
+
         } else {
+          // no data case
           this.rows = [];
-          this.tableHeaders = [];
           this.dataRows = [];
+          this.tableHeaders = [];
           this.totalRecord = 0;
         }
+        
       },
-      error: (error: any) => {
-        console.error('API error:', error);
+
+      error: (err) => {
         this.isLoading = false;
         this.rows = [];
-        this.tableHeaders = [];
         this.dataRows = [];
+        this.tableHeaders = [];
         this.totalRecord = 0;
+        console.error('AML API error', err);
       }
     });
-  }
+}
+
 
   private mapAmlScreeningDataToRows(items: AmlScreeningData[]): AmlScreeningRow[] {
     return items.map(item => {

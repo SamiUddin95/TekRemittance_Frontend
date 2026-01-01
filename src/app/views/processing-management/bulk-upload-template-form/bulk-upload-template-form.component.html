@@ -35,28 +35,37 @@
             <form [formGroup]="form" (ngSubmit)="save()" class="row g-4">
               <div class="col-md-3">
                 <label class="form-label">Acquisition Agent <span class="text-danger">*</span></label>
-                <select class="form-select" formControlName="agentId">
+                <select class="form-select" formControlName="agentId"  [class.is-invalid]="isFieldInvalid('agentId')">
                   <option value="">Select an agent</option>
                   <option *ngFor="let a of agents" [value]="a.id">{{ a.name }}</option>
                 </select>
+                <div class="invalid-feedback">
+                 {{ getFieldError('agentId') }}
+                  </div>
               </div>
 
               <div class="col-md-3">
                 <label class="form-label">Name <span class="text-danger">*</span></label>
                 <div class="input-group">
                   <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerFileText" size="16"></ng-icon></span>
-                  <input type="text" class="form-control" placeholder="Enter template name" formControlName="name" />
+                  <input type="text" class="form-control" placeholder="Enter template name" formControlName="name" [class.is-invalid]="isFieldInvalid('name')"  />
                 </div>
                 <small class="text-muted">A friendly name to identify this template.</small>
+                <div class="invalid-feedback">
+                 {{ getFieldError('name') }}
+                 </div>
               </div>
 
               <div class="col-md-3">
                 <label class="form-label">Sheet Name <span class="text-danger">*</span></label>
                 <div class="input-group">
                   <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerTable" size="16"></ng-icon></span>
-                  <input type="text" class="form-control" placeholder="Enter sheet name" formControlName="sheetName" [disabled]="form.get('format')?.value === '.txt'" />
+                  <input type="text" class="form-control" placeholder="Enter sheet name" formControlName="sheetName" [disabled]="form.get('format')?.value === '.txt'" [class.is-invalid]="isFieldInvalid('sheetName')" />
                 </div>
                 <small class="text-muted">Required for Excel formats; disabled for .txt.</small>
+                <div class="invalid-feedback">
+                  {{ getFieldError('sheetName') }}
+                  </div>
               </div>
               <div class="col-md-3">
                 <label class="form-label">Delimiter</label>

@@ -95,6 +95,14 @@ export class DisbursementService {
         const body = { userId, xpin: String(xpin ?? '') };
         return this.http.post<any>(url, body);
     }
+    
+    markAml(userId: string, xpin: string | number): Observable<any> {
+  const url = `${environment.apiUrl}/Disbursement/AntiMoneyLaundering`;
+  const body = { userId, xpin: String(xpin ?? '') };
+  return this.http.post<any>(url, body);
+}
+
+
 
 
 getDataByAuthorize(

@@ -354,6 +354,70 @@ private loadDisbursementData(
     });
   }
 
+  markAml(row: QueueRow): void {
+  const userId = this.auth.getUserId();
+  const xpin = row?.xpin;
+
+  if (!userId) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'User not found',
+      text: 'Please login again to continue.'
+    });
+    return;
+  }
+
+  if (!xpin) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Missing XPin',
+      text: 'XPin not available for this row.'
+    });
+    return;
+  }
+
+  this.isLoading = true;
+
+  this.disbursementService.markAml(userId, xpin).subscribe({
+    next: (res) => {
+      this.isLoading = false;
+
+      if ((res?.status || '').toLowerCase() === 'success') {
+        Swal.fire({
+          icon: 'success',
+          title: 'AML Hold',
+          text: 'Remittance moved to AML successfully.'
+        });
+
+        // 🔄 Reload current screen
+        const agentId = this.filterForm.get('agentId')?.value;
+        if (agentId) {
+          this.loadDisbursementData(agentId);
+        }
+
+        // 👉 OPTIONAL: redirect to AML screen
+        // this.router.navigate(['/disbursement/aml']);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: res?.errorMessage || 'Failed to move remittance to AML.'
+        });
+      }
+    },
+    error: (err) => {
+      this.isLoading = false;
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'API call failed. Please try again.'
+      });
+      console.error('AML error', err);
+    }
+  });
+}
+
+
   // wrappers for dynamic table actions
   private findRowById(id: string): QueueRow | null {
     return this.rows.find(r => r.id === id) || null;
@@ -373,4 +437,12 @@ private loadDisbursementData(
     const row = this.findRowById(id);
     if (row) this.reject(row);
   }
+  
+  onAml(id: string): void {
+  const row = this.findRowById(id);
+  if (row) this.markAml(row);
+}
+
+
+
 }

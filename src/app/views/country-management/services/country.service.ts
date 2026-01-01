@@ -84,22 +84,24 @@ getCountries(
     }
 
     addCountry(country: Omit<Country, 'id'>): Observable<Country> {
-        const url = `${environment.apiUrl}/BasicSetup/create`;
-        const nowIso = new Date().toISOString();
-        const payload = {
-            id: crypto?.randomUUID ? crypto.randomUUID() : undefined,
-            countryCode: country.code,
-            countryName: country.name,
-            isActive: country.isActive,
-            createdBy: '',
-            updatedBy: '',
-            createdOn: nowIso,
-            updatedOn: nowIso
-        };
-        return this.http.post<any>(url, payload).pipe(
-            map((res) => this.mapDtoToCountry(res?.data ?? res))
-        );
-    }
+    const url = `${environment.apiUrl}/BasicSetup/create`;
+    const nowIso = new Date().toISOString();
+    const payload = {
+        id: crypto?.randomUUID ? crypto.randomUUID() : undefined,
+        countryCode: country.code,
+        countryName: country.name,
+        isActive: country.isActive,
+        createdBy: '',
+        updatedBy: '',
+        createdOn: nowIso,
+        updatedOn: nowIso
+    };
+    return this.http.post<any>(url, payload).pipe(
+        map(res => this.mapDtoToCountry(res?.data ?? res)),
+        catchError(err => throwError(() => err)) // forward error to component
+    );
+}
+
 
     updateCountry(id: string, country: Partial<Country>): Observable<Country> {
         const url = `${environment.apiUrl}/BasicSetup/update`;

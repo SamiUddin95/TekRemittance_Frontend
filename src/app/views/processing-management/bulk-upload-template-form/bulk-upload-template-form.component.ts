@@ -171,8 +171,31 @@ this.form.get('fixLength')?.valueChanges.subscribe(isFixed => {
   return !!this.form.get('fixLength')?.value;
 }
 
+private markFormGroupTouched(): void {
+  Object.keys(this.form.controls).forEach(key => {
+    const control = this.form.get(key);
+    control?.markAsTouched();
+  });
+}
+isFieldInvalid(fieldName: string): boolean {
+  const field = this.form.get(fieldName);
+  return !!(field && field.invalid && (field.touched || field.dirty));
+}
+
+
+getFieldError(fieldName: string): string {
+  const field = this.form.get(fieldName);
+  if (!field?.errors) return '';
+
+  if (field.errors['required']) {
+    return 'This field is required';
+  }
+
+  return '';
+}
 
   save(): void {
+    this.markFormGroupTouched();
     if (this.form.invalid || this.isSubmitting) return;
     this.isSubmitting = true;
     this.errorMessage = null;
