@@ -27,26 +27,17 @@
                     }
                   </select>
                 </div>
-                <div class="col-md-2">
-                  <label class="form-label fw-semibold">Status</label>
-                  <select class="form-select" formControlName="status">
-                    <option value="">All Status</option>
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                  </select>
+                 <div class="col-md-2">
+                  <label class="form-label fw-semibold">XPin</label>
+                  <input type="text" class="form-control" formControlName="xpin" placeholder="XPin" />
+                </div>
+               <div class="col-md-2">
+                  <label class="form-label fw-semibold">Account Number</label>
+                  <input type="text" class="form-control" formControlName="accountnumber" placeholder="Account Number" />
                 </div>
                 <div class="col-md-2">
-                  <label class="form-label fw-semibold">Date From</label>
-                  <input type="date" class="form-control" formControlName="dateFrom" />
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label fw-semibold">Date To</label>
-                  <input type="date" class="form-control" formControlName="dateTo" />
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label fw-semibold">Search</label>
-                  <input type="text" class="form-control" formControlName="search" placeholder="Search by file name..." />
+                  <label class="form-label fw-semibold">Date </label>
+                  <input type="date" class="form-control" formControlName="date" />
                 </div>
                 <div class="col-md-2 d-flex align-items-end gap-2">
                   <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">

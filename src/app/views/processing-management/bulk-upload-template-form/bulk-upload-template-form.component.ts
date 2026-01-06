@@ -53,7 +53,7 @@ export class BulkUploadTemplateFormComponent {
       fieldType: ['', [Validators.required]],
       required: [false],
       enable: [false],
-      startIndex: [0],
+      startIndex: [null as unknown as number,[Validators.required]],
       length: [0],
     });
   }
@@ -171,12 +171,16 @@ this.form.get('fixLength')?.valueChanges.subscribe(isFixed => {
   return !!this.form.get('fixLength')?.value;
 }
 
-private markFormGroupTouched(): void {
-  Object.keys(this.form.controls).forEach(key => {
-    const control = this.form.get(key);
+
+
+private markFormGroupTouched(form: FormGroup): void {
+  Object.keys(form.controls).forEach(key => {
+    const control = form.get(key);
     control?.markAsTouched();
   });
 }
+
+
 isFieldInvalid(fieldName: string): boolean {
   const field = this.form.get(fieldName);
   return !!(field && field.invalid && (field.touched || field.dirty));
@@ -193,9 +197,31 @@ getFieldError(fieldName: string): string {
 
   return '';
 }
+isFieldFormInvalid(fieldName: string): boolean {
+  const field = this.fieldForm.get(fieldName);
+  return !!(field && field.invalid && (field.touched || field.dirty));
+}
+
+getFieldFormError(fieldName: string): string {
+  const field = this.fieldForm.get(fieldName);
+  if (!field?.errors) return '';
+
+  if (field.errors['required']) {
+    return 'This field is required';
+  }
+
+  if (field.errors['min']) {
+    return `Minimum value is ${field.errors['min'].min}`;
+  }
+
+  return '';
+}
+
+
 
   save(): void {
-    this.markFormGroupTouched();
+    this.markFormGroupTouched(this.form);
+
     if (this.form.invalid || this.isSubmitting) return;
     this.isSubmitting = true;
     this.errorMessage = null;
@@ -300,6 +326,7 @@ getFieldError(fieldName: string): string {
   }
 
   saveField(): void {
+    this.markFormGroupTouched(this.fieldForm);
     if (this.fieldForm.invalid || !this.templateId) return;
     const v = this.fieldForm.value as any;
     const toApiType = (uiType: string) => ({ 'TextBox': 'String' } as Record<string, string>)[uiType] ?? uiType;
