@@ -27,8 +27,8 @@ function generateRandomData() {
 
 export const statistics: StatisticsWidgetType[] = [
     {
-        title: 'Total Transactions',
-        badge: {text: 'Monthly', variant: 'success'},
+        title: 'Successfull Count',
+        // badge: {text: 'Monthly', variant: 'success'},
         value: 250,
         prefix: '$',
         suffix: 'K',
@@ -57,8 +57,8 @@ export const statistics: StatisticsWidgetType[] = [
         })
     },
     {
-        title: 'Total Value Sent',
-        badge: {text: 'Monthly', variant: 'primary'},
+        title: 'Successfull Amount',
+        // badge: {text: 'Monthly', variant: 'primary'},
         value: 180,
         description: 'from last month',
         chartOptions: () => ({
@@ -85,8 +85,8 @@ export const statistics: StatisticsWidgetType[] = [
         })
     },
     {
-        title: 'Successful Rate', 
-        badge: {text: 'Monthly', variant: 'info'},
+        title: 'Successful Percentage', 
+        // badge: {text: 'Monthly', variant: 'info'},
         value: 50895,
         description: 'from last month',
         chartOptions: () => ({
@@ -113,12 +113,42 @@ export const statistics: StatisticsWidgetType[] = [
         })
     },
     {
-        title: 'Failed Transactions',
-        badge: {text: 'Monthly', variant: 'warning'},
+        title: 'Failed Count',
+        // badge: {text: 'Monthly', variant: 'warning'},
         value: 50.33,
         prefix: '$',
         suffix: 'K',
         description: 'from last month',
+        chartOptions: () => ({
+            tooltip: {show: false},
+            series: [
+                {
+                    type: 'pie',
+                    radius: ['65%', '100%'],
+                    hoverAnimation: false,
+                    label: {show: false},
+                    labelLine: {show: false},
+                    data: generateRandomData().map((item, index) => ({
+                        value: item.value,
+                        itemStyle: {
+                            color: index === 0
+                                ? getColor('primary')
+                                : index === 1
+                                    ? getColor('secondary')
+                                    : '#bbcae14d'
+                        }
+                    }))
+                }
+            ]
+        })
+    },
+    {
+        title: 'Failed Amount',
+        // badge: {text: 'Monthly', variant: 'info'},
+        value: 125,
+        prefix: '$',
+        suffix: 'K',
+        description: 'From last month',
         chartOptions: () => ({
             tooltip: {show: false},
             series: [

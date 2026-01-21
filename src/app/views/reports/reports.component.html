@@ -1,0 +1,243 @@
+<div class="">
+    <app-page-title
+        title="Reports Management"
+        subTitle="Transaction Reports"
+    ></app-page-title>
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light border-bottom">
+                    <div
+                        class="d-flex justify-content-between align-items-center col-12"
+                        style="margin-top: -5px; margin-bottom: -5px"
+                    >
+                        <div class="d-flex align-items-center">
+                            <ng-icon
+                                name="tablerFileReport"
+                                class="me-2 gradient-icon"
+                                size="20"
+                            ></ng-icon>
+                            <h4 class="card-title mb-0 text-dark">Transaction Reports</h4>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button
+                                type="button"
+                                class="btn submit-button"
+                                (click)="viewPdfModal(filterForm.value.accountNumber)"
+                                [disabled]="loading || transactions.length === 0"
+                            >
+                                <ng-icon
+                                    name="tablerEye"
+                                    class="me-1"
+                                    size="16"
+                                ></ng-icon>
+                                View Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="filterForm" class="row g-2 mb-3">
+                        <div class="col-md-2">
+                            <label for="accountNumber" class="form-label fw-semibold">Account Number</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                formControlName="accountNumber"
+                                placeholder="Account Number"
+                            />
+                        </div>
+                        <!-- <div class="col-md-2">
+                            <label for="status" class="form-label fw-semibold">Status</label>
+                            <select
+                                class="form-select"
+                                formControlName="status"
+                            >
+                                <option value="">All Status</option>
+                                <option value="A">Approved</option>
+                                <option value="P">Pending</option>
+                                <option value="U">Unprocessed</option>
+                            </select>
+                        </div> -->
+                        <div class="col-md-2 d-flex align-items-end gap-2">
+                            <button
+                                type="button"
+                                class="btn submit-button flex-fill"
+                                (click)="loadTransactions()"
+                            >
+                                <ng-icon
+                                    name="tablerSearch"
+                                    size="16"
+                                    class="me-1"
+                                ></ng-icon>
+                                Search
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-dark"
+                                (click)="onClearFilters()"
+                            >
+                                <ng-icon
+                                    name="tablerX"
+                                    size="16"
+                                    class="me-1"
+                                ></ng-icon>
+                                Clear
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                @if (loading) {
+                <div class="text-center py-4">
+                    <div class="spinner-border spinner-border-sm me-2"></div>
+                    Loading transactions...
+                </div>
+                } @else {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-sm">
+                        <thead class="table text-center">
+                            <tr>
+                                <th class="fw-bold">Row #</th>
+                                <th class="fw-bold">Status</th>
+                                <th class="fw-bold">Account Number</th>
+                                <th class="fw-bold">Account Title</th>
+                                <th class="fw-bold">XPIN</th>
+                                <th class="fw-bold">Created On</th>
+                                <th class="fw-bold">Error</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider text-center">
+                            @for (transaction of transactions; track transaction.rowNumber) {
+                            <tr>
+                                <td>
+                                    <span class="fw-medium">{{
+                                        transaction.rowNumber
+                                    }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge" 
+                                        [class]="transaction.status === 'A' ? 'bg-success' : 
+                                               transaction.status === 'P' ? 'bg-warning' : 'bg-secondary'">
+                                        {{ transaction.status === 'A' ? 'Approved' : 
+                                           transaction.status === 'P' ? 'Pending' : 'Unprocessed' }}
+                                    </span>
+                                </td>
+                                <td>{{ transaction.accountNumber || '-' }}</td>
+                                <td>{{ transaction.accountTitle || '-' }}</td>
+                                <td>{{ transaction.xpin || '-' }}</td>
+                                <td>{{ transaction.createdOn | date:'short' }}</td>
+                                <td>
+                                    <span *ngIf="transaction.error" class="text-danger small">
+                                        {{ transaction.error }}
+                                    </span>
+                                    <span *ngIf="!transaction.error" class="text-muted">-</span>
+                                </td>
+                            </tr>
+                            } @empty {
+                            <tr>
+                                <td colspan="7" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <ng-icon
+                                            name="tablerInbox"
+                                            size="48"
+                                            class="mb-2 d-block mx-auto"
+                                        ></ng-icon>
+                                        <p class="mb-0">No transactions found</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-3" *ngIf="totalTransactions > pageSize">
+                    <div class="text-muted">
+                        Showing {{ getStartIndex() }} to 
+                        {{ getEndIndex() }} of 
+                        {{ totalTransactions }} transactions
+                    </div>
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item" [class.disabled]="currentPage === 1">
+                                <button class="page-link" (click)="onPageChange(currentPage - 1)">Previous</button>
+                            </li>
+                            <li class="page-item" 
+                                *ngFor="let page of getTotalPages()" 
+                                [class.active]="page === currentPage">
+                                <button class="page-link" (click)="onPageChange(page)">{{ page }}</button>
+                            </li>
+                            <li class="page-item" [class.disabled]="currentPage === getTotalPages().length">
+                                <button class="page-link" (click)="onPageChange(currentPage + 1)">Next</button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PDF Viewer Modal -->
+@if (showPdfModal) {
+<div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-light border-bottom">
+                <h5 class="modal-title">
+                    <ng-icon name="tablerFileReport" class="me-2" size="20"></ng-icon>
+                    Transaction Report Preview
+                </h5>
+                <button type="button" class="btn-close" (click)="closePdfModal()"></button>
+            </div>
+            <div class="modal-body p-0" style="height: 70vh;">
+                @if (pdfLoading) {
+                <div class="d-flex justify-content-center align-items-center h-100">
+                    <div class="text-center">
+                        <div class="spinner-border spinner-border-lg mb-3"></div>
+                        <p class="mb-0">Loading report...</p>
+                    </div>
+                </div>
+                } @else if (pdfUrl) {
+                <iframe [src]="pdfUrl" 
+                        style="width: 100%; height: 100%; border: none;"
+                        type="application/pdf">
+                </iframe>
+                }
+            </div>
+            <div class="modal-footer bg-light border-top">
+                <div class="d-flex gap-2 justify-content-center w-100">
+                    <button type="button" 
+                            class="btn submit-button" 
+                            (click)="downloadReport(filterForm.value.accountNumber, 'PDF')"
+                            [disabled]="!pdfUrl || pdfLoading">
+                        <ng-icon name="tablerFileText" class="me-1" size="16"></ng-icon>
+                        Download PDF
+                    </button>
+                    <button type="button" 
+                            class="btn btn-success" 
+                            (click)="downloadReport(filterForm.value.accountNumber, 'EXCEL')"
+                            [disabled]="!pdfUrl || pdfLoading">
+                        <ng-icon name="tablerFileSpreadsheet" class="me-1" size="16"></ng-icon>
+                        Download Excel
+                    </button>
+                    <button type="button" 
+                            class="btn btn-warning" 
+                            (click)="downloadReport(filterForm.value.accountNumber, 'CSV')"
+                            [disabled]="!pdfUrl || pdfLoading">
+                        <ng-icon name="tablerFileSpreadsheet" class="me-1" size="16"></ng-icon>
+                        Download CSV
+                    </button>
+                </div>
+                <!-- <button type="button" class="btn btn-secondary" (click)="closePdfModal()">
+                    <ng-icon name="tablerX" class="me-1" size="16"></ng-icon>
+                    Close
+                </button> -->
+            </div>
+        </div>
+    </div>
+</div>
+}

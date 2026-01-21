@@ -1,13 +1,20 @@
 <div class="card">
     <div class="card-header border-dashed card-tabs d-flex align-items-center">
         <div class="flex-grow-1">
-            <h4 class="card-title">Orders Statistics</h4>
+            <h4 class="card-title">Transaction Status Distribution</h4>
         </div>
         <ul ngbNav #nav="ngbNav" class="nav nav-tabs nav-justified card-header-tabs nav-bordered">
             <li ngbNavItem class="nav-item">
                 <a ngbNavLink class="nav-link">
                     <ng-icon name="tablerHome" class="d-md-none d-block"/>
                     <span class="d-none d-md-block">Today</span>
+                </a>
+                <ng-template ngbNavContent></ng-template> <!--tab content goes here-->
+            </li>
+            <li ngbNavItem class="nav-item">
+                <a ngbNavLink class="nav-link">
+                    <ng-icon name="tablerHome" class="d-md-none d-block"/>
+                    <span class="d-none d-md-block">Weekly</span>
                 </a>
                 <ng-template ngbNavContent></ng-template> <!--tab content goes here-->
             </li>

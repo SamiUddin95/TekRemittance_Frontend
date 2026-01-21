@@ -59,6 +59,10 @@ export const VIEWS_ROUTES: Routes = [
         loadChildren: () => import('./general-feature/general-feature.routes').then((mod) => mod.GENERAL_FEATURE_ROUTES)
     },
     {
+        path: '',
+        loadChildren: () => import('./reports/reports.routes').then((mod) => mod.routes)
+    },
+    {
         path: 'widgets',
         component: WidgetsComponent,
         data: {title: "Widgets"},

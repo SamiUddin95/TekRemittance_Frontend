@@ -1,9 +1,22 @@
 <div class="">
-    <app-page-title title="Dashboard"/>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- <app-page-title title="Dashboard"/> -->
+         <h3 style="font-size: x-large; font-weight: bold; margin-top: 10px;">DASHBOARD</h3>
+        <div class="dropdown" [class.show]="isDropdownOpen" style="position: relative;">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" (click)="toggleDropdown(); $event.stopPropagation()">
+                {{ selectedPeriod }}
+            </button>
+            <ul class="dropdown-menu" [class.show]="isDropdownOpen" style="position: absolute; top: 100%; right: 0; min-width: 150px;">
+                @for (period of timePeriods; track period) {
+                <li><a class="dropdown-item" href="#" (click)="selectPeriod(period); $event.preventDefault(); $event.stopPropagation()">{{ period }}</a></li>
+                }
+            </ul>
+        </div>
+    </div>
 
-    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-xl-4">
+    <div class="d-flex gap-3">
         @for ( item of statistics; track $index) {
-        <div class="col">
+        <div style="flex: 1 1 20%;">
             <app-statistics-widget [item]="item"/>
         </div>
         }
