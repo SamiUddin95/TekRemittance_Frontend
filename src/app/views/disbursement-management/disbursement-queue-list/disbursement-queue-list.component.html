@@ -63,6 +63,7 @@
                     @for (h of tableHeaders; track h) {
                       <th class="fw-bold text-nowrap">{{ h }}</th>
                     }
+                    <th class="fw-bold text-nowrap">Limit Status</th>
                     <th class="fw-bold text-nowrap">Mode of Transfer</th>
                     <th class="text-center fw-bold">Actions</th>
                   </tr>
@@ -73,6 +74,15 @@
                       @for (h of tableHeaders; track h) {
                         <td>{{ r.obj?.[h] ?? '-' }}</td>
                       }
+                      <td class="text-center">
+                        @if (r.obj?.limitMessage?.toString() === '0') {
+                          <span class="badge bg-danger">Off Limit</span>
+                        } @else if (r.obj?.limitMessage?.toString() === '1') {
+                          <span class="badge bg-success">Within Limit</span>
+                        } @else {
+                          <span class="badge bg-secondary">Unknown</span>
+                        }
+                      </td>
                       <td class="text-center">
                         <select class="form-select form-select-sm" [value]="getModeOfTransfer(r.id)" (change)="setModeOfTransfer(r.id, $any($event.target).value)">
                           <option value="">Select Mode of Transfer</option>
@@ -86,7 +96,14 @@
                           <button type="button" class="btn btn-sm btn-outline-secondary" title="View" (click)="onView(r.id)">
                             <ng-icon name="tablerEye" size="16"></ng-icon>
                           </button>
-                          <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="onDisburse(r.id)">Disburse</button>
+                          @if (r.obj?.limitMessage?.toString() === '0') {
+                            <button type="button" class="btn btn-sm btn-outline-success" title="Authorize" (click)="onAuthorize(r.id)">Authorize</button>
+                          } @else if (r.obj?.limitMessage?.toString() === '1') {
+                            <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="onDisburse(r.id)">Disburse</button>
+                          } @else {
+                            <button type="button" class="btn btn-sm btn-outline-warning" title="Disburse" (click)="onDisburse(r.id)">Disburse</button>
+                            <button type="button" class="btn btn-sm btn-outline-success" title="Authorize" (click)="onAuthorize(r.id)">Authorize</button>
+                          }
                           <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">Reject</button>
                           <button type="button" class="btn btn-sm btn-outline-secondary" title="AML" (click)="onAml(r.id)">AML</button>
                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Revert">Revert</button>
@@ -95,7 +112,7 @@
                     </tr>
                   } @empty {
                     <tr>
-                      <td [attr.colspan]="((tableHeaders?.length || 1) > 1 ? (tableHeaders?.length || 1) : 1) + 2" class="text-center py-4">
+                      <td [attr.colspan]="((tableHeaders?.length || 1) > 1 ? (tableHeaders?.length || 1) : 1) + 3" class="text-center py-4">
                         <div class="text-muted">
                           <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
                           <p class="mb-0">No records found</p>

@@ -14,7 +14,7 @@
                 <table class="table table-custom table-nowrap table-hover table-centered mb-0">
                     <thead class="bg-light align-middle bg-opacity-25 thead-sm">
                     <tr class="text-uppercase fs-xxs">
-                        <th class="text-muted">Tran. No.</th>
+                        <th class="text-muted">XPIN No</th>
                         <th class="text-muted">Agent Name</th>
                         <th class="text-muted">Date</th>
                         <th class="text-muted">Amount</th>
@@ -25,10 +25,11 @@
                     <tbody>
                         @for (transaction of transactions; track $index) {
                             <tr>
-                                <td><a [routerLink]="[]" class="link-reset fw-semibold">{{ getTransactionId(transaction, $index) }}</a></td>
+                                <!-- <td><a [routerLink]="[]" class="link-reset fw-semibold">{{ getTransactionId(transaction, $index) }}</a></td> -->
+                                <td>{{ transaction.xpin }}</td>
                                 <td>{{ transaction.agentName }}</td>
                                 <td>{{ getTransactionDate(transaction) }} <small class="text-muted">{{ getTransactionTime(transaction) }}</small></td>
-                                <td class="fw-semibold">{{ currency }}{{ transaction.amount.toLocaleString() }}</td>
+                                <td class="fw-semibold">{{ transaction.amount.toLocaleString() }}</td>
                                 <td>
                                 <span class="badge fs-xxs" [class]="`badge-soft-${getTransactionVariant(transaction.status)}`">
                                     <ng-icon name="tablerPointFill"/>

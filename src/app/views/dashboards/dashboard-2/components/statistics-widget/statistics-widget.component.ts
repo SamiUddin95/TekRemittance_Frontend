@@ -12,3 +12,4 @@ import {EchartComponent} from '@app/components/echart.component';
 export class StatisticsWidgetComponent {
     @Input() item!: StatisticsWidgetType
 }
+

@@ -23,6 +23,8 @@ export interface DashboardData {
   successAmount: number;
   successCount: number;
   successPercentage: number;
+  totalCount: number;
+  totalAmount: number;
 }
 
 export interface DashboardResponse {

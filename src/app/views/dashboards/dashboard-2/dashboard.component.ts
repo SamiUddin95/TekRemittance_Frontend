@@ -13,6 +13,8 @@ import {FormsModule} from '@angular/forms';
 import {DashboardService, DashboardData} from './services/dashboard.service';
 import {catchError, tap} from 'rxjs/operators';
 import {of} from 'rxjs';
+import {getColor} from "@/app/utils/color-utils";
+import {EChartsOption} from 'echarts';
 
 @Component({
     selector: 'app-dashboard-2',
@@ -69,8 +71,12 @@ export class Dashboard2Component implements OnInit {
         this.statistics[0].value = data.successCount; 
         this.statistics[1].value = data.successAmount; 
         this.statistics[2].value = data.successPercentage; 
+        this.statistics[2].suffix = '%'; // Add percentage sign
         this.statistics[3].value = data.failedCount; 
         this.statistics[4].value = data.failedAmount; 
+        
+        // Update chart options with real data
+        this.updateChartOptions(data);
         
         // Update descriptions based on selected period
         let description = '';
@@ -94,6 +100,134 @@ export class Dashboard2Component implements OnInit {
         // Update all statistics descriptions
         this.statistics.forEach(stat => {
             stat.description = description;
+        });
+    }
+
+    updateChartOptions(data: DashboardData) {
+        // Calculate percentages for charts
+        const total = data.totalCount;
+        const successPercent = total > 0 ? (data.successCount / total) * 100 : 0;
+        const failedPercent = total > 0 ? (data.failedCount / total) * 100 : 0;
+        const remainingPercent = 100 - successPercent - failedPercent;
+
+        // Update Successful Count Chart (0: success, 1: remaining)
+        this.statistics[0].chartOptions = () => ({
+            tooltip: {show: false},
+            series: [
+                {
+                    type: 'pie',
+                    radius: ['65%', '100%'],
+                    hoverAnimation: false,
+                    label: {show: false},
+                    labelLine: {show: false},
+                    data: [
+                        {
+                            value: successPercent,
+                            itemStyle: { color: getColor('success') }
+                        },
+                        {
+                            value: 100 - successPercent,
+                            itemStyle: { color: '#bbcae14d' }
+                        }
+                    ]
+                }
+            ]
+        });
+
+        // Update Successful Amount Chart
+        this.statistics[1].chartOptions = () => ({
+            tooltip: {show: false},
+            series: [
+                {
+                    type: 'pie',
+                    radius: ['65%', '100%'],
+                    hoverAnimation: false,
+                    label: {show: false},
+                    labelLine: {show: false},
+                    data: [
+                        {
+                            value: successPercent,
+                            itemStyle: { color: getColor('primary') }
+                        },
+                        {
+                            value: 100 - successPercent,
+                            itemStyle: { color: '#bbcae14d' }
+                        }
+                    ]
+                }
+            ]
+        });
+
+        // Update Successful Percentage Chart
+        this.statistics[2].chartOptions = () => ({
+            tooltip: {show: false},
+            series: [
+                {
+                    type: 'pie',
+                    radius: ['65%', '100%'],
+                    hoverAnimation: false,
+                    label: {show: false},
+                    labelLine: {show: false},
+                    data: [
+                        {
+                            value: data.successPercentage,
+                            itemStyle: { color: getColor('info') }
+                        },
+                        {
+                            value: 100 - data.successPercentage,
+                            itemStyle: { color: '#bbcae14d' }
+                        }
+                    ]
+                }
+            ]
+        });
+
+        // Update Failed Count Chart
+        this.statistics[3].chartOptions = () => ({
+            tooltip: {show: false},
+            series: [
+                {
+                    type: 'pie',
+                    radius: ['65%', '100%'],
+                    hoverAnimation: false,
+                    label: {show: false},
+                    labelLine: {show: false},
+                    data: [
+                        {
+                            value: failedPercent,
+                            itemStyle: { color: getColor('warning') }
+                        },
+                        {
+                            value: 100 - failedPercent,
+                            itemStyle: { color: '#bbcae14d' }
+                        }
+                    ]
+                }
+            ]
+        });
+
+        // Update Failed Amount Chart
+        this.statistics[4].chartOptions = () => ({
+            tooltip: {show: false},
+            series: [
+                {
+                    type: 'pie',
+                    radius: ['65%', '100%'],
+                    hoverAnimation: false,
+                    label: {show: false},
+                    labelLine: {show: false},
+                    data: [
+                        {
+                            value: failedPercent,
+                            itemStyle: { color: getColor('danger') }
+                        },
+                        {
+                            value: 100 - failedPercent,
+                            itemStyle: { color: '#bbcae14d' }
+                        }
+                    ]
+                }
+            ]
         });
     }
 

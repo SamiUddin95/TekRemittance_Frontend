@@ -13,6 +13,7 @@ export interface DisbursementData {
     error: string;
     createdOn: string;
     status: string;
+    limitMessage?: string;
 }
 
 export interface DisbursementResponse {
@@ -38,11 +39,23 @@ export class DisbursementService {
   pageSize: number = 50,
   filters: { xpin?: string; accountNumber?: string; date?: string } = {}
 ): Observable<any> {
-  let url = `${environment.apiUrl}/Disbursement/GetDataByAgent?agentId=${agentId}&pageNumber=${pageNumber}&pageSize=${pageSize}`;
+  let url = `${environment.apiUrl}/Disbursement/GetDataByAgent?agentId=${agentId}`;
+ 
+  const userId = sessionStorage.getItem('auth_userid');
+  if (userId) {
+    url += `&userId=${userId}`;
+    console.log('getDataByAgent: Adding userId to URL:', userId);
+  } else {
+    console.warn('getDataByAgent: No userId found in session storage');
+  }
+ 
+  url += `&pageNumber=${pageNumber}&pageSize=${pageSize}`;
 
   if (filters.xpin) url += `&xpin=${filters.xpin}`;
   if (filters.accountNumber) url += `&accountNumber=${filters.accountNumber}`;
   if (filters.date) url += `&date=${filters.date}`;
+
+  console.log('Final getDataByAgent URL:', url);
 
   return this.http.get<any>(url).pipe(
     map(res => {
@@ -60,8 +73,6 @@ export class DisbursementService {
   );
 }
 
-
-    // RemitReject: rejects a disbursement by XPin and UserId
     remitReject(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitReject`;
         const body: any = { userId, xpin: String(xpin ?? '') };
@@ -69,15 +80,13 @@ export class DisbursementService {
         return this.http.post<any>(url, body);
     }
 
-    // RemitApprove: approves a disbursement by XPin and UserId
     remitApprove(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitApprove`;
         const body: any = { userId, xpin: String(xpin ?? '') };
         if (modeOfTransaction) body.modeOfTransaction = modeOfTransaction;
         return this.http.post<any>(url, body);
     }
-
-    // RemitAuthorize: authorizes a disbursement by XPin and UserId
+ 
     remitAuthorize(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitAuthorize`;
         const body: any = { userId, xpin: String(xpin ?? '') };
@@ -85,15 +94,13 @@ export class DisbursementService {
         return this.http.post<any>(url, body);
     }
 
-    // RemitRepair: repairs a rejected disbursement by XPin and UserId
     remitRepair(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitRepair`;
         const body: any = { userId, xpin: String(xpin ?? '') };
         if (modeOfTransaction) body.modeOfTransaction = modeOfTransaction;
         return this.http.post<any>(url, body);
     }
-
-    // RemitReverse: reverses a disbursement by XPin and UserId
+ 
     remitReverse(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitReverse`;
         const body: any = { userId, xpin: String(xpin ?? '') };
@@ -115,7 +122,7 @@ getDataByAuthorize(
   agentId: string,
   pageNumber: number = 1,
   pageSize: number = 10,
-  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+  filters: { xpin?: string; accountNumber?: string; date?: string; userId?: string } = {}
 ): Observable<{
   items: DisbursementData[];
   totalCount: number;
@@ -128,8 +135,15 @@ getDataByAuthorize(
   let params = new HttpParams()
     .set('pageNumber', pageNumber.toString())
     .set('pageSize', pageSize.toString());
-
-  // Add optional filters only if they exist
+ 
+  const userId = sessionStorage.getItem('auth_userid');
+  if (userId) {
+    params = params.set('userId', userId);
+    console.log('Service: Adding userId to params:', userId);
+  } else {
+    console.warn('Service: No userId found in session storage');
+  }
+ 
   if (filters.xpin) {
     params = params.set('xpin', filters.xpin);
   }
@@ -137,7 +151,7 @@ getDataByAuthorize(
     params = params.set('accountNumber', filters.accountNumber);
   }
   if (filters.date) {
-    params = params.set('date', filters.date); // agar backend mein 'edate' hai to yahan 'edate' likh dena
+    params = params.set('date', filters.date); 
   }
 
   const url = `${environment.apiUrl}/Disbursement/GetDataByAuthorize/${agentId}`;

@@ -75,11 +75,25 @@ export class AuthorizationQueueListComponent implements OnInit {
     return;
   }
 
+  // Get userId from session storage
+  const userId = sessionStorage.getItem('auth_userid');
+  console.log('Retrieved userId from session storage:', userId);
+  if (!userId) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'User not found',
+      text: 'Please login again to continue.',
+      confirmButtonText: 'OK'
+    });
+    return;
+  }
+
   // Filters collect karo (empty fields ignore karne ke liye)
   const filters = {
     xpin: formValues.xpin?.trim() || undefined,
     accountNumber: formValues.accountnumber?.trim() || undefined,
-    date: formValues.date || undefined
+    date: formValues.date || undefined,
+    userId: userId // Add userId from session storage
   };
 
   console.log('Searching for Agent:', agentId, 'with filters:', filters);
@@ -108,13 +122,20 @@ export class AuthorizationQueueListComponent implements OnInit {
 
   private loadDisbursementData(
   agentId: string,
-  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+  filters: { xpin?: string; accountNumber?: string; date?: string; userId?: string } = {}
 ): void {
   console.log('Loading data for agent:', agentId, 'with filters:', filters);
   this.isLoading = true;
 
   const pageNumber = this.PaginationInfo.Page;
   const pageSize = this.PaginationInfo.RowsPerPage;
+
+  // Always get userId from session storage and include it
+  const userId = sessionStorage.getItem('auth_userid');
+  if (userId) {
+    filters.userId = userId;
+    console.log('Adding userId to API call:', userId);
+  }
 
   this.disbursementService
     .getDataByAuthorize(agentId, pageNumber, pageSize, filters)
@@ -275,8 +296,9 @@ export class AuthorizationQueueListComponent implements OnInit {
             
             // Reload the data to refresh the list regardless of success/failure
             const agentId = this.filterForm.get('agentId')?.value;
-            if (agentId) {
-              this.loadDisbursementData(agentId);
+            const userId = sessionStorage.getItem('auth_userid');
+            if (agentId && userId) {
+              this.loadDisbursementData(agentId, { userId });
             }
           },
           error: (err) => {
@@ -331,8 +353,9 @@ export class AuthorizationQueueListComponent implements OnInit {
           });
           // Reload the data to refresh the list
           const agentId = this.filterForm.get('agentId')?.value;
-          if (agentId) {
-            this.loadDisbursementData(agentId);
+          const userId = sessionStorage.getItem('auth_userid');
+          if (agentId && userId) {
+            this.loadDisbursementData(agentId, { userId });
           }
         } else {
           Swal.fire({

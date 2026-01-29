@@ -51,6 +51,9 @@ export class DisbursementQueueListComponent implements OnInit {
   // agents for dropdown
   agents: Array<{ id: string; name: string }> = [];
 
+  // limit message from API response
+  limitMessage: string | number | null = null;
+
   constructor(private fb: FormBuilder, private agentService: AgentService, private disbursementService: DisbursementService, private auth: AuthService) {
     this.filterForm = this.fb.group({
       agentId: [''],
@@ -157,6 +160,9 @@ private loadDisbursementData(
 
         if (response.status === 'success' && response.items) {
           this.rows = this.mapDisbursementDataToRows(response.items);
+          
+          // Store limitMessage from API response
+          this.limitMessage = response.limitMessage || null;
 
           // Dynamic headers logic (same as before)
           const parsedObjects: any[] = response.items.map((item: DisbursementData) => {
@@ -178,7 +184,7 @@ private loadDisbursementData(
             return {
               id: item.id,
               status: item.status === 'P' ? 'Pending' : (item.status || ''),
-              obj: { AgentName: agentName, ...obj }
+              obj: { AgentName: agentName, limitMessage: item.limitMessage, ...obj }
             };
           });
 
@@ -442,6 +448,84 @@ private loadDisbursementData(
   });
 }
 
+  authorize(row: QueueRow): void {
+    const userId = this.auth.getUserId();
+    const xpin = row?.xpin;
+    const modeOfTransaction = this.getModeOfTransfer(row.id);
+
+    if (!userId) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'User not found',
+        text: 'Please login again to continue.'
+      });
+      return;
+    }
+
+    if (!xpin) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing XPin',
+        text: 'XPin not available for this row.'
+      });
+      return;
+    }
+
+    // Show confirmation dialog before proceeding
+    Swal.fire({
+      title: 'Confirm Authorization',
+      html: `Are you sure you want to authorize this remittance?<br><br><strong>XPin:</strong> ${xpin}<br><strong>Mode:</strong> ${modeOfTransaction}`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, authorize!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.isLoading = true;
+        this.disbursementService.remitAuthorize(userId, xpin, modeOfTransaction).subscribe({
+          next: (res) => {
+            this.isLoading = false;
+            const status = res?.status;
+            const message = res?.errorMessage || 'Authorization completed successfully';
+            
+            if (status === 'success') {
+              Swal.fire({
+                icon: 'success',
+                title: 'Authorization Successful',
+                text: message,
+                confirmButtonText: 'OK'
+              });
+            } else {
+              Swal.fire({
+                icon: 'warning',
+                title: 'Authorization Failed',
+                text: message,
+                confirmButtonText: 'OK'
+              });
+            }
+            
+            // Reload the data to refresh the list regardless of success/failure
+            const agentId = this.filterForm.get('agentId')?.value;
+            if (agentId) {
+              this.loadDisbursementData(agentId);
+            }
+          },
+          error: (err) => {
+            this.isLoading = false;
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'API call failed. Please try again.',
+              confirmButtonText: 'OK'
+            });
+            console.error('RemitAuthorize error', err);
+          }
+        });
+      }
+    });
+  }
+
 
   // wrappers for dynamic table actions
   private findRowById(id: string): QueueRow | null {
@@ -479,6 +563,14 @@ private loadDisbursementData(
     this.markAml(row);
   }
 }
+
+  onAuthorize(id: string): void {
+    const row = this.findRowById(id);
+    if (row) {
+      row.transferMode = this.getModeOfTransfer(id);
+      this.authorize(row);
+    }
+  }
 
 
 
