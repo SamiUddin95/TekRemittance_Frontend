@@ -23,6 +23,8 @@ interface QueueRow {
   error?: string;
 }
 
+type ModeOfTransfer = 'IBFT' | 'FT' | 'RTGS';
+
 @Component({
   selector: 'app-disbursement-queue-list',
   standalone: true,
@@ -35,6 +37,8 @@ export class DisbursementQueueListComponent implements OnInit {
   rows: QueueRow[] = [];
   tableHeaders: string[] = [];
   dataRows: Array<{ id: string; obj: any; status: string }> = [];
+
+  modeOfTransferByRowId: Record<string, ModeOfTransfer> = {};
 
   PaginationInfo: any = { Page: 1, RowsPerPage: 10 };
   totalRecord = 0;
@@ -58,6 +62,18 @@ export class DisbursementQueueListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAgents();
+  }
+
+  getModeOfTransfer(rowId: string): ModeOfTransfer {
+    return this.modeOfTransferByRowId[rowId] ?? 'IBFT';
+  }
+
+  setModeOfTransfer(rowId: string, mode: string): void {
+    const normalized = (mode || '').toUpperCase();
+    const next: ModeOfTransfer = (normalized === 'FT' || normalized === 'RTGS' || normalized === 'IBFT')
+      ? (normalized as ModeOfTransfer)
+      : 'IBFT';
+    this.modeOfTransferByRowId[rowId] = next;
   }
 
   private loadAgents(): void {
@@ -166,6 +182,12 @@ private loadDisbursementData(
             };
           });
 
+          this.dataRows.forEach(r => {
+            if (!this.modeOfTransferByRowId[r.id]) {
+              this.modeOfTransferByRowId[r.id] = 'IBFT';
+            }
+          });
+
           this.totalRecord = response.totalCount;
         } else {
           this.rows = [];
@@ -223,6 +245,7 @@ private loadDisbursementData(
   disburse(row: QueueRow): void {
     const userId = this.auth.getUserId();
     const xpin = row?.xpin;
+    const modeOfTransaction = this.getModeOfTransfer(row.id);
 
     if (!userId) {
       Swal.fire({
@@ -245,7 +268,7 @@ private loadDisbursementData(
     // Show confirmation dialog before proceeding
     Swal.fire({
       title: 'Confirm Disbursement',
-      html: `Are you sure you want to disburse this remittance?<br><br><strong>XPin:</strong> ${xpin}`,
+      html: `Are you sure you want to disburse this remittance?<br><br><strong>XPin:</strong> ${xpin}<br><strong>Mode:</strong> ${modeOfTransaction}`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -254,7 +277,7 @@ private loadDisbursementData(
     }).then((result) => {
       if (result.isConfirmed) {
         this.isLoading = true;
-        this.disbursementService.remitApprove(userId, xpin).subscribe({
+        this.disbursementService.remitApprove(userId, xpin, modeOfTransaction).subscribe({
           next: (res) => {
             this.isLoading = false;
             const isSuccess = res?.isSuccess;
@@ -300,6 +323,7 @@ private loadDisbursementData(
   reject(row: QueueRow): void {
     const userId = this.auth.getUserId();
     const xpin = row?.xpin;
+    const modeOfTransaction = this.getModeOfTransfer(row.id);
 
     if (!userId) {
       Swal.fire({
@@ -320,7 +344,7 @@ private loadDisbursementData(
     }
 
     this.isLoading = true;
-    this.disbursementService.remitReject(userId, xpin).subscribe({
+    this.disbursementService.remitReject(userId, xpin, modeOfTransaction).subscribe({
       next: (res) => {
         this.isLoading = false;
         if ((res?.status || '').toLowerCase() === 'success') {
@@ -357,6 +381,7 @@ private loadDisbursementData(
   markAml(row: QueueRow): void {
   const userId = this.auth.getUserId();
   const xpin = row?.xpin;
+  const modeOfTransaction = this.getModeOfTransfer(row.id);
 
   if (!userId) {
     Swal.fire({
@@ -378,7 +403,7 @@ private loadDisbursementData(
 
   this.isLoading = true;
 
-  this.disbursementService.markAml(userId, xpin).subscribe({
+  this.disbursementService.markAml(userId, xpin, modeOfTransaction).subscribe({
     next: (res) => {
       this.isLoading = false;
 
@@ -425,22 +450,34 @@ private loadDisbursementData(
 
   onView(id: string): void {
     const row = this.findRowById(id);
-    if (row) this.view(row);
+    if (row) {
+      row.transferMode = this.getModeOfTransfer(id);
+      this.view(row);
+    }
   }
 
   onDisburse(id: string): void {
     const row = this.findRowById(id);
-    if (row) this.disburse(row);
+    if (row) {
+      row.transferMode = this.getModeOfTransfer(id);
+      this.disburse(row);
+    }
   }
 
   onReject(id: string): void {
     const row = this.findRowById(id);
-    if (row) this.reject(row);
+    if (row) {
+      row.transferMode = this.getModeOfTransfer(id);
+      this.reject(row);
+    }
   }
   
   onAml(id: string): void {
   const row = this.findRowById(id);
-  if (row) this.markAml(row);
+  if (row) {
+    row.transferMode = this.getModeOfTransfer(id);
+    this.markAml(row);
+  }
 }
 
 

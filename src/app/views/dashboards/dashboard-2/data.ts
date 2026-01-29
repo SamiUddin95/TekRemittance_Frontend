@@ -27,12 +27,9 @@ function generateRandomData() {
 
 export const statistics: StatisticsWidgetType[] = [
     {
-        title: 'Successfull Count',
-        // badge: {text: 'Monthly', variant: 'success'},
-        value: 250,
-        prefix: '$',
-        suffix: 'K',
-        description: 'From last month',
+        title: 'Successful Count',
+        value: 0,
+        description: 'From today',
         chartOptions: () => ({
             tooltip: {show: false},
             series: [
@@ -46,7 +43,7 @@ export const statistics: StatisticsWidgetType[] = [
                         value: item.value,
                         itemStyle: {
                             color: index === 0
-                                ? getColor('primary')
+                                ? getColor('success')
                                 : index === 1
                                     ? getColor('secondary')
                                     : '#bbcae14d'
@@ -57,10 +54,9 @@ export const statistics: StatisticsWidgetType[] = [
         })
     },
     {
-        title: 'Successfull Amount',
-        // badge: {text: 'Monthly', variant: 'primary'},
-        value: 180,
-        description: 'from last month',
+        title: 'Successful Amount',
+        value: 0,
+        description: 'From today',
         chartOptions: () => ({
             tooltip: {show: false},
             series: [
@@ -86,9 +82,8 @@ export const statistics: StatisticsWidgetType[] = [
     },
     {
         title: 'Successful Percentage', 
-        // badge: {text: 'Monthly', variant: 'info'},
-        value: 50895,
-        description: 'from last month',
+        value: 0,
+        description: 'From today',
         chartOptions: () => ({
             tooltip: {show: false},
             series: [
@@ -102,7 +97,7 @@ export const statistics: StatisticsWidgetType[] = [
                         value: item.value,
                         itemStyle: {
                             color: index === 0
-                                ? getColor('primary')
+                                ? getColor('info')
                                 : index === 1
                                     ? getColor('secondary')
                                     : '#bbcae14d'
@@ -114,11 +109,8 @@ export const statistics: StatisticsWidgetType[] = [
     },
     {
         title: 'Failed Count',
-        // badge: {text: 'Monthly', variant: 'warning'},
-        value: 50.33,
-        prefix: '$',
-        suffix: 'K',
-        description: 'from last month',
+        value: 0,
+        description: 'From today',
         chartOptions: () => ({
             tooltip: {show: false},
             series: [
@@ -132,7 +124,7 @@ export const statistics: StatisticsWidgetType[] = [
                         value: item.value,
                         itemStyle: {
                             color: index === 0
-                                ? getColor('primary')
+                                ? getColor('warning')
                                 : index === 1
                                     ? getColor('secondary')
                                     : '#bbcae14d'
@@ -144,11 +136,8 @@ export const statistics: StatisticsWidgetType[] = [
     },
     {
         title: 'Failed Amount',
-        // badge: {text: 'Monthly', variant: 'info'},
-        value: 125,
-        prefix: '$',
-        suffix: 'K',
-        description: 'From last month',
+        value: 0,
+        description: 'From today',
         chartOptions: () => ({
             tooltip: {show: false},
             series: [
@@ -162,7 +151,7 @@ export const statistics: StatisticsWidgetType[] = [
                         value: item.value,
                         itemStyle: {
                             color: index === 0
-                                ? getColor('primary')
+                                ? getColor('danger')
                                 : index === 1
                                     ? getColor('secondary')
                                     : '#bbcae14d'
@@ -498,6 +487,50 @@ export const transactions: TransactionsType[] = [
     },
 ]
 
+
+export const pieChartOptions = (): EChartsOption => ({
+    tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b}: {c} ({d}%)'
+    },
+    legend: {
+        orient: 'vertical',
+        left: 'left',
+        data: ['FT','RTGS','IBFT']
+    },
+    series: [
+        {
+            name: 'RTGS',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+            },
+            label: {
+                show: false,
+                position: 'center'
+            },
+            emphasis: {
+                label: {
+                    show: true,
+                    fontSize: '20',
+                    fontWeight: 'bold'
+                }
+            },
+            labelLine: {
+                show: false
+            },
+            data: [
+                {value: 335, name: 'FT', itemStyle: {color: '#1877F2'}},
+                {value: 310, name: 'RTGS', itemStyle: {color: '#FF0000'}},
+                {value: 234, name: 'IBFT', itemStyle: {color: '#1DA1F2'}},
+            ]
+        }
+    ]
+});
 
 export const worldTransactionMapOptions = {
     map: "world",

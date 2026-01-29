@@ -1,32 +1,19 @@
 <div class="card">
-    <div class="card-header border-dashed card-tabs d-flex align-items-center">
-        <div class="flex-grow-1">
-            <h4 class="card-title">Transaction Status Distribution</h4>
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <div>
+            <h4 class="header-title mb-0">Transaction Status Distribution</h4>
+            <p class="text-muted mb-0 tx-12">Overview of transaction status</p>
         </div>
         <ul ngbNav #nav="ngbNav" class="nav nav-tabs nav-justified card-header-tabs nav-bordered">
             <li ngbNavItem class="nav-item">
-                <a ngbNavLink class="nav-link">
-                    <ng-icon name="tablerHome" class="d-md-none d-block"/>
-                    <span class="d-none d-md-block">Today</span>
-                </a>
-                <ng-template ngbNavContent></ng-template> <!--tab content goes here-->
-            </li>
-            <li ngbNavItem class="nav-item">
-                <a ngbNavLink class="nav-link">
-                    <ng-icon name="tablerHome" class="d-md-none d-block"/>
-                    <span class="d-none d-md-block">Weekly</span>
-                </a>
-                <ng-template ngbNavContent></ng-template> <!--tab content goes here-->
-            </li>
-            <li ngbNavItem class="nav-item">
-                <a ngbNavLink class="nav-link">
+                <a ngbNavLink class="nav-link" (click)="selectPeriod('Monthly')">
                     <ng-icon name="tablerUserCircle" class="d-md-none d-block"/>
                     <span class="d-none d-md-block">Monthly</span>
                 </a>
-                <ng-template ngbNavContent></ng-template> <!--tab content goes here-->
+                <ng-template ngbNavContent></ng-template> 
             </li>
             <li ngbNavItem class="nav-item">
-                <a ngbNavLink class="nav-link">
+                <a ngbNavLink class="nav-link" (click)="selectPeriod('Annual')">
                     <ng-icon name="tablerSettings" class="d-md-none d-block"/>
                     <span class="d-none d-md-block">Annual</span>
                 </a>
@@ -37,7 +24,16 @@
     <div class="card-body p-0">
         <div class="row g-0">
             <div class="col-xxl-8 border-end border-dashed">
-                <app-echart [getOptions]="orderStatisticsChartOptions" height="405px"/>
+                <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 400px;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div #chartContainer>
+                    <app-echart *ngIf="!isLoading && canShowChart" [getOptions]="orderStatisticsChartOptions" height="400px"/>
+                </div>
+                <div class="mt-2 p-2 bg-light">
+                </div>
             </div>
             <div class="col-xxl-4">
                 <div [ngbNavOutlet]="nav"></div>

@@ -1,13 +1,21 @@
 <app-ui-card title="Recent Transaction Activity" [isTogglable]="true"
-             [isReloadable]="true" bodyClass="pt-2">
+             [isReloadable]="true" bodyClass="pt-2" (onReload)="refreshTransactions()">
     <div card-body class="row align-items-center">
         <div class="col-xl-6">
-            <div class="table-responsive">
+            <!-- Loading indicator -->
+            <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 300px;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            
+            <!-- Transactions table -->
+            <div *ngIf="!isLoading" class="table-responsive">
                 <table class="table table-custom table-nowrap table-hover table-centered mb-0">
                     <thead class="bg-light align-middle bg-opacity-25 thead-sm">
                     <tr class="text-uppercase fs-xxs">
                         <th class="text-muted">Tran. No.</th>
-                        <th class="text-muted">Order</th>
+                        <th class="text-muted">Agent Name</th>
                         <th class="text-muted">Date</th>
                         <th class="text-muted">Amount</th>
                         <th class="text-muted">Status</th>
@@ -17,20 +25,27 @@
                     <tbody>
                         @for (transaction of transactions; track $index) {
                             <tr>
-                                <td><a [routerLink]="[]" class="link-reset fw-semibold">{{ transaction.id }}</a></td>
-                                <td>{{ transaction.order }}</td>
-                                <td>{{ transaction.date }} <small class="text-muted">{{ transaction.time }}</small></td>
-                                <td class="fw-semibold">{{ currency }}{{ transaction.amount }}</td>
+                                <td><a [routerLink]="[]" class="link-reset fw-semibold">{{ getTransactionId(transaction, $index) }}</a></td>
+                                <td>{{ transaction.agentName }}</td>
+                                <td>{{ getTransactionDate(transaction) }} <small class="text-muted">{{ getTransactionTime(transaction) }}</small></td>
+                                <td class="fw-semibold">{{ currency }}{{ transaction.amount.toLocaleString() }}</td>
                                 <td>
-                                <span class="badge fs-xxs" [class]="`badge-soft-${transaction.variant}`">
+                                <span class="badge fs-xxs" [class]="`badge-soft-${getTransactionVariant(transaction.status)}`">
                                     <ng-icon name="tablerPointFill"/>
                                     {{ toTitleCase(transaction.status) }}
                                 </span>
                                 </td>
                                 <td>
-                                    <img [src]="`assets/images/cards/${transaction.paymentMethod}.svg`" alt=""
-                                         class="me-2"
-                                         height="28"> xxxx {{ transaction.lastFour }}
+                                    <div class="d-flex align-items-center">
+                                        <ng-icon [name]="getPaymentMethodIcon(transaction.modeOfTransaction)" class="me-2" size="20"/>
+                                        <span>{{ transaction.modeOfTransaction || '-' }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        } @empty {
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <p class="text-muted mb-0">No recent transactions found</p>
                                 </td>
                             </tr>
                         }
@@ -38,18 +53,106 @@
                 </table>
             </div>
 
-            <div class="text-center mt-3">
-                <a [routerLink]="[]"
-                   class="link-reset text-decoration-underline fw-semibold link-offset-3 d-flex align-items-center gap-1 justify-content-center">
-                    View All Transactions
-                    <ng-icon name="tablerSend2"/>
-                </a>
+        </div>
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Transaction Status</h5>
+                    <div class="dropdown" [class.show]="isChartDropdownOpen" style="position: relative;">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" (click)="toggleChartDropdown(); $event.stopPropagation()">
+                            {{ selectedChartPeriod }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" [class.show]="isChartDropdownOpen" style="position: absolute; top: 100%; right: 0; min-width: 120px;">
+                            @for (period of chartPeriods; track period) {
+                            <li><a class="dropdown-item" href="#" (click)="selectChartPeriod(period); $event.preventDefault(); $event.stopPropagation()">{{ period }}</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <app-echart *ngIf="shouldRenderChart" [getOptions]="transactionPieChartOptions" (chartInit)="onChartInit($event)" height="280px" width="100%"/>
+                </div>
             </div>
         </div>
-        <!-- <div class="col-xl-6">
-            <div class="w-100 mt-4 mt-xl-0">
-                <app-vector-map [options]="worldTransactionMapOptions" height="297px"/>
-            </div>
-        </div> -->
     </div>
 </app-ui-card>
+
+<!-- Transaction Details Modal -->
+@if (isModalOpen) {
+<div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <span class="badge bg-primary me-2">{{ selectedMode }}</span>
+                    Transaction Details - {{ selectedChartPeriod }}
+                </h5>
+                <button type="button" class="btn-close" (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                @if (modalLoading) {
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Loading transaction details...</p>
+                </div>
+                } @else {
+                @if (modalData.length > 0) {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Agent Name</th>
+                                <th>X-PIN</th>
+                                <th>Date</th>
+                                <th>Account</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of modalData; track $index) {
+                            <tr>
+                                <td>{{ item.agentName }}</td>
+                                <td>{{ item.xpin || '-' }}</td>
+                                <td>{{ formatModalDate(item.date) }}</td>
+                                <td>
+                                    @if (item.accountTitle) {
+                                    <div>
+                                        <small class="text-muted">{{ item.accountTitle }}</small>
+                                        <br>
+                                        <small class="text-muted">{{ item.accountNumber || '-' }}</small>
+                                    </div>
+                                    } @else {
+                                    <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td class="fw-semibold">{{ formatModalAmount(item.amount) }}</td>
+                                <td>
+                                    <span class="badge {{ getStatusBadgeClass(item.status) }}">
+                                        {{ getStatusText(item.status) }}
+                                    </span>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                } @else {
+                <div class="text-center py-4">
+                    <div class="text-muted">
+                        <ng-icon name="heroInbox" size="48"></ng-icon>
+                        <p class="mt-2">No {{ selectedMode }} transactions found for {{ selectedChartPeriod }}</p>
+                    </div>
+                </div>
+                }
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+}

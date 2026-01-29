@@ -62,43 +62,49 @@ export class DisbursementService {
 
 
     // RemitReject: rejects a disbursement by XPin and UserId
-    remitReject(userId: string, xpin: string | number): Observable<any> {
+    remitReject(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitReject`;
-        const body = { userId, xpin: String(xpin ?? '') };
+        const body: any = { userId, xpin: String(xpin ?? '') };
+        if (modeOfTransaction) body.modeOfTransaction = modeOfTransaction;
         return this.http.post<any>(url, body);
     }
 
     // RemitApprove: approves a disbursement by XPin and UserId
-    remitApprove(userId: string, xpin: string | number): Observable<any> {
+    remitApprove(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitApprove`;
-        const body = { userId, xpin: String(xpin ?? '') };
+        const body: any = { userId, xpin: String(xpin ?? '') };
+        if (modeOfTransaction) body.modeOfTransaction = modeOfTransaction;
         return this.http.post<any>(url, body);
     }
 
     // RemitAuthorize: authorizes a disbursement by XPin and UserId
-    remitAuthorize(userId: string, xpin: string | number): Observable<any> {
+    remitAuthorize(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitAuthorize`;
-        const body = { userId, xpin: String(xpin ?? '') };
+        const body: any = { userId, xpin: String(xpin ?? '') };
+        if (modeOfTransaction) body.modeOfTransaction = modeOfTransaction;
         return this.http.post<any>(url, body);
     }
 
     // RemitRepair: repairs a rejected disbursement by XPin and UserId
-    remitRepair(userId: string, xpin: string | number): Observable<any> {
+    remitRepair(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitRepair`;
-        const body = { userId, xpin: String(xpin ?? '') };
+        const body: any = { userId, xpin: String(xpin ?? '') };
+        if (modeOfTransaction) body.modeOfTransaction = modeOfTransaction;
         return this.http.post<any>(url, body);
     }
 
     // RemitReverse: reverses a disbursement by XPin and UserId
-    remitReverse(userId: string, xpin: string | number): Observable<any> {
+    remitReverse(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitReverse`;
-        const body = { userId, xpin: String(xpin ?? '') };
+        const body: any = { userId, xpin: String(xpin ?? '') };
+        if (modeOfTransaction) body.modeOfTransaction = modeOfTransaction;
         return this.http.post<any>(url, body);
     }
     
-    markAml(userId: string, xpin: string | number): Observable<any> {
+    markAml(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
   const url = `${environment.apiUrl}/Disbursement/AntiMoneyLaundering`;
-  const body = { userId, xpin: String(xpin ?? '') };
+  const body: any = { userId, xpin: String(xpin ?? '') };
+  if (modeOfTransaction) body.modeOfTransaction = modeOfTransaction;
   return this.http.post<any>(url, body);
 }
 

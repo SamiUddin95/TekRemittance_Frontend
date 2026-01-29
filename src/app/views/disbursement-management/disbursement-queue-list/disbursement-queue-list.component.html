@@ -54,7 +54,7 @@
           </div>
 
           @if (isLoading) {
-            <app-skeleton-loader [isLoading]="true" variant="table" [rows]="10" [cols]="8" ariaLabel="Loading disbursement list"></app-skeleton-loader>
+            <app-skeleton-loader [isLoading]="true" variant="table" [rows]="10" [cols]="9" ariaLabel="Loading disbursement list"></app-skeleton-loader>
           } @else {
             <div class="table-responsive">
               <table class="table table-bordered table-striped table-sm">
@@ -63,6 +63,7 @@
                     @for (h of tableHeaders; track h) {
                       <th class="fw-bold text-nowrap">{{ h }}</th>
                     }
+                    <th class="fw-bold text-nowrap">Mode of Transfer</th>
                     <th class="text-center fw-bold">Actions</th>
                   </tr>
                 </thead>
@@ -73,6 +74,14 @@
                         <td>{{ r.obj?.[h] ?? '-' }}</td>
                       }
                       <td class="text-center">
+                        <select class="form-select form-select-sm" [value]="getModeOfTransfer(r.id)" (change)="setModeOfTransfer(r.id, $any($event.target).value)">
+                          <option value="">Select Mode of Transfer</option>
+                          <option value="IBFT">IBFT</option>
+                          <option value="FT">FT</option>
+                          <option value="RTGS">RTGS</option>
+                        </select>
+                      </td>
+                      <td class="text-center">
                         <div class="btn-group" role="group">
                           <button type="button" class="btn btn-sm btn-outline-secondary" title="View" (click)="onView(r.id)">
                             <ng-icon name="tablerEye" size="16"></ng-icon>
@@ -81,19 +90,12 @@
                           <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">Reject</button>
                           <button type="button" class="btn btn-sm btn-outline-secondary" title="AML" (click)="onAml(r.id)">AML</button>
                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Revert">Revert</button>
-
-                          <!-- <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="onDisburse(r.id)">
-                            <ng-icon name="tablerCheck" size="16" class="me-1"></ng-icon>
-                          </button>
-                          <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">
-                            <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
-                          </button> -->
                         </div>
                       </td>
                     </tr>
                   } @empty {
                     <tr>
-                      <td [attr.colspan]="((tableHeaders?.length || 1) > 1 ? (tableHeaders?.length || 1) : 1) + 1" class="text-center py-4">
+                      <td [attr.colspan]="((tableHeaders?.length || 1) > 1 ? (tableHeaders?.length || 1) : 1) + 2" class="text-center py-4">
                         <div class="text-muted">
                           <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
                           <p class="mb-0">No records found</p>
