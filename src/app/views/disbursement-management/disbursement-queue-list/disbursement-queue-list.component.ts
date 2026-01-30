@@ -52,7 +52,7 @@ export class DisbursementQueueListComponent implements OnInit {
   agents: Array<{ id: string; name: string }> = [];
 
   // limit message from API response
-  limitMessage: string | number | null = null;
+  limitType: string | number | null = null;
 
   constructor(private fb: FormBuilder, private agentService: AgentService, private disbursementService: DisbursementService, private auth: AuthService) {
     this.filterForm = this.fb.group({
@@ -161,8 +161,8 @@ private loadDisbursementData(
         if (response.status === 'success' && response.items) {
           this.rows = this.mapDisbursementDataToRows(response.items);
           
-          // Store limitMessage from API response
-          this.limitMessage = response.limitMessage || null;
+          // Store limitType from API response
+          this.limitType = response.limitType || null;
 
           // Dynamic headers logic (same as before)
           const parsedObjects: any[] = response.items.map((item: DisbursementData) => {
@@ -184,7 +184,7 @@ private loadDisbursementData(
             return {
               id: item.id,
               status: item.status === 'P' ? 'Pending' : (item.status || ''),
-              obj: { AgentName: agentName, limitMessage: item.limitMessage, ...obj }
+              obj: { AgentName: agentName, limitType: item.limitType, ...obj }
             };
           });
 

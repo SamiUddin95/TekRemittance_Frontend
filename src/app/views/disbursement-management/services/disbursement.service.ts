@@ -13,7 +13,7 @@ export interface DisbursementData {
     error: string;
     createdOn: string;
     status: string;
-    limitMessage?: string;
+    limitType?: string;
 }
 
 export interface DisbursementResponse {

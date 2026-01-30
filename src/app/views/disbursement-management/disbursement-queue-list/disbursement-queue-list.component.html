@@ -75,10 +75,10 @@
                         <td>{{ r.obj?.[h] ?? '-' }}</td>
                       }
                       <td class="text-center">
-                        @if (r.obj?.limitMessage?.toString() === '0') {
-                          <span class="badge bg-danger">Off Limit</span>
-                        } @else if (r.obj?.limitMessage?.toString() === '1') {
+                        @if (r.obj?.limitType?.toString() === '0') {
                           <span class="badge bg-success">Within Limit</span>
+                        } @else if (r.obj?.limitType?.toString() === '1') {
+                          <span class="badge bg-danger">off Limit</span>
                         } @else {
                           <span class="badge bg-secondary">Unknown</span>
                         }
@@ -96,9 +96,9 @@
                           <button type="button" class="btn btn-sm btn-outline-secondary" title="View" (click)="onView(r.id)">
                             <ng-icon name="tablerEye" size="16"></ng-icon>
                           </button>
-                          @if (r.obj?.limitMessage?.toString() === '0') {
+                          @if (r.obj?.limitType?.toString() === '1') {
                             <button type="button" class="btn btn-sm btn-outline-success" title="Authorize" (click)="onAuthorize(r.id)">Authorize</button>
-                          } @else if (r.obj?.limitMessage?.toString() === '1') {
+                          } @else if (r.obj?.limitType?.toString() === '0') {
                             <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="onDisburse(r.id)">Disburse</button>
                           } @else {
                             <button type="button" class="btn btn-sm btn-outline-warning" title="Disburse" (click)="onDisburse(r.id)">Disburse</button>
