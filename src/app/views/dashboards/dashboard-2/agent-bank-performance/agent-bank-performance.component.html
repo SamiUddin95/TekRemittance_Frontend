@@ -1,0 +1,68 @@
+<div class="row mb-0">
+    <!-- Debug: {{ agents.length }} agents, {{ banks.length }} banks -->
+    <div class="col-md-6 mb-0">
+        <div class="card" style="border: 1px solid #ddd; border-radius: 5px; background-color: #fff;">
+            <div class="card-header bg-light" style=" border-bottom: 1px solid #ddd; padding: 10px 15px;">
+                <h3 class="card-title text-dark" style="font-size: 14px; font-weight: bold; margin: 0;">Agent Performance</h3>
+            </div>
+            <div class="card-body" style="padding: 15px;">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped table-sm" style="font-size: 12px;">
+                        <thead>
+                            <tr>
+                                <th style="border-top: none; font-weight: bold; color: black;">Agent Name</th>
+                                <th class="text-end" style="border-top: none; font-weight: bold; color: black; width: 150px;">Total Transactions</th>
+                                <th class="text-center" style="width: 10px;">/</th>
+                                <th class="text-center" style="border-top: none; font-weight: bold; color: black; width: 150px;">Amount (PKR)</th>
+                            </tr>
+                        </thead>
+                        <tbody> 
+                            <tr *ngFor="let agent of agents">
+                                <td style="border-top: none; color: black;">{{ agent.name }}</td>
+                                <td class="text-end" style="border-top: none; color: black; width: 150px;">{{ agent.tx.toLocaleString() }}</td>
+                                <td class="text-center" style="width: 10px;"></td>
+                                <td class="text-center" style="border-top: none; color: black; width: 150px;">PKR{{ agent.amount }}M</td>
+                            </tr>
+                            <tr *ngIf="agents.length === 0">
+                                <td colspan="3" style="text-align: center; color: black;">No agents data available</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-1">
+        <div class="card" style="border: 1px solid #ddd; border-radius: 5px; background-color: #fff;">
+            <div class="card-header bg-light" style=" border-bottom: 1px solid #ddd; padding: 10px 15px;">
+                <h3 class="card-title text-dark" style="font-size: 14px; font-weight: bold; margin: 0;">Top Banks - Incoming Transactions</h3>
+            </div>
+            <div class="card-body" style="padding: 15px;">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped table-sm" style="font-size: 12px;">
+                        <thead>
+                            <tr>
+                                <th style="border-top: none; font-weight: bold; color: black;">BANK NAME</th>
+                                <th class="text-end" style="border-top: none; font-weight: bold; color: black; width: 150px;">Total Transactions</th>
+                                <th class="text-center" style="width: 10px;">/</th>
+                                <th class="text-center" style="border-top: none; font-weight: bold; color: black; width: 150px;">Amount (PKR)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let bank of banks">
+                                <td style="border-top: none; color: black;">{{ bank.name }}</td>
+                                <td class="text-end" style="border-top: none; color: black; width: 150px;">{{ bank.tx.toLocaleString() }}</td>
+                                <td class="text-center" style="width: 10px;"></td>
+                                <td class="text-center" style="border-top: none; color: black;width: 150px;">{{ (bank.amount * 1000000).toLocaleString() }}</td>
+                            </tr>
+                            <tr *ngIf="banks.length === 0">
+                                <td colspan="3" style="text-align: center; color: black;">No banks data available</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

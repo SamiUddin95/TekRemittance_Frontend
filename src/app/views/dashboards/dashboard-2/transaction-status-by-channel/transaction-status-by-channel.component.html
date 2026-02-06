@@ -1,0 +1,57 @@
+<div class="row mb-0">
+    <div class="col-12">
+        <div class="card" style="border: 1px solid #ddd; border-radius: 5px; background-color: #fff;">
+            <div class="card-header" style="background-color: #f8f9fa; border-bottom: 1px solid #ddd; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="card-title" style="font-size: 14px; font-weight: bold; color: #2c3e50; margin: 0;">TRANSACTION STATUS BY CHANNEL</h3>
+                <!-- Legend in header -->
+                <div class="d-flex">
+                    <div class="legend-item">
+                        <span class="legend-color" style="background-color: #4B8E8C;"></span>
+                        <span class="legend-icon">↓</span>
+                        <span class="legend-text">Incoming</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background-color: #4A7EDB;"></span>
+                        <span class="legend-icon">↑</span>
+                        <span class="legend-text">Outgoing</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background-color: #E1DEF1;"></span>
+                        <span class="legend-icon">⏸</span>
+                        <span class="legend-text">Pending</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-2">
+                <!-- Progress Bars -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div *ngFor="let channel of channels" class="mb-1">
+                            <div class="d-flex justify-content-between mb-0">
+                                <small style="font-size: 12px; color: #555; font-weight: bold;">{{ channel.name }}</small>
+                                <small style="font-size: 12px; color: #555; font-weight: bold;">{{ channel.incoming + channel.outgoing + channel.pending }}%</small>
+                            </div>
+                            <div class="progress" style="height: 18px; border-radius: 5px; background-color: #ecf0f1;">
+                                <div class="progress-bar" [ngStyle]="{width: channel.incoming + '%', 'background-color': '#4B8E8C'}" style="border-radius: 3px 0 0 3px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
+                                    {{ channel.incoming > 10 ? channel.incoming + '%' : '' }}
+                                </div>
+                                <div class="progress-bar" [ngStyle]="{width: channel.outgoing + '%', 'background-color': '#4A7EDB'}" style="display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
+                                    {{ channel.outgoing > 10 ? channel.outgoing + '%' : '' }}
+                                </div>
+                                <div class="progress-bar" [ngStyle]="{width: channel.pending + '%', 'background-color': '#E1DEF1'}" style="border-radius: 0 3px 3px 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
+                                    {{ channel.pending > 10 ? channel.pending + '%' : '' }}
+                                </div>
+                            </div>
+                            <!-- Only show percentages below if they're too small to fit inside bars -->
+                            <div class="d-flex justify-content-between mt-0" *ngIf="channel.incoming <= 10 || channel.outgoing <= 10 || channel.pending <= 10">
+                                <small style="font-size: 10px; color: #27ae60; font-weight: bold;" *ngIf="channel.incoming <= 10">Incoming: {{ channel.incoming }}%</small>
+                                <small style="font-size: 10px; color: #3498db; font-weight: bold;" *ngIf="channel.outgoing <= 10">Outgoing: {{ channel.outgoing }}%</small>
+                                <small style="font-size: 10px; color: #95a5a6; font-weight: bold;" *ngIf="channel.pending <= 10">Pending: {{ channel.pending }}%</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

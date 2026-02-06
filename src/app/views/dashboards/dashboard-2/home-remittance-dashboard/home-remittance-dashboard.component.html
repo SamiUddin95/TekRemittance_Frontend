@@ -1,0 +1,101 @@
+<div class="wrapper">
+    <app-page-title
+        title="TEK-REMITTANCE DASHBOARD"></app-page-title>
+
+        <section class="content">
+            <div class="container-fluid">
+                <!-- Filter Section -->
+                <div class="row mb-0">
+                    <div class="col-12">
+                        <div class="card" style="border: 1px solid #ddd; border-radius: 5px; background-color: #fff;">
+                            <div class="card-body p-2">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2">
+                                        <div class="form-group mb-0">
+                                            <label style="font-size: 13px; color: #555; font-weight: bold; margin-bottom: 2px;"><i class="fas fa-calendar-alt mr-1"></i> Date Range</label>
+                                            <select class="form-control" style="border: 1px solid #ccc; border-radius: 4px; font-size: 11px; height: 30px;">
+                                                <option>Today</option>
+                                                <option>This Week</option>
+                                                <option>This Month</option>
+                                                <option>Last Month</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group mb-0">
+                                            <label style="font-size: 13px; color: #555; font-weight: bold; margin-bottom: 2px;"><i class="fas fa-user mr-1"></i> Agent</label>
+                                            <select class="form-control" style="border: 1px solid #ccc; border-radius: 4px; font-size: 11px; height: 30px;">
+                                                <option>All Agents</option>
+                                                <option>Agent 1</option>
+                                                <option>Agent 2</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group mb-0">
+                                            <label style="font-size: 13px; color: #555; font-weight: bold; margin-bottom: 2px;"><i class="fas fa-exchange-alt mr-1"></i> Channel</label>
+                                            <select class="form-control" style="border: 1px solid #ccc; border-radius: 4px; font-size: 11px; height: 30px;">
+                                                <option>All Channels</option>
+                                                <option>IBFT</option>
+                                                <option>Raast</option>
+                                                <option>FT</option>
+                                                <option>RTGS</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group mb-0">
+                                            <label style="font-size: 13px; color: #555; font-weight: bold; margin-bottom: 2px;"><i class="fas fa-list-alt mr-1"></i> Status</label>
+                                            <select class="form-control" style="border: 1px solid #ccc; border-radius: 4px; font-size: 11px; height: 30px;">
+                                                <option>All Statuses</option>
+                                                <option>Success</option>
+                                                <option>Pending</option>
+                                                <option>Failed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-md-4">
+                                        <button class="btn float-right" style="background-color: #27ae60; border-color: #27ae60; color: white; font-size: 13px; padding: 8px 20px; border-radius: 4px; font-weight: bold;">
+                                            <i class="fas fa-download mr-1"></i> Export
+                                        </button>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-0">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-0">
+                            <h5 class="mb-0">( INCOMING / OUTGOING ) TRANSACTIONS SUMMARY</h5>
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active" style="border: none; border-bottom: 3px solid #007bff; color: #007bff; font-weight: bold; font-size: 14px; background: transparent;">
+                                        <i class="fas fa-bars" style="margin-right: 5px;"></i>All Transactions
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" style="border: none; color: #777; font-size: 14px; background: transparent;">
+                                        <i class="fas fa-check-circle" style="margin-right: 5px;"></i>Incoming
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" style="border: none; color: #777; font-size: 14px; background: transparent;">
+                                        <i class="fas fa-exchange-alt" style="margin-right: 5px;"></i>Outgoing
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <app-incoming-outgoing-cards></app-incoming-outgoing-cards>
+
+                <app-transaction-status-by-channel></app-transaction-status-by-channel>
+
+                <app-agent-bank-performance></app-agent-bank-performance>
+
+                <app-eprc-overview></app-eprc-overview>
+            </div>
+        </section>
+    </div>
