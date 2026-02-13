@@ -25,14 +25,14 @@ export const menuItems: MenuItemType[] = [
             icon: 'tablerLayoutDashboard',
              url: '/dashboard',
     },
-    {
-        label: 'Reports',
-        icon: 'tablerTableColumn',
-        isCollapsed: true,
-        children: [
-            {icon: 'tablerFileReport', label: 'Transaction Reports', url: '/reports'},
-        ]
-    },
+    // {
+    //     label: 'Reports',
+    //     icon: 'tablerTableColumn',
+    //     isCollapsed: true,
+    //     children: [
+    //         {icon: 'tablerFileReport', label: 'Transaction Reports', url: '/reports'},
+    //     ]
+    // },
     {
         label: 'Basic Setup',
         icon: 'tablerTableColumn',
@@ -42,6 +42,7 @@ export const menuItems: MenuItemType[] = [
             {icon: 'tablerMapPin', label: 'Province Management', url: '/province-management'},
             {icon: 'tablerBuilding', label: 'City Management', url: '/city-management'},
             {icon: 'tablerBuildingBank', label: 'Bank Management', url: '/bank-management'},
+            {icon: 'tablerShield', label: 'AML List', url: '/aml-list'},
         ]
     },
     {
@@ -105,14 +106,14 @@ export const horizontalMenuItems: MenuItemType[] = [
             icon: 'tablerLayoutDashboard',
              url: '/dashboard',
     },
-    {
-        label: 'Reports',
-        icon: 'tablerTableColumn',
-        isCollapsed: true,
-        children: [
-            {icon: 'tablerFileReport', label: 'Transaction Reports', url: '/reports'}
-        ]
-    },
+    // {
+    //     label: 'Reports',
+    //     icon: 'tablerTableColumn',
+    //     isCollapsed: true,
+    //     children: [
+    //         {icon: 'tablerFileReport', label: 'Transaction Reports', url: '/reports'}
+    //     ]
+    // },
     {
         label: 'Basic Setup',
         icon: 'tablerTableColumn',
@@ -122,6 +123,7 @@ export const horizontalMenuItems: MenuItemType[] = [
             {icon: 'tablerMapPin', label: 'Province Management', url: '/province-management'},
             {icon: 'tablerBuilding', label: 'City Management', url: '/city-management'},
             {icon: 'tablerBuildingBank', label: 'Bank Management', url: '/bank-management'},
+            {icon: 'tablerShield', label: 'AML List', url: '/aml-list'},
         ]
     },
     {
@@ -130,9 +132,6 @@ export const horizontalMenuItems: MenuItemType[] = [
         isCollapsed: true,
         children: [
             {icon: 'tablerFileDescription', label: 'Audit Logs', url: '/audit-log'},
-            // {icon: 'tablerMapPin', label: 'Province Management', url: '/province-management'},
-            // {icon: 'tablerBuilding', label: 'City Management', url: '/city-management'},
-            // {icon: 'tablerBuildingBank', label: 'Bank Management', url: '/bank-management'},
         ]
     },
     {

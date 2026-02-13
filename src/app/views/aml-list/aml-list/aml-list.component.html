@@ -1,0 +1,112 @@
+<div class="">
+    <app-page-title title="AML Management" subTitle="Basic Setup"></app-page-title>
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light border-bottom">
+                    <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+                        <div class="d-flex align-items-center">
+                            <ng-icon name="tablerShield" class="me-2 gradient-icon" size="20"></ng-icon>
+                            <h4 class="card-title mb-0 text-dark">AML List</h4>
+                        </div>
+                        <button type="button" class="btn submit-button" (click)="addNewAml()" >
+                            <ng-icon name="tablerPlus" class="me-1" size="16"></ng-icon>
+                            Add AML
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="rounded mb-2">
+                        <form [formGroup]="filterForm">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">CNIC</label>
+                                    <input type="text" class="form-control" formControlName="cnic" placeholder="All CNICs" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Account Name</label>
+                                    <input type="text" class="form-control" formControlName="accountName" placeholder="All Account Names" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Address</label>
+                                    <input type="text" class="form-control" formControlName="address" placeholder="All Addresses" />
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end gap-2">
+                                    <button type="button" class="btn submit-button flex-fill" (click)="searchAml()">
+                                        <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                                        Search
+                                    </button>
+                                    <button type="button" class="btn btn-dark" (click)="resetFilters()">
+                                        <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    @if (isLoading) {
+                        <app-skeleton-loader variant="table" [rows]="8" [cols]="4" ariaLabel="Loading AML table"></app-skeleton-loader>
+                    } @else {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-sm">
+                                <thead class="table text-center">
+                                    <tr>
+                                        <th class="fw-bold">CNIC</th>
+                                        <th class="fw-bold">Account Name</th>
+                                        <th class="fw-bold">Address</th>
+                                        <th class="text-center fw-bold">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider text-center">
+                                    @for (aml of amlList; track aml.id) {
+                                        <tr>
+                                            <td>
+                                                <span class="fw-medium">{{ aml.cnic }}</span>
+                                            </td>
+                                            <td>{{ aml.accountName }}</td>
+                                            <td>{{ aml.address }}</td>
+                                            <td class="text-center">
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" 
+                                                            class="btn btn-sm btn-outline-primary" 
+                                                            (click)="editAml(aml)"
+                                                            title="Edit AML">
+                                                        <ng-icon name="tablerEdit" size="16"></ng-icon>
+                                                    </button>
+                                                    <button type="button" 
+                                                            class="btn btn-sm btn-outline-danger" 
+                                                            (click)="deleteAml(aml)"
+                                                            title="Delete AML">
+                                                        <ng-icon name="tablerTrash" size="16"></ng-icon>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    } @empty {
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4">
+                                                <div class="text-muted">
+                                                    <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                                                    <p class="mb-0">No AML records found</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <app-generic-pagination
+                            [totalItems]="totalRecord"
+                            [pageSize]="PaginationInfo.RowsPerPage"
+                            [currentPage]="PaginationInfo.Page"
+                            (pageChanged)="onAmlPageChanged($event)">
+                        </app-generic-pagination>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,124 @@
+<div class="">
+    <div class="row">
+        <div class="col-12">
+            @if (isLoading) {
+                <app-skeleton-loader variant="form" ariaLabel="Loading form"></app-skeleton-loader>
+            } @else {
+                <app-page-title [title]="getPageTitle()" subTitle="AML Management"></app-page-title>
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light text-white">
+                        <div class="d-flex align-items-center">
+                            <ng-icon name="tablerShield" class="me-2 gradient-icon" size="20"></ng-icon>
+                            <h4 class="card-title mb-0 text-dark">Basic Information</h4>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <form [formGroup]="amlForm" (ngSubmit)="onSubmit()">
+                            <div class="row g-4">
+                                <!-- CNIC -->
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="cnic" class="form-label fw-semibold">
+                                            <ng-icon name="tablerId" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            CNIC <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="cnic"
+                                            class="form-control form-control"
+                                            [class.is-invalid]="isFieldInvalid('cnic')"
+                                            formControlName="cnic"
+                                            placeholder="Enter CNIC"
+                                            maxlength="13"
+                                            (input)="validateCnic($event)">
+                                        @if (isFieldInvalid('cnic')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('cnic') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Account Name -->
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="accountName" class="form-label fw-semibold">
+                                            <ng-icon name="tablerUser" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Account Name <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="accountName"
+                                            class="form-control form-control"
+                                            [class.is-invalid]="isFieldInvalid('accountName')"
+                                            formControlName="accountName"
+                                            placeholder="Enter Account Name"
+                                            maxlength="100">
+                                        @if (isFieldInvalid('accountName')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('accountName') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Address -->
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="address" class="form-label fw-semibold">
+                                            <ng-icon name="tablerMapPin" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Address <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="address"
+                                            class="form-control form-control"
+                                            [class.is-invalid]="isFieldInvalid('address')"
+                                            formControlName="address"
+                                            placeholder="Enter Address"
+                                            maxlength="500">
+                                        @if (isFieldInvalid('address')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('address') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-12 mt-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-dark"
+                                            (click)="cancel()"
+                                            [disabled]="isSubmitting">
+                                            <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
+                                            Back to List
+                                        </button>
+                                        <button 
+                                            type="submit" 
+                                            class="btn submit-button"
+                                            >
+                                            @if (isSubmitting) {
+                                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                                Saving...
+                                            } @else {
+                                                <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                                                {{ isEditMode ? 'Update AML' : 'Save AML' }}
+                                            }
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
