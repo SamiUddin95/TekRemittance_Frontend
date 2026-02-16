@@ -10,7 +10,7 @@ export class AgentService {
 
     private mapDtoToAgent(dto: any): Agent {
         // Normalize enum-like strings to booleans
-        const rin: string | undefined = dto.rin ?? dto.RIN ?? dto.Rin;
+        const rin: string | undefined = dto.rin ?? dto.Xpin ?? dto.Xpin;
         const processStr: string | undefined = dto.process ?? dto.Process;
         const acquisitionModes: string | undefined = dto.acquisitionModes ?? dto.AcquisitionModes;
         const disbursementModes: string | undefined = dto.disbursementModes ?? dto.DisbursementModes;

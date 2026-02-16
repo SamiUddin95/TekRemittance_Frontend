@@ -164,7 +164,7 @@ export const horizontalMenuItems: MenuItemType[] = [
             {icon: 'tablerChecklist', label: 'Authorization Queue', url: '/authorization-queue'},
             {icon: 'tablerX', label: 'Rejected Queue', url: '/rejected-queue'},
             {icon: 'tablerCircleCheck', label: 'Approved Queue', url: '/approved-queue'},
-            {icon: 'tablerDownload', label: 'Fetch Accounts', url: '/fetch-accounts'},
+            {icon: 'tablerDownload', label: 'Pull Agents', url: '/fetch-accounts'},
             {icon: 'tablerCash', label: 'COC Payout', url: '/coc-payout'},
         ]
     },

@@ -23,7 +23,7 @@ interface QueueRow {
   error?: string;
 }
 
-type ModeOfTransfer = 'IBFT' | 'FT' | 'RTGS';
+type ModeOfTransfer = 'IBFT' | 'FT' | 'RTGS' | 'RAAST';
 
 @Component({
   selector: 'app-disbursement-queue-list',
@@ -73,7 +73,7 @@ export class DisbursementQueueListComponent implements OnInit {
 
   setModeOfTransfer(rowId: string, mode: string): void {
     const normalized = (mode || '').toUpperCase();
-    const next: ModeOfTransfer = (normalized === 'FT' || normalized === 'RTGS' || normalized === 'IBFT')
+    const next: ModeOfTransfer = (normalized === 'FT' || normalized === 'RTGS' || normalized === 'IBFT' || normalized === 'RAAST')
       ? (normalized as ModeOfTransfer)
       : 'IBFT';
     this.modeOfTransferByRowId[rowId] = next;

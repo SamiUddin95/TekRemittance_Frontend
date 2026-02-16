@@ -89,6 +89,7 @@
                           <option value="IBFT">IBFT</option>
                           <option value="FT">FT</option>
                           <option value="RTGS">RTGS</option>
+                          <option value="RAAST">RAAST</option>
                         </select>
                       </td>
                       <td class="text-center">
@@ -105,8 +106,7 @@
                             <button type="button" class="btn btn-sm btn-outline-success" title="Authorize" (click)="onAuthorize(r.id)">Authorize</button>
                           }
                           <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">Reject</button>
-                          <button type="button" class="btn btn-sm btn-outline-secondary" title="AML" (click)="onAml(r.id)">AML</button>
-                           <button type="button" class="btn btn-sm btn-outline-secondary" title="Revert">Revert</button>
+                          <button type="button" class="btn btn-sm btn-outline-secondary" title="AML Verification" (click)="onAml(r.id)">AML Verification</button>
                         </div>
                       </td>
                     </tr>
@@ -152,7 +152,7 @@
               <div class="fw-semibold">{{ selectedRow.beneficiaryName }}</div>
             </div>
             <div class="col-md-6">
-              <div class="text-muted">RIN</div>
+              <div class="text-muted">Xpin</div>
               <div class="fw-semibold">{{ selectedRow.xpin }}</div>
             </div>
             <div class="col-md-6">

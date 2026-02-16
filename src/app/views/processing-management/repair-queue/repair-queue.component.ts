@@ -224,7 +224,6 @@ private loadRepairData(agentId: string): void {
   repair(row: RepairQueueRow): void {
     this.repairVisible = false;
     this.selectedRow = null;
-    console.log('Repair clicked for RIN:', row.xpin);
     this.router.navigate(['/repair-instruction'], { state: { row } });
   }
 
@@ -234,8 +233,6 @@ private loadRepairData(agentId: string): void {
   }
 
   saveRepair(): void {
-    console.log('Saving repair for RIN:', this.selectedRow?.xpin);
-    // Implement save logic here
     this.closeRepair();
   }
 

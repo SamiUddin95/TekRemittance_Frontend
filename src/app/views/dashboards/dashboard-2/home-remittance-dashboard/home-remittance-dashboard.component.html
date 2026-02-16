@@ -3,7 +3,7 @@
         title="TEK-REMITTANCE DASHBOARD"></app-page-title>
 
         <section class="content">
-            <div class="container-fluid">
+            <div class="">
                 <!-- Filter Section -->
                 <div class="row mb-0">
                     <div class="col-12">
@@ -65,17 +65,26 @@
                             <!-- <h5 class="mb-0">( INCOMING / OUTGOING ) TRANSACTIONS SUMMARY</h5> -->
                             <ul class="nav nav-tabs" style="border: none; background-color: transparent;">
                                 <li class="nav-item">
-                                    <a class="nav-link active" style="border: none; border-bottom: 3px solid #007bff; color: #007bff; font-weight: bold; font-size: 14px; background: transparent; border-radius: 0;">
+                                    <a class="nav-link" 
+                                       [ngClass]="getTabClass('all')" 
+                                       (click)="selectTab('all')"
+                                       [style]="selectedTab === 'all' ? 'border: none; border-bottom: 3px solid #007bff; color: #007bff; font-weight: bold; font-size: 14px; background: transparent; border-radius: 0;' : 'border: none; color: #777; font-size: 14px; background: transparent; border-radius: 0;'">
                                         <i class="fas fa-bars" style="margin-right: 5px;"></i>All Transactions
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" style="border: none; color: #777; font-size: 14px; background: transparent; border-radius: 0;">
+                                    <a class="nav-link" 
+                                       [ngClass]="getTabClass('incoming')" 
+                                       (click)="selectTab('incoming')"
+                                       [style]="selectedTab === 'incoming' ? 'border: none; border-bottom: 3px solid #007bff; color: #007bff; font-weight: bold; font-size: 14px; background: transparent; border-radius: 0;' : 'border: none; color: #777; font-size: 14px; background: transparent; border-radius: 0;'">
                                         <i class="fas fa-check-circle" style="margin-right: 5px;"></i>Incoming
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" style="border: none; color: #777; font-size: 14px; background: transparent; border-radius: 0;">
+                                    <a class="nav-link" 
+                                       [ngClass]="getTabClass('outgoing')" 
+                                       (click)="selectTab('outgoing')"
+                                       [style]="selectedTab === 'outgoing' ? 'border: none; border-bottom: 3px solid #007bff; color: #007bff; font-weight: bold; font-size: 14px; background: transparent; border-radius: 0;' : 'border: none; color: #777; font-size: 14px; background: transparent; border-radius: 0;'">
                                         <i class="fas fa-exchange-alt" style="margin-right: 5px;"></i>Outgoing
                                     </a>
                                 </li>
@@ -84,7 +93,7 @@
                     </div>
                 </div>
 
-                <app-incoming-outgoing-cards></app-incoming-outgoing-cards>
+                <app-incoming-outgoing-cards [selectedTab]="selectedTab"></app-incoming-outgoing-cards>
 
                 <app-transaction-status-by-channel></app-transaction-status-by-channel>
 

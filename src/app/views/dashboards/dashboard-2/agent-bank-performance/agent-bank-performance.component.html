@@ -17,15 +17,20 @@
                             </tr>
                         </thead>
                         <tbody> 
-                            <tr *ngFor="let agent of agents">
-                                <td style="border-top: none; color: black;">{{ agent.name }}</td>
-                                <td class="text-end" style="border-top: none; color: black; width: 150px;">{{ agent.tx.toLocaleString() }}</td>
-                                <td class="text-center" style="width: 10px;"></td>
-                                <td class="text-center" style="border-top: none; color: black; width: 150px;">PKR{{ agent.amount }}M</td>
-                            </tr>
-                            <tr *ngIf="agents.length === 0">
-                                <td colspan="3" style="text-align: center; color: black;">No agents data available</td>
-                            </tr>
+                            @for (agent of agents; track agent.name) {
+                                <tr>
+                                    <td style="border-top: none; color: black;">{{ agent.name }}</td>
+                                    <td class="text-end" style="border-top: none; color: black; width: 150px;">
+                                        <app-countup [endVal]="agent.tx" [duration]="1.5" [options]="{decimalPlaces: 0}"></app-countup>
+                                    </td>
+                                    <td class="text-center" style="width: 10px;"></td>
+                                    <td class="text-center" style="border-top: none; color: black; width: 150px;">PKR<app-countup [endVal]="agent.amount" [duration]="1.5" [options]="{decimalPlaces: 1}"></app-countup>M</td>
+                                </tr>
+                            } @empty {
+                                <tr>
+                                    <td colspan="3" style="text-align: center; color: black;">No agents data available</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -50,15 +55,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let bank of banks">
-                                <td style="border-top: none; color: black;">{{ bank.name }}</td>
-                                <td class="text-end" style="border-top: none; color: black; width: 150px;">{{ bank.tx.toLocaleString() }}</td>
-                                <td class="text-center" style="width: 10px;"></td>
-                                <td class="text-center" style="border-top: none; color: black;width: 150px;">{{ (bank.amount * 1000000).toLocaleString() }}</td>
-                            </tr>
-                            <tr *ngIf="banks.length === 0">
-                                <td colspan="3" style="text-align: center; color: black;">No banks data available</td>
-                            </tr>
+                            @for (bank of banks; track bank.name) {
+                                <tr>
+                                    <td style="border-top: none; color: black;">{{ bank.name }}</td>
+                                    <td class="text-end" style="border-top: none; color: black; width: 150px;">
+                                        <app-countup [endVal]="bank.tx" [duration]="1.5" [options]="{decimalPlaces: 0}"></app-countup>
+                                    </td>
+                                    <td class="text-center" style="width: 10px;"></td>
+                                    <td class="text-center" style="border-top: none; color: black;width: 150px;">
+                                        <app-countup [endVal]="bank.amount * 1000000" [duration]="1.5" [options]="{decimalPlaces: 0}"></app-countup>
+                                    </td>
+                                </tr>
+                            } @empty {
+                                <tr>
+                                    <td colspan="3" style="text-align: center; color: black;">No banks data available</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>

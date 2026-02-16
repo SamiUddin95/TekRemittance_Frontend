@@ -5,7 +5,7 @@ import { NgIcon } from '@ng-icons/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { AgentService } from '@/app/views/acquisition-management/services/agent.service';
-import { CountUpModule } from "ngx-countup";
+import { CountupComponent } from '../../../shared/components/countup/countup.component';
 
 interface SearchResult {
   trackingNumber: string;
@@ -28,7 +28,7 @@ interface Denomination {
 @Component({
   selector: 'app-coc-payout',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, ReactiveFormsModule, CountUpModule],
+  imports: [CommonModule, PageTitleComponent, NgIcon, ReactiveFormsModule, CountupComponent],
   templateUrl: './coc-payout.component.html'
 })
 export class CocPayoutComponent implements OnInit {

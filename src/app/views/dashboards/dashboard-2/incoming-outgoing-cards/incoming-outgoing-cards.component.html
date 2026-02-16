@@ -1,62 +1,70 @@
 <div class="row mb-0">
     <!-- Incoming Card -->
-    <div class="col-md-6 mb-0">
-        <div class="card">
-            <div class="card-header incoming-header">
-                <span class="header-title">INCOMING</span>
-                <span class="header-icon">↗</span>
-            </div>
-            <div class="card-body">
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-label">Total Transactions</div>
-                        <div class="stat-value-large">{{ incoming.totalTransactions.toLocaleString() }} <span
-                                class="stat-change positive">▲ +{{ incoming.transactionChange }}</span></div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Amount</div>
-                        <div class="stat-value-large">PKR {{ incoming.amount }}M</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label"><span class="check-icon">✓</span> Success %</div>
-                        <div class="stat-value-small success-text">{{ incoming.success }}%</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label"><span class="check-icon">✓</span> Failure %</div>
-                        <div class="stat-value-small success-text">{{ incoming.failure }}%</div>
+    @if (shouldShowIncoming()) {
+        <div [ngClass]="getCardClass()" class="mb-0">
+            <div class="card">
+                <div class="card-header incoming-header">
+                    <span class="header-title">INCOMING</span>
+                    <span class="header-icon">↗</span>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Transactions</div>
+                            <div class="stat-value-large">
+                                <app-countup [endVal]="incoming.totalTransactions" [duration]="2" [options]="{decimalPlaces: 0}"></app-countup> 
+                                <span class="stat-change positive">▲ +<app-countup [endVal]="incoming.transactionChange" [duration]="1.5" [options]="{decimalPlaces: 0}"></app-countup></span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Amount</div>
+                            <div class="stat-value-large">PKR <app-countup [endVal]="incoming.amount" [duration]="2" [options]="{decimalPlaces: 1}"></app-countup>M</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label"><span class="check-icon">✓</span> Success %</div>
+                            <div class="stat-value-small success-text"><app-countup [endVal]="incoming.success" [duration]="1.5" [options]="{decimalPlaces: 1}"></app-countup>%</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label"><span class="check-icon">✓</span> Failure %</div>
+                            <div class="stat-value-small success-text"><app-countup [endVal]="incoming.failure" [duration]="1.5" [options]="{decimalPlaces: 1}"></app-countup>%</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
 
     <!-- Outgoing Card -->
-    <div class="col-md-6 mb-0">
-        <div class="card">
-            <div class="card-header outgoing-header">
-                <span class="header-title">OUTGOING</span>
-                <span class="header-icon">↗</span>
-            </div>
-            <div class="card-body">
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-label">Total Transactions</div>
-                        <div class="stat-value-large">{{ outgoing.totalTransactions.toLocaleString() }}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Amount</div>
-                        <div class="stat-value-large">PKR {{ outgoing.amount }}M</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label"><span class="blue-icon">✓</span> Success %</div>
-                        <div class="stat-value-small black-text">{{ outgoing.success }}%</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label"><span class="blue-icon">✓</span> Failure %</div>
-                        <div class="stat-value-small black-text">{{ outgoing.failure }}%</div>
+    @if (shouldShowOutgoing()) {
+        <div [ngClass]="getCardClass()" class="mb-0">
+            <div class="card">
+                <div class="card-header outgoing-header">
+                    <span class="header-title">OUTGOING</span>
+                    <span class="header-icon">↗</span>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Transactions</div>
+                            <div class="stat-value-large">
+                                <app-countup [endVal]="outgoing.totalTransactions" [duration]="2" [options]="{decimalPlaces: 0}"></app-countup>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Amount</div>
+                            <div class="stat-value-large">PKR <app-countup [endVal]="outgoing.amount" [duration]="2" [options]="{decimalPlaces: 1}"></app-countup>M</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label"><span class="blue-icon">✓</span> Success %</div>
+                            <div class="stat-value-small black-text"><app-countup [endVal]="outgoing.success" [duration]="1.5" [options]="{decimalPlaces: 1}"></app-countup>%</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label"><span class="blue-icon">✓</span> Failure %</div>
+                            <div class="stat-value-small black-text"><app-countup [endVal]="outgoing.failure" [duration]="1.5" [options]="{decimalPlaces: 1}"></app-countup>%</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
 </div>

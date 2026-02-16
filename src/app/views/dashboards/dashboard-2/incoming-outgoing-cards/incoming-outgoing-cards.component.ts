@@ -1,14 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CountupComponent } from '../../../../shared/components/countup/countup.component';
 
 @Component({
   selector: 'app-incoming-outgoing-cards',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CountupComponent],
   templateUrl: './incoming-outgoing-cards.component.html',
   styleUrls: ['./incoming-outgoing-cards.component.css']
 })
 export class IncomingOutgoingCardsComponent implements OnInit {
+  @Input() selectedTab: 'all' | 'incoming' | 'outgoing' = 'all';
+
   incoming = {
     totalTransactions: 1420,
     transactionChange: 128,
@@ -28,5 +31,20 @@ export class IncomingOutgoingCardsComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  shouldShowIncoming(): boolean {
+    return this.selectedTab === 'all' || this.selectedTab === 'incoming';
+  }
+
+  shouldShowOutgoing(): boolean {
+    return this.selectedTab === 'all' || this.selectedTab === 'outgoing';
+  }
+
+  getCardClass(): string {
+    if (this.selectedTab === 'all') {
+      return 'col-md-6';
+    }
+    return 'col-md-12';
   }
 }

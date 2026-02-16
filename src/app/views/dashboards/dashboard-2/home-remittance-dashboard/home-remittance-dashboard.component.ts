@@ -14,6 +14,8 @@ import { PageTitleComponent } from '../../../../components/page-title.component'
   styleUrls: ['./home-remittance-dashboard.component.css']
 })
 export class HomeRemittanceDashboardComponent implements OnInit {
+  selectedTab: 'all' | 'incoming' | 'outgoing' = 'all';
+
   agents = [
     { name: 'A-01', tx: 420, amount: 8.4 },
     { name: 'A-02', tx: 310, amount: 6.1 },
@@ -39,5 +41,16 @@ export class HomeRemittanceDashboardComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  selectTab(tab: 'all' | 'incoming' | 'outgoing'): void {
+    this.selectedTab = tab;
+  }
+
+  getTabClass(tab: 'all' | 'incoming' | 'outgoing'): string {
+    if (this.selectedTab === tab) {
+      return 'nav-link active';
+    }
+    return 'nav-link';
   }
 }

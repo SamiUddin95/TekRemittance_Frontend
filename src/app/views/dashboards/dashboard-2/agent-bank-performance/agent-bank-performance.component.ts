@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CountupComponent } from '../../../../shared/components/countup/countup.component';
 
 @Component({
   selector: 'app-agent-bank-performance',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CountupComponent],
   templateUrl: './agent-bank-performance.component.html',
   styleUrls: ['./agent-bank-performance.component.css']
 })

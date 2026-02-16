@@ -1,12 +1,12 @@
 import {Component, Input} from '@angular/core';
 import { StatisticCard6Type} from '@/app/views/widgets/types';
-import {CountUpModule} from 'ngx-countup';
+import {CountupComponent} from '../../../shared/components/countup/countup.component';
 import {NgIcon} from '@ng-icons/core';
 
 @Component({
   selector: 'app-statistic-card6',
     imports: [
-        CountUpModule,
+        CountupComponent,
         NgIcon
     ],
   template: `
@@ -18,8 +18,8 @@ import {NgIcon} from '@ng-icons/core';
           </span>
               </div>
               <h3 class="mb-1">
-                  {{ item.count.prefix || '' }}<span
-                  [countUp]="item.count.value">0</span>{{ item.count.suffix || '' }}
+                  {{ item.count.prefix || '' }}<app-countup
+                  [endVal]="item.count.value"></app-countup>{{ item.count.suffix || '' }}
               </h3>
               <p class="mb-0 text-muted">{{ item.title }}</p>
           </div>

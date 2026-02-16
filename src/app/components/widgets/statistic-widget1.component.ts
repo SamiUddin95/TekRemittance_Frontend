@@ -2,14 +2,14 @@ import {Component, Input} from '@angular/core';
 import {NgIcon} from '@ng-icons/core';
 import {RouterLink} from '@angular/router';
 import {StatisticWidget1Type} from '@/app/types';
-import {CountUpModule} from 'ngx-countup';
+import {CountupComponent} from '../../shared/components/countup/countup.component';
 
 @Component({
     selector: 'app-statistic-widget1',
     imports: [
         NgIcon,
         RouterLink,
-        CountUpModule
+        CountupComponent
     ],
     template: `
         <div class="card {{cardClass}}">
@@ -25,8 +25,8 @@ import {CountUpModule} from 'ngx-countup';
                               <ng-icon [name]="item.icon" class="d-flex align-items-center"/>
                        </span>
                     </div>
-                    <h3 class="mb-0">{{ item.count.prefix }}<span
-                        [countUp]="item.count.value">0</span>{{ item.count.suffix }}</h3>
+                    <h3 class="mb-0">{{ item.count.prefix }}<app-countup
+                        [endVal]="item.count.value"></app-countup>{{ item.count.suffix }}</h3>
                     <span class="badge badge-soft-{{item.variant}} fw-medium ms-2 fs-xs ms-auto">{{ item.label }}</span>
                 </div>
                 <p class="d-flex align-items-center gap-1 mb-0">
