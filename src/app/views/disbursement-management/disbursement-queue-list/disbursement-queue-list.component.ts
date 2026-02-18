@@ -48,6 +48,11 @@ export class DisbursementQueueListComponent implements OnInit {
   selectedRow: QueueRow | null = null;
   detailsMode: 'view' | 'disburse' = 'view';
 
+  // selection properties
+  selectedRows: Set<string> = new Set();
+  selectAllChecked = false;
+  selectedModeOfTransfer: ModeOfTransfer | '' = '';
+
   // agents for dropdown
   agents: Array<{ id: string; name: string }> = [];
 
@@ -572,6 +577,126 @@ private loadDisbursementData(
     }
   }
 
+  // Selection methods
+  onSelectAllChange(event: any): void {
+    const isChecked = event.target.checked;
+    this.selectAllChecked = isChecked;
+    
+    if (isChecked) {
+      // Select all rows
+      this.selectedRows.clear();
+      this.dataRows.forEach(row => {
+        this.selectedRows.add(row.id);
+      });
+    } else {
+      // Deselect all rows
+      this.selectedRows.clear();
+    }
+  }
 
+  onRowSelectChange(rowId: string, event: any): void {
+    const isChecked = event.target.checked;
+    
+    if (isChecked) {
+      this.selectedRows.add(rowId);
+    } else {
+      this.selectedRows.delete(rowId);
+    }
+    
+    // Update select all checkbox state
+    this.selectAllChecked = this.selectedRows.size === this.dataRows.length && this.dataRows.length > 0;
+  }
+
+  isRowSelected(rowId: string): boolean {
+    return this.selectedRows.has(rowId);
+  }
+
+  onModeOfTransferChange(event: any): void {
+    this.selectedModeOfTransfer = event.target.value as ModeOfTransfer;
+  }
+
+  canBulkApprove(): boolean {
+    return this.selectedRows.size > 0 && this.selectedModeOfTransfer !== '';
+  }
+
+  onBulkApprove(): void {
+    if (!this.canBulkApprove()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Selection Required',
+        text: 'Please select at least one record and choose a mode of transfer.',
+        confirmButtonColor: '#667eea'
+      });
+      return;
+    }
+
+    const selectedXPins = Array.from(this.selectedRows).map(rowId => {
+      const row = this.dataRows.find(r => r.id === rowId);
+      console.log('Row data for XPIN extraction:', row);
+      console.log('Available properties:', row ? Object.keys(row) : 'Row not found');
+      console.log('obj properties:', row?.obj ? Object.keys(row.obj) : 'obj not found');
+      
+      // Try different possible XPIN field names
+      const xpin = row?.obj?.xpin || 
+                   row?.obj?.['XPIN'] || 
+                   row?.obj?.['xPin'] || 
+                   (row as any)?.xpin || 
+                   (row as any)?.['XPIN'] ||
+                   (row as any)?.['xPin'];
+      
+      console.log('Extracted XPIN:', xpin);
+      return xpin || rowId; // Fallback to rowId only if absolutely necessary
+    });
+
+    Swal.fire({
+      title: 'Confirm Bulk Approval',
+      html: `Are you sure you want to approve <strong>${selectedXPins.length}</strong> records using <strong>${this.selectedModeOfTransfer}</strong>?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#667eea',
+      cancelButtonColor: '#dc3545',
+      confirmButtonText: 'Yes, Approve!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.isLoading = true;
+        
+        const bulkApproveRequest = {
+          xpins: selectedXPins,
+          userId: '3fa85f64-5717-4562-b3fc-2c963f66afa6', // TODO: Get from auth service
+          modeOfTransaction: this.selectedModeOfTransfer
+        };
+
+        this.disbursementService.bulkApprove(bulkApproveRequest).subscribe({
+          next: (response: any) => {
+            this.isLoading = false;
+            this.selectedRows.clear();
+            this.selectAllChecked = false;
+            
+            Swal.fire({
+              icon: 'success',
+              title: 'Success!',
+              text: `Successfully approved ${selectedXPins.length} records.`,
+              confirmButtonColor: '#667eea'
+            }).then(() => {
+              // Refresh the data
+              this.onSearch();
+            });
+          },
+          error: (error: any) => {
+            this.isLoading = false;
+            console.error('Bulk approve failed:', error);
+            
+            Swal.fire({
+              icon: 'error',
+              title: 'Approval Failed',
+              text: error.error?.message || 'Failed to approve records. Please try again.',
+              confirmButtonColor: '#667eea'
+            });
+          }
+        });
+      }
+    });
+  }
 
 }

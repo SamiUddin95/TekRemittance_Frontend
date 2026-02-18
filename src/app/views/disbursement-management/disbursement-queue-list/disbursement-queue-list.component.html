@@ -6,9 +6,30 @@
       <div class="card shadow-sm">
         <div class="card-header bg-light border-bottom">
           <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
-            <div class="d-flex align-items-center">
-              <ng-icon name="tablerTable" class="me-2 gradient-icon" size="20"></ng-icon>
-              <h4 class="card-title mb-0 text-dark">Recent Disbursements</h4>
+            <div class="d-flex align-items-center gap-3">
+              <div class="d-flex align-items-center">
+                <ng-icon name="tablerTable" class="me-2 gradient-icon" size="20"></ng-icon>
+                <h4 class="card-title mb-0 text-dark">Recent Disbursements</h4>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="selectAll" (change)="onSelectAllChange($event)">
+                  <label class="form-check-label" for="selectAll">
+                    Select All
+                  </label>
+                </div>
+                <select class="form-select form-select-sm" style="width: 150px;" (change)="onModeOfTransferChange($event)">
+                  <option value="">Mode of Transfer</option>
+                  <option value="IBFT">IBFT</option>
+                  <option value="FT">FT</option>
+                  <option value="RTGS">RTGS</option>
+                  <option value="RAAST">RAAST</option>
+                </select>
+                <button type="button" class="btn btn-sm btn-success" (click)="onBulkApprove()" [disabled]="!canBulkApprove()">
+                  <ng-icon name="tablerCheck" size="16" class="me-1"></ng-icon>
+                  Approve
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -60,6 +81,9 @@
               <table class="table table-bordered table-striped table-sm">
                 <thead class="table text-center">
                   <tr>
+                    <th class="fw-bold text-center" style="width: 50px;">
+                      <input class="form-check-input" type="checkbox" id="headerSelectAll" (change)="onSelectAllChange($event)">
+                    </th>
                     @for (h of tableHeaders; track h) {
                       <th class="fw-bold text-nowrap">{{ h }}</th>
                     }
@@ -71,6 +95,9 @@
                 <tbody class="table-group-divider text-center">
                   @for (r of dataRows; track r.id) {
                     <tr>
+                      <td class="text-center">
+                        <input class="form-check-input" type="checkbox" [checked]="isRowSelected(r.id)" (change)="onRowSelectChange(r.id, $event)">
+                      </td>
                       @for (h of tableHeaders; track h) {
                         <td>{{ r.obj?.[h] ?? '-' }}</td>
                       }
@@ -98,15 +125,27 @@
                             <ng-icon name="tablerEye" size="16"></ng-icon>
                           </button>
                           @if (r.obj?.limitType?.toString() === '1') {
-                            <button type="button" class="btn btn-sm btn-outline-success" title="Authorize" (click)="onAuthorize(r.id)">Authorize</button>
+                            <button type="button" class="btn btn-sm btn-outline-success" title="Authorize" (click)="onAuthorize(r.id)">
+                              <ng-icon name="tablerCheck" size="16"></ng-icon>
+                            </button>
                           } @else if (r.obj?.limitType?.toString() === '0') {
-                            <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="onDisburse(r.id)">Disburse</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" title="Disburse" (click)="onDisburse(r.id)">
+                              <ng-icon name="tablerCash" size="16"></ng-icon>
+                            </button>
                           } @else {
-                            <button type="button" class="btn btn-sm btn-outline-warning" title="Disburse" (click)="onDisburse(r.id)">Disburse</button>
-                            <button type="button" class="btn btn-sm btn-outline-success" title="Authorize" (click)="onAuthorize(r.id)">Authorize</button>
+                            <button type="button" class="btn btn-sm btn-outline-warning" title="Disburse" (click)="onDisburse(r.id)">
+                              <ng-icon name="tablerCash" size="16"></ng-icon>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-success" title="Authorize" (click)="onAuthorize(r.id)">
+                              <ng-icon name="tablerCheck" size="16"></ng-icon>
+                            </button>
                           }
-                          <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">Reject</button>
-                          <button type="button" class="btn btn-sm btn-outline-secondary" title="AML Verification" (click)="onAml(r.id)">AML Verification</button>
+                          <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" (click)="onReject(r.id)">
+                            <ng-icon name="tablerX" size="16"></ng-icon>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-outline-secondary" title="AML Verification" (click)="onAml(r.id)">
+                            <ng-icon name="tablerShield" size="16"></ng-icon>
+                          </button>
                         </div>
                       </td>
                     </tr>

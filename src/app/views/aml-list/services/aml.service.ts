@@ -65,6 +65,14 @@ export class AmlService {
     return this.http.delete<ApiResponse<any>>(`${this.baseUrl}/AmlbyId/${id}`);
   }
 
+  // POST: /api/BasicSetup/UploadAmlFile
+  uploadAmlFile(file: File): Observable<ApiResponse<any>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/UploadAmlFile`, formData);
+  }
+
   // Helper method to generate UUID for new records
   private generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

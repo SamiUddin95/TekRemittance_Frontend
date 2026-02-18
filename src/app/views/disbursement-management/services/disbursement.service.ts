@@ -339,4 +339,10 @@ getDataByRepair(
   );
 }
 
+// POST: /api/Disbursement/RemitApproveBulk
+bulkApprove(request: { xpins: string[], userId: string, modeOfTransaction: string }): Observable<any> {
+  const url = `${environment.apiUrl}/Disbursement/RemitApproveBulk`;
+  return this.http.post(url, request);
+}
+
 }

@@ -5,19 +5,22 @@
                 <app-skeleton-loader variant="form" ariaLabel="Loading form"></app-skeleton-loader>
             } @else {
                 <app-page-title [title]="getPageTitle()" subTitle="AML Management"></app-page-title>
-                <div class="card shadow-sm">
+                <div class="card shadow-sm mt-lg-n2 mb-lg-n0">
                     <div class="card-header bg-light text-white">
                         <div class="d-flex align-items-center">
                             <ng-icon name="tablerShield" class="me-2 gradient-icon" size="20"></ng-icon>
-                            <h4 class="card-title mb-0 text-dark">Basic Information</h4>
+                            <h5  class="card-title mb-0 text-dark">Basic Information</h5>
                         </div>
                     </div>
                     
-                    <div class="card-body p-4">
+                    <div class="card-body p-3">
                         <form [formGroup]="amlForm" (ngSubmit)="onSubmit()">
-                            <div class="row g-4">
-                                <!-- CNIC -->
-                                <div class="col-lg-4">
+                            <div class="row g-3">
+                                <!-- Form Fields Column -->
+                                <div [class]="fileData.length > 0 ? 'col-lg-6' : 'col-lg-12'">
+                                    <div class="row g-3">
+                                        <!-- CNIC -->
+                                        <div [class]="fileData.length > 0 ? 'col-lg-12' : 'col-lg-4'">
                                     <div class="form-group">
                                         <label for="cnic" class="form-label fw-semibold">
                                             <ng-icon name="tablerId" class="me-1 gradient-icon" size="16"></ng-icon>
@@ -39,10 +42,10 @@
                                             </div>
                                         }
                                     </div>
-                                </div>
+                                        </div>
 
-                                <!-- Account Name -->
-                                <div class="col-lg-4">
+                                        <!-- Account Name -->
+                                        <div [class]="fileData.length > 0 ? 'col-lg-12' : 'col-lg-4'">
                                     <div class="form-group">
                                         <label for="accountName" class="form-label fw-semibold">
                                             <ng-icon name="tablerUser" class="me-1 gradient-icon" size="16"></ng-icon>
@@ -63,10 +66,10 @@
                                             </div>
                                         }
                                     </div>
-                                </div>
+                                        </div>
 
-                                <!-- Address -->
-                                <div class="col-lg-4">
+                                        <!-- Address -->
+                                        <div [class]="fileData.length > 0 ? 'col-lg-12' : 'col-lg-4'">
                                     <div class="form-group">
                                         <label for="address" class="form-label fw-semibold">
                                             <ng-icon name="tablerMapPin" class="me-1 gradient-icon" size="16"></ng-icon>
@@ -86,33 +89,112 @@
                                                 {{ getFieldError('address') }}
                                             </div>
                                         }
+                                            </div>
+                                        </div>
+
+                                        <!-- File Upload (Optional) -->
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="fileUpload" class="form-label fw-semibold">
+                                                    <ng-icon name="tablerUpload" class="me-1 gradient-icon" size="16"></ng-icon>
+                                                    Upload Excel/CSV File <span class="text-muted">(Optional)</span>
+                                                </label>
+                                                <input 
+                                                    type="file" 
+                                                    id="fileUpload"
+                                                    class="form-control"
+                                                    accept=".xlsx,.xls,.csv"
+                                                    (change)="onFileSelected($event)">
+                                                <small class="text-muted">Upload Excel or CSV file with CNIC and Account Name (required), Address (optional)</small>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-12 mt-2">
+                                            <div class="d-flex justify-content-end gap-2">
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-dark"
+                                                    (click)="cancel()"
+                                                    [disabled]="isSubmitting">
+                                                    <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
+                                                    Back to List
+                                                </button>
+                                                <button 
+                                                    type="submit" 
+                                                    class="btn submit-button"
+                                                    >
+                                                    @if (isSubmitting) {
+                                                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                                        Saving...
+                                                    } @else {
+                                                        <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                                                        {{ isEditMode ? 'Update AML' : 'Save AML' }}
+                                                    }
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                
-                                <div class="col-lg-12 mt-4">
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <button 
-                                            type="button" 
-                                            class="btn btn-dark"
-                                            (click)="cancel()"
-                                            [disabled]="isSubmitting">
-                                            <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
-                                            Back to List
-                                        </button>
-                                        <button 
-                                            type="submit" 
-                                            class="btn submit-button"
-                                            >
-                                            @if (isSubmitting) {
-                                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
-                                                Saving...
-                                            } @else {
-                                                <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
-                                                {{ isEditMode ? 'Update AML' : 'Save AML' }}
-                                            }
-                                        </button>
+
+                                <!-- File Data Table Column -->
+                                @if (fileData.length > 0) {
+                                <div class="col-lg-6">
+                                    <div class="card shadow-sm">
+                                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">
+                                                <ng-icon name="tablerFileSpreadsheet" class="me-2 gradient-icon" size="18"></ng-icon>
+                                                File Data Preview
+                                            </h6>
+                                            <button 
+                                                type="button" 
+                                                class="btn btn-sm btn-danger"
+                                                (click)="removeFile()">
+                                                <ng-icon name="tablerTrash" class="me-1" size="14"></ng-icon>
+                                                Remove File
+                                            </button>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                                <table class="table table-bordered table-striped table-sm mb-0">
+                                                    <thead class="table-light sticky-top">
+                                                        <tr>
+                                                            <th class="fw-bold">#</th>
+                                                            <th class="fw-bold">CNIC</th>
+                                                            <th class="fw-bold">Account Name</th>
+                                                            <th class="fw-bold">Address</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @for (row of fileData; track $index) {
+                                                            <tr>
+                                                                <td>{{ $index + 1 }}</td>
+                                                                <td>{{ row.cnic || '-' }}</td>
+                                                                <td>{{ row.accountName || '-' }}</td>
+                                                                <td>{{ row.address || '-' }}</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="p-3 bg-light border-top">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">
+                                                        <ng-icon name="tablerInfoCircle" class="me-1" size="14"></ng-icon>
+                                                        Total Records: <strong>{{ fileData.length }}</strong>
+                                                    </small>
+                                                    <button 
+                                                        type="button" 
+                                                        class="btn btn-sm submit-button"
+                                                        (click)="bulkInsert()">
+                                                        <ng-icon name="tablerDatabase" class="me-1" size="14"></ng-icon>
+                                                        Bulk Insert
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                }
                             </div>
                             
                         </form>

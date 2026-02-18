@@ -80,8 +80,18 @@ export class FetchAccountsComponent implements OnInit {
     console.log('Selected agent ID:', agentId);
     
     if (agentId) {
-      this.PaginationInfo.Page = 1; // Reset to first page for new search
-      this.loadFetchAccountsData(agentId);
+      // Show request sent message
+      Swal.fire({
+        icon: 'info',
+        title: 'Request Sent',
+        html: 'Request has been sent to server.<br><br>Please wait for a response in 5 to 10 mins',
+        confirmButtonColor: '#667eea',
+        confirmButtonText: 'Okay'
+      }).then(() => {
+        // After clicking Okay, load the data
+        this.PaginationInfo.Page = 1; // Reset to first page for new search
+        this.loadFetchAccountsData(agentId);
+      });
     } else {
       console.log('No agent selected');
       Swal.fire({

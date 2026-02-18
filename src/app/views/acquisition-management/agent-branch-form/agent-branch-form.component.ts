@@ -51,11 +51,7 @@ export class AgentBranchFormComponent implements OnInit {
 
   private stepFields: { [key: number]: string[] } = {
         0: ['agentId','code', 'name','email'],
-        1: ['countryId', 'provinceId', 'cityId'],
-        2: [],
-        3: [],
-        4: [],
-        5: [],
+        1: ['countryId', 'provinceId', 'cityId']
     };
   constructor(
     private fb: FormBuilder,
@@ -82,38 +78,9 @@ export class AgentBranchFormComponent implements OnInit {
       address: ['', [Validators.maxLength(500)]],
       countryId: ['', Validators.required],
       provinceId: ['', Validators.required],
-      cityId: ['', Validators.required],
-
-      // Acquisition Modes
-      isOnlineAllow: [false],
-      isFileUploadAllow: [false],
-      isFtpAllow: [false],
-      isEmailUploadAllow: [false],
-      isWebServiceAllow: [false],
-      isBeneficiarySmsAllow: [false],
-      isActive: [false],
-
-      // Disbursement Modes
-      isOtcAllow: [false],
-      isDirectCreditAllow: [false],
-      isOtherCreditAllow: [false],
-      isRemitterSmsAllow: [false]
+      cityId: ['', Validators.required]
     });
   }
-selectOnlyOne(selected: string) {
-  const controls = [
-    'isOtcAllow',
-    'isDirectCreditAllow',
-    'isOtherCreditAllow',
-    'isRemitterSmsAllow'
-  ];
-
-  controls.forEach(control => {
-    if (control !== selected) {
-      this.form.get(control)?.setValue(false, { emitEvent: false });
-    }
-  });
-}
 
   ngOnInit(): void {
     this.loadAgents();
@@ -213,17 +180,6 @@ next: (branch: any) => {
             countryId: branch.countryId || '',
             provinceId: branch.provinceId || '',
             cityId: branch.cityId || '',
-            isOnlineAllow: branch.isOnlineAllow || false,
-            isFileUploadAllow: branch.isFileUploadAllow || false,
-            isFtpAllow: branch.isFtpAllow || false,
-            isEmailUploadAllow: branch.isEmailUploadAllow || false,
-            isWebServiceAllow: branch.isWebServiceAllow || false,
-            isBeneficiarySmsAllow: branch.isBeneficiarySmsAllow || false,
-            isOtcAllow: branch.isOtcAllow || false,
-            isDirectCreditAllow: branch.isDirectCreditAllow || false,
-            isOtherCreditAllow: branch.isOtherCreditAllow || false,
-            isRemitterSmsAllow: branch.isRemitterSmsAllow || false,
-            isActive: branch.isActive || false,
 
         });
         if (branch.countryId) this.loadProvinces(String(branch.countryId));
@@ -271,21 +227,6 @@ this.isSubmitting = true;
 const formValue = this.form.value;
 const trim = (v: any) => (typeof v === 'string' ? v.trim() : (v ?? ''));
 
-const acq: string[] = [];
-if (formValue.isOnlineAllow) acq.push('IsOnlineAllow');
-if (formValue.isFileUploadAllow) acq.push('IsFileUploadAllow');
-if (formValue.isFtpAllow) acq.push('IsFtpAllow');
-if (formValue.isEmailUploadAllow) acq.push('IsEmailUploadAllow');
-if (formValue.isWebServiceAllow) acq.push('IsWebServiceAllow');
-if (formValue.isBeneficiarySmsAllow) acq.push('IsBeneficiarySmsAllow');
-if (formValue.isActive) acq.push('IsActive');
-
-const disb: string[] = [];
-if (formValue.isOtcAllow) disb.push('IsOtcAllow');
-if (formValue.isDirectCreditAllow) disb.push('IsDirectCreditAllow');
-if (formValue.isOtherCreditAllow) disb.push('IsOtherCreditAllow');
-if (formValue.isRemitterSmsAllow) disb.push('IsRemitterSmsAllow');
-
 
 const branchData: any = {
     id: this.editId || null,
@@ -301,9 +242,7 @@ const branchData: any = {
     phone2: trim(formValue.phone2),
     fax: trim(formValue.fax),
     email: trim(formValue.email),
-    address: trim(formValue.address),
-    acquisitionModes: acq.length ? acq.join(',') : 'None',
-    disbursementModes: disb.length ? disb.join(',') : 'None'
+    address: trim(formValue.address)
 };
     const saveObservable = (this.isEditMode && this.editId != null)
       ? this.branchService.updateBranch(this.editId, branchData)
@@ -357,37 +296,6 @@ saveObservable.subscribe({
                 }
             });
         });
-
-        this.setupExclusiveGroup([
-            'isOnlineAllow',
-            'isFileUploadAllow',
-            'isFtpAllow',
-            'isEmailUploadAllow',
-            'isWebServiceAllow',
-            'isBeneficiarySmsAllow',
-            'isActive'
-
-        ]);
-
-        this.setupExclusiveGroup([
-            'isOtcAllow',
-            'isDirectCreditAllow',
-            'isOtherCreditAllow',
-            'isRemitterSmsAllow',
-        ]);
-    }
-
-    private setupExclusiveGroup(controlNames: string[]): void {
-        controlNames.forEach((name) => {
-            const ctrl = this.form.get(name);
-            ctrl?.valueChanges.subscribe((val: boolean) => {
-                if (val) {
-                    controlNames
-                        .filter((n) => n !== name)
-                        .forEach((other) => this.form.get(other)?.patchValue(false, { emitEvent: false }));
-                }
-            });
-        });
     }
 
   onCancel(): void {
@@ -401,10 +309,7 @@ saveObservable.subscribe({
        currentStep = 0;
     steps: Array<{ title: string; subtitle: string; icon: string }> = [
         { title: 'Basic Information', subtitle: 'Agent basics', icon: 'tablerUserPlus' },
-        { title: 'Location Details', subtitle: 'Address & area', icon: 'tablerMapPin' },
-        { title: 'Acquisition Modes', subtitle: 'Acquisition channels', icon: 'tablerPlugConnected' },
-        { title: 'Disbursement Modes', subtitle: 'Payout methods', icon: 'tablerCurrencyDollar' },
-
+        { title: 'Location Details', subtitle: 'Address & area', icon: 'tablerMapPin' }
     ];
         nextStep(): void {
         if (this.currentStep < this.steps.length - 1) {

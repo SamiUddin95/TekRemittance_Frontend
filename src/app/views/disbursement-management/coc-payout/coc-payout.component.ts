@@ -11,6 +11,7 @@ interface SearchResult {
   trackingNumber: string;
   rin: string;
   beneficiaryName: string;
+  beneficiaryCnic: string;
   name: string;
   cnicPassport: string;
   amount: string;
@@ -42,6 +43,7 @@ export class CocPayoutComponent implements OnInit {
     trackingNumber: 'TRK1234567890',
     rin: '20250828000001',
     beneficiaryName: 'Ahmed Khan',
+    beneficiaryCnic: '42201-8011566-8',
     name: 'Waji Khan',
     cnicPassport: '42289-8549975-8',
     amount: '1000 USD',
@@ -69,7 +71,7 @@ export class CocPayoutComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private agentService: AgentService) {
     this.searchForm = this.fb.group({
-      agentId: ['', Validators.required],
+      // agentId: ['', Validators.required],
       inquiryPin: ['', Validators.required]
     });
 
@@ -99,7 +101,7 @@ export class CocPayoutComponent implements OnInit {
       Swal.fire({
         icon: 'warning',
         title: 'Required Fields',
-        text: 'Please select Agent and enter Inquiry x pin',
+        text: 'Please Enter Inquiry x pin',
         confirmButtonText: 'OK'
       });
       return;

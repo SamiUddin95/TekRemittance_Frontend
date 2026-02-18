@@ -6,10 +6,10 @@ import {NgIcon} from '@ng-icons/core';
     selector: 'app-page-title',
     imports: [RouterLink, NgIcon],
     template: `
-    <div class="">
+    <div class="mb-0">
         <div class="page-title-head d-flex align-items-center">
             <div class="flex-grow-1">
-                <h4 class="text-uppercase fw-bold m-0" style="font-size: 22px;">{{ title }}</h4>
+                <h4 class="text-uppercase fw-bold m-0 ms1 me-1" style="font-size: 16px;">{{ title }}</h4>
             </div>
 
             <div class="text-end">

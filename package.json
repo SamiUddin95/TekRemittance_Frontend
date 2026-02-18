@@ -31,6 +31,7 @@
         "@ng-icons/tabler-icons": "^32.4.0",
         "@popperjs/core": "^2.11.8",
         "@tanstack/angular-table": "^8.21.3",
+        "@types/xlsx": "^0.0.35",
         "angular-shepherd": "^20.0.0",
         "angular2-ladda": "^5.0.0",
         "angularx-flatpickr": "^8.1.0",
@@ -79,6 +80,7 @@
         "spinkit": "^2.0.1",
         "sweetalert2": "^11.22.3",
         "tslib": "^2.3.0",
+        "xlsx": "^0.18.5",
         "zone.js": "~0.15.0"
     },
     "devDependencies": {
