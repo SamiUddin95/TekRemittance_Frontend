@@ -29,7 +29,8 @@ type ModeOfTransfer = 'IBFT' | 'FT' | 'RTGS' | 'RAAST';
   selector: 'app-disbursement-queue-list',
   standalone: true,
   imports: [CommonModule, PageTitleComponent, NgIcon, ReactiveFormsModule, GenericPaginationComponent, SkeletonLoaderComponent],
-  templateUrl: './disbursement-queue-list.component.html'
+  templateUrl: './disbursement-queue-list.component.html',
+  styleUrls: ['./disbursement-queue-list.component.css']
 })
 export class DisbursementQueueListComponent implements OnInit {
   isLoading = false;
@@ -51,7 +52,11 @@ export class DisbursementQueueListComponent implements OnInit {
   // selection properties
   selectedRows: Set<string> = new Set();
   selectAllChecked = false;
+  topSelectAllChecked = false; // Track top select all checkbox
+  tableSelectAllChecked = false; // Track table header select all checkbox
   selectedModeOfTransfer: ModeOfTransfer | '' = '';
+  selectAllAcrossPages = false; // Track if we're selecting all records (top select all)
+  allXPins: string[] = []; // Store all XPINs when select all across pages is used
 
   // agents for dropdown
   agents: Array<{ id: string; name: string }> = [];
@@ -578,24 +583,111 @@ private loadDisbursementData(
   }
 
   // Selection methods
-  onSelectAllChange(event: any): void {
+  onTopSelectAllChange(event: any): void {
     const isChecked = event.target.checked;
-    this.selectAllChecked = isChecked;
+    this.topSelectAllChecked = isChecked;
     
     if (isChecked) {
-      // Select all rows
+      // Select all records across all pages (isTrue: true)
+      this.selectAllAcrossPages = true;
+      this.allXPins = []; // Empty array for select all mode
+      
+      // Select current page rows for UI display
       this.selectedRows.clear();
       this.dataRows.forEach(row => {
         this.selectedRows.add(row.id);
       });
+      
+      // Uncheck table select all when top select all is used
+      this.tableSelectAllChecked = false;
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'All Records Selected',
+        html: `Successfully selected <strong>all records</strong> across all pages.`,
+        confirmButtonColor: '#667eea',
+        timer: 2000,
+        showConfirmButton: false
+      });
     } else {
       // Deselect all rows
       this.selectedRows.clear();
+      this.selectAllAcrossPages = false;
+      this.allXPins = [];
+      this.tableSelectAllChecked = false;
     }
+  }
+
+  onTableSelectAllChange(event: any): void {
+    const isChecked = event.target.checked;
+    this.tableSelectAllChecked = isChecked;
+    
+    if (isChecked) {
+      // Select current page only (isTrue: false)
+      this.selectAllAcrossPages = false;
+      this.allXPins = [];
+      
+      // Select current page rows
+      this.selectedRows.clear();
+      this.dataRows.forEach(row => {
+        this.selectedRows.add(row.id);
+      });
+      
+      // Uncheck top select all when table select all is used
+      this.topSelectAllChecked = false;
+    } else {
+      // Deselect all rows
+      this.selectedRows.clear();
+      this.selectAllAcrossPages = false;
+      this.allXPins = [];
+      this.topSelectAllChecked = false;
+    }
+  }
+
+  private selectAllCurrentPage(): void {
+    this.selectedRows.clear();
+    this.selectAllAcrossPages = false;
+    this.allXPins = [];
+    
+    this.dataRows.forEach(row => {
+      this.selectedRows.add(row.id);
+    });
+  }
+
+  private selectAllAcrossAllPages(): void {
+    // Directly set selection state without API call
+    this.selectAllAcrossPages = true;
+    this.allXPins = []; // Empty array for select all mode
+    
+    // Select current page rows for UI display
+    this.selectedRows.clear();
+    this.dataRows.forEach(row => {
+      this.selectedRows.add(row.id);
+    });
+    
+    Swal.fire({
+      icon: 'success',
+      title: 'All Records Selected',
+      html: `Successfully selected <strong>all records</strong> across all pages.`,
+      confirmButtonColor: '#667eea',
+      timer: 2000,
+      showConfirmButton: false
+    });
   }
 
   onRowSelectChange(rowId: string, event: any): void {
     const isChecked = event.target.checked;
+    
+    if (this.selectAllAcrossPages) {
+      // If we're in "select all across pages" mode, deselecting a row should switch to individual selection mode
+      if (!isChecked) {
+        this.selectAllAcrossPages = false;
+        this.allXPins = [];
+        this.topSelectAllChecked = false;
+        // Don't add the clicked row since user is deselecting it
+        return;
+      }
+    }
     
     if (isChecked) {
       this.selectedRows.add(rowId);
@@ -603,8 +695,15 @@ private loadDisbursementData(
       this.selectedRows.delete(rowId);
     }
     
-    // Update select all checkbox state
-    this.selectAllChecked = this.selectedRows.size === this.dataRows.length && this.dataRows.length > 0;
+    // Update checkbox states based on selection
+    const allCurrentPageSelected = this.selectedRows.size === this.dataRows.length && this.dataRows.length > 0;
+    this.tableSelectAllChecked = allCurrentPageSelected;
+    
+    // If no rows selected, uncheck both select all checkboxes
+    if (this.selectedRows.size === 0) {
+      this.topSelectAllChecked = false;
+      this.tableSelectAllChecked = false;
+    }
   }
 
   isRowSelected(rowId: string): boolean {
@@ -630,27 +729,40 @@ private loadDisbursementData(
       return;
     }
 
-    const selectedXPins = Array.from(this.selectedRows).map(rowId => {
-      const row = this.dataRows.find(r => r.id === rowId);
-      console.log('Row data for XPIN extraction:', row);
-      console.log('Available properties:', row ? Object.keys(row) : 'Row not found');
-      console.log('obj properties:', row?.obj ? Object.keys(row.obj) : 'obj not found');
-      
-      // Try different possible XPIN field names
-      const xpin = row?.obj?.xpin || 
-                   row?.obj?.['XPIN'] || 
-                   row?.obj?.['xPin'] || 
-                   (row as any)?.xpin || 
-                   (row as any)?.['XPIN'] ||
-                   (row as any)?.['xPin'];
-      
-      console.log('Extracted XPIN:', xpin);
-      return xpin || rowId; // Fallback to rowId only if absolutely necessary
-    });
+    let selectedXPins: string[] = [];
+    let isTrue = false;
+    
+    if (this.selectAllAcrossPages) {
+      // When select all across pages is used, send isTrue: true and no XPINs
+      selectedXPins = [];
+      isTrue = true;
+    } else {
+      // Extract XPINs from selected rows (current page only)
+      selectedXPins = Array.from(this.selectedRows).map(rowId => {
+        const row = this.dataRows.find(r => r.id === rowId);
+        console.log('Row data for XPIN extraction:', row);
+        console.log('Available properties:', row ? Object.keys(row) : 'Row not found');
+        console.log('obj properties:', row?.obj ? Object.keys(row.obj) : 'obj not found');
+        
+        // Try different possible XPIN field names
+        const xpin = row?.obj?.xpin || 
+                     row?.obj?.['XPIN'] || 
+                     row?.obj?.['xPin'] || 
+                     (row as any)?.xpin || 
+                     (row as any)?.['XPIN'] ||
+                     (row as any)?.['xPin'];
+        
+        console.log('Extracted XPIN:', xpin);
+        return xpin || rowId; // Fallback to rowId only if absolutely necessary
+      });
+      isTrue = false;
+    }
 
+    const selectionScope = this.selectAllAcrossPages ? 'all records across all pages' : 'selected records';
+    
     Swal.fire({
       title: 'Confirm Bulk Approval',
-      html: `Are you sure you want to approve <strong>${selectedXPins.length}</strong> records using <strong>${this.selectedModeOfTransfer}</strong>?`,
+      html: `Are you sure you want to approve <strong>${selectedXPins.length}</strong> records (${selectionScope}) using <strong>${this.selectedModeOfTransfer}</strong>?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#667eea',
@@ -664,7 +776,10 @@ private loadDisbursementData(
         const bulkApproveRequest = {
           xpins: selectedXPins,
           userId: '3fa85f64-5717-4562-b3fc-2c963f66afa6', // TODO: Get from auth service
-          modeOfTransaction: this.selectedModeOfTransfer
+          modeOfTransaction: this.selectedModeOfTransfer,
+          agentId: this.filterForm.get('agentId')?.value || '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          status: 'P',
+          isTrue: isTrue
         };
 
         this.disbursementService.bulkApprove(bulkApproveRequest).subscribe({
@@ -673,10 +788,12 @@ private loadDisbursementData(
             this.selectedRows.clear();
             this.selectAllChecked = false;
             
+            const approvedCount = isTrue ? 'all records' : selectedXPins.length;
+            
             Swal.fire({
               icon: 'success',
               title: 'Success!',
-              text: `Successfully approved ${selectedXPins.length} records.`,
+              text: `Successfully approved ${approvedCount} records.`,
               confirmButtonColor: '#667eea'
             }).then(() => {
               // Refresh the data
@@ -698,5 +815,4 @@ private loadDisbursementData(
       }
     });
   }
-
 }

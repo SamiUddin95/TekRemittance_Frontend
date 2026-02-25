@@ -1,0 +1,76 @@
+/* Select All Modal Custom Styles */
+.swal2-popup.select-all-modal {
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.swal2-popup.select-all-modal .swal2-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.swal2-popup.select-all-modal .swal2-html-container {
+  margin: 0;
+  padding: 0;
+}
+
+.swal2-popup.select-all-modal .swal2-actions {
+  margin-top: 20px;
+  padding: 0;
+}
+
+.swal2-popup.select-all-modal .swal2-confirm {
+  margin-right: 10px;
+  min-width: 140px;
+  font-weight: 500;
+}
+
+.swal2-popup.select-all-modal .swal2-deny {
+  margin-right: 10px;
+  min-width: 140px;
+  font-weight: 500;
+}
+
+.swal2-popup.select-all-modal .swal2-cancel {
+  min-width: 100px;
+  font-weight: 500;
+}
+
+/* Hover effects for option cards */
+.option-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.option-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon animations */
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.swal2-popup.select-all-modal .fa-list-check {
+  animation: fadeInScale 0.5s ease-out;
+}
+
+/* Button hover effects */
+.swal2-popup.select-all-modal .btn {
+  transition: all 0.3s ease;
+}
+
+.swal2-popup.select-all-modal .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}

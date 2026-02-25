@@ -340,9 +340,59 @@ getDataByRepair(
 }
 
 // POST: /api/Disbursement/RemitApproveBulk
-bulkApprove(request: { xpins: string[], userId: string, modeOfTransaction: string }): Observable<any> {
+bulkApprove(request: { 
+  xpins: string[], 
+  userId: string, 
+  modeOfTransaction: string,
+  agentId: string,
+  status: string,
+  isTrue: boolean
+}): Observable<any> {
   const url = `${environment.apiUrl}/Disbursement/RemitApproveBulk`;
   return this.http.post(url, request);
+}
+
+// GET: /api/Disbursement/GetAllXPins - Get all XPINs for current filters
+getAllXPins(filters: any): Observable<{
+  isSuccess: boolean;
+  message: string;
+  status: string;
+  statusCode: number;
+  data: {
+    xpins: string[];
+    totalCount: number;
+  };
+}> {
+  let params = new HttpParams();
+  
+  // Add filters if provided
+  if (filters.agentId) params = params.set('agentId', filters.agentId);
+  if (filters.xpin) params = params.set('xpin', filters.xpin);
+  if (filters.accountnumber) params = params.set('accountnumber', filters.accountnumber);
+  if (filters.date) params = params.set('date', filters.date);
+  
+  const url = `${environment.apiUrl}/Disbursement/GetAllXPins`;
+  
+  return this.http.get<any>(url, { params }).pipe(
+    map((res) => {
+      const statusCode = res?.statusCode ?? res?.status ?? 200;
+      const status = res?.status ?? 'success';
+      const payload = res?.data ?? res;
+      
+      const xpins = Array.isArray(payload?.xpins) ? payload.xpins : [];
+      
+      return {
+        isSuccess: res?.isSuccess ?? (statusCode >= 200 && statusCode < 300),
+        message: res?.message || (xpins.length > 0 ? 'XPINs retrieved successfully' : 'No XPINs found'),
+        status: status,
+        statusCode: statusCode,
+        data: {
+          xpins: xpins,
+          totalCount: xpins.length
+        }
+      };
+    })
+  );
 }
 
 }
