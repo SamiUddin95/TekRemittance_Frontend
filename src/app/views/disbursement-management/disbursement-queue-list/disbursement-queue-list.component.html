@@ -111,13 +111,19 @@
                         }
                       </td>
                       <td class="text-center">
-                        <select class="form-select form-select-sm" [value]="getModeOfTransfer(r.id)" (change)="setModeOfTransfer(r.id, $any($event.target).value)">
-                          <option value="">Select Mode of Transfer</option>
-                          <option value="IBFT">IBFT</option>
-                          <option value="FT">FT</option>
-                          <option value="RTGS">RTGS</option>
-                          <option value="RAAST">RAAST</option>
-                        </select>
+                        @if (getModeOfTransfer(r.id) === 'FT') {
+                          <select class="form-select form-select-sm" [value]="getModeOfTransfer(r.id)" disabled>
+                            <option value="FT">FT</option>
+                          </select>
+                        } @else {
+                          <select class="form-select form-select-sm" [value]="getModeOfTransfer(r.id)" (change)="setModeOfTransfer(r.id, $any($event.target).value)">
+                            <option value="">Select Mode of Transfer</option>
+                            <option value="IBFT">IBFT</option>
+                            <option value="FT">FT</option>
+                            <option value="RTGS">RTGS</option>
+                            <option value="RAAST">RAAST</option>
+                          </select>
+                        }
                       </td>
                       <td class="text-center">
                         <div class="btn-group" role="group">

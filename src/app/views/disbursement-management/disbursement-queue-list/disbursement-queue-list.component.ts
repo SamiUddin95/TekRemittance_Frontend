@@ -43,25 +43,21 @@ export class DisbursementQueueListComponent implements OnInit {
 
   PaginationInfo: any = { Page: 1, RowsPerPage: 10 };
   totalRecord = 0;
-
-  // details modal state
+ 
   detailsVisible = false;
   selectedRow: QueueRow | null = null;
   detailsMode: 'view' | 'disburse' = 'view';
-
-  // selection properties
+ 
   selectedRows: Set<string> = new Set();
   selectAllChecked = false;
-  topSelectAllChecked = false; // Track top select all checkbox
-  tableSelectAllChecked = false; // Track table header select all checkbox
+  topSelectAllChecked = false;  
+  tableSelectAllChecked = false;  
   selectedModeOfTransfer: ModeOfTransfer | '' = '';
-  selectAllAcrossPages = false; // Track if we're selecting all records (top select all)
-  allXPins: string[] = []; // Store all XPINs when select all across pages is used
-
-  // agents for dropdown
+  selectAllAcrossPages = false;  
+  allXPins: string[] = [];  
+ 
   agents: Array<{ id: string; name: string }> = [];
-
-  // limit message from API response
+ 
   limitType: string | number | null = null;
 
   constructor(private fb: FormBuilder, private agentService: AgentService, private disbursementService: DisbursementService, private auth: AuthService) {
@@ -90,12 +86,11 @@ export class DisbursementQueueListComponent implements OnInit {
   }
 
   private loadAgents(): void {
-    // load first page of agents; can be enhanced later with pagination/search
     this.agentService.getAgents(1, 100).subscribe({
       next: (res) => {
         this.agents = (res.items || []).map(a => ({ id: String(a.id), name: a.name || '-' }));
       },
-      error: () => { /* ignore for now */ }
+      error: () => {}
     });
   }
 
@@ -122,21 +117,19 @@ export class DisbursementQueueListComponent implements OnInit {
     return;
   }
 
-  // Filters collect karo — empty strings ko ignore karne ke liye
   const filters = {
     xpin: formValues.xpin?.trim() || undefined,
     accountNumber: formValues.accountnumber?.trim() || undefined,
-    date: formValues.date || undefined  // date empty ho to undefined
+    date: formValues.date || undefined
   };
 
   console.log('Searching with Agent:', agentId, 'Filters:', filters);
 
-  this.PaginationInfo.Page = 1; // Nayi search → page 1
+  this.PaginationInfo.Page = 1; 
   this.loadDisbursementData(agentId, filters);
 }
 
   onClearFilters(): void {
-    // Reset form fields to defaults
     this.filterForm.reset({
       agentId: '',
       xpin: '',
@@ -144,7 +137,6 @@ export class DisbursementQueueListComponent implements OnInit {
       date: ''
     });
 
-    // Reset pagination and table state
     this.PaginationInfo.Page = 1;
     this.rows = [];
     this.tableHeaders = [];
@@ -171,10 +163,8 @@ private loadDisbursementData(
         if (response.status === 'success' && response.items) {
           this.rows = this.mapDisbursementDataToRows(response.items);
           
-          // Store limitType from API response
           this.limitType = response.limitType || null;
 
-          // Dynamic headers logic (same as before)
           const parsedObjects: any[] = response.items.map((item: DisbursementData) => {
             try { return JSON.parse(item.dataJson || '{}'); } catch { return {}; }
           });
@@ -186,7 +176,6 @@ private loadDisbursementData(
           }
           this.tableHeaders = headersArr;
 
-          // Data rows with AgentName
           this.dataRows = response.items.map((item: DisbursementData, idx: number) => {
             const obj = parsedObjects[idx] || {};
             const agentName = (this.agents.find(a => a.id?.toLowerCase() === item.agentId?.toLowerCase())?.name)
@@ -200,7 +189,20 @@ private loadDisbursementData(
 
           this.dataRows.forEach(r => {
             if (!this.modeOfTransferByRowId[r.id]) {
-              this.modeOfTransferByRowId[r.id] = 'IBFT';
+              // Find the original item to get modeOfTransaction from item level
+              const originalItem = response.items.find((item: DisbursementData) => item.id === r.id);
+              let modeFromApi = originalItem?.modeOfTransaction || originalItem?.ModeOfTransaction;
+              
+              // Normalize the mode value to match our enum values
+              let normalizedMode: ModeOfTransfer = 'IBFT';
+              if (modeFromApi) {
+                const upperMode = modeFromApi.toUpperCase();
+                if (upperMode === 'FT' || upperMode === 'RTGS' || upperMode === 'IBFT' || upperMode === 'RAAST') {
+                  normalizedMode = upperMode as ModeOfTransfer;
+                }
+              }
+              
+              this.modeOfTransferByRowId[r.id] = normalizedMode;
             }
           });
 
@@ -280,8 +282,7 @@ private loadDisbursementData(
       });
       return;
     }
-
-    // Show confirmation dialog before proceeding
+ 
     Swal.fire({
       title: 'Confirm Disbursement',
       html: `Are you sure you want to disburse this remittance?<br><br><strong>XPin:</strong> ${xpin}<br><strong>Mode:</strong> ${modeOfTransaction}`,
@@ -314,8 +315,7 @@ private loadDisbursementData(
                 confirmButtonText: 'OK'
               });
             }
-            
-            // Reload the data to refresh the list regardless of success/failure
+             
             const agentId = this.filterForm.get('agentId')?.value;
             if (agentId) {
               this.loadDisbursementData(agentId);
@@ -368,8 +368,7 @@ private loadDisbursementData(
             icon: 'success',
             title: 'Rejected',
             text: 'Remittance rejected successfully.'
-          });
-          // Reload the data to refresh the list
+          }); 
           const agentId = this.filterForm.get('agentId')?.value;
           if (agentId) {
             this.loadDisbursementData(agentId);
@@ -435,9 +434,6 @@ private loadDisbursementData(
         if (agentId) {
           this.loadDisbursementData(agentId);
         }
-
-        // 👉 OPTIONAL: redirect to AML screen
-        // this.router.navigate(['/disbursement/aml']);
       } else {
         Swal.fire({
           icon: 'error',
@@ -480,8 +476,7 @@ private loadDisbursementData(
       });
       return;
     }
-
-    // Show confirmation dialog before proceeding
+ 
     Swal.fire({
       title: 'Confirm Authorization',
       html: `Are you sure you want to authorize this remittance?<br><br><strong>XPin:</strong> ${xpin}<br><strong>Mode:</strong> ${modeOfTransaction}`,
@@ -514,8 +509,7 @@ private loadDisbursementData(
                 confirmButtonText: 'OK'
               });
             }
-            
-            // Reload the data to refresh the list regardless of success/failure
+             
             const agentId = this.filterForm.get('agentId')?.value;
             if (agentId) {
               this.loadDisbursementData(agentId);
@@ -535,9 +529,7 @@ private loadDisbursementData(
       }
     });
   }
-
-
-  // wrappers for dynamic table actions
+ 
   private findRowById(id: string): QueueRow | null {
     return this.rows.find(r => r.id === id) || null;
   }
@@ -581,24 +573,20 @@ private loadDisbursementData(
       this.authorize(row);
     }
   }
-
-  // Selection methods
+ 
   onTopSelectAllChange(event: any): void {
     const isChecked = event.target.checked;
     this.topSelectAllChecked = isChecked;
     
-    if (isChecked) {
-      // Select all records across all pages (isTrue: true)
+    if (isChecked) { 
       this.selectAllAcrossPages = true;
-      this.allXPins = []; // Empty array for select all mode
+      this.allXPins = []; 
       
-      // Select current page rows for UI display
       this.selectedRows.clear();
       this.dataRows.forEach(row => {
         this.selectedRows.add(row.id);
       });
-      
-      // Uncheck table select all when top select all is used
+       
       this.tableSelectAllChecked = false;
       
       Swal.fire({
@@ -609,8 +597,7 @@ private loadDisbursementData(
         timer: 2000,
         showConfirmButton: false
       });
-    } else {
-      // Deselect all rows
+    } else { 
       this.selectedRows.clear();
       this.selectAllAcrossPages = false;
       this.allXPins = [];
@@ -622,21 +609,16 @@ private loadDisbursementData(
     const isChecked = event.target.checked;
     this.tableSelectAllChecked = isChecked;
     
-    if (isChecked) {
-      // Select current page only (isTrue: false)
+    if (isChecked) { 
       this.selectAllAcrossPages = false;
       this.allXPins = [];
-      
-      // Select current page rows
+       
       this.selectedRows.clear();
       this.dataRows.forEach(row => {
         this.selectedRows.add(row.id);
-      });
-      
-      // Uncheck top select all when table select all is used
+      }); 
       this.topSelectAllChecked = false;
-    } else {
-      // Deselect all rows
+    } else { 
       this.selectedRows.clear();
       this.selectAllAcrossPages = false;
       this.allXPins = [];

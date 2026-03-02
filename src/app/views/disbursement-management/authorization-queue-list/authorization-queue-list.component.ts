@@ -375,5 +375,79 @@ export class AuthorizationQueueListComponent implements OnInit {
         console.error('RemitReject error', err);
       }
     });
+  }
+
+  onRevert(id: string): void {
+    const row = this.findRowById(id);
+    if (!row) return;
+    
+    const userId = this.auth.getUserId();
+    const xpin = row?.xpin;
+
+    if (!userId) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'User not found',
+        text: 'Please login again to continue.'
+      });
+      return;
+    }
+
+    if (!xpin) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing XPin',
+        text: 'XPin not available for this row.'
+      });
+      return;
+    }
+
+    // Show confirmation dialog before proceeding
+    Swal.fire({
+      title: 'Confirm Revert',
+      html: `Are you sure you want to revert this remittance?<br><br><strong>XPin:</strong> ${xpin}`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, revert!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.isLoading = true;
+        this.disbursementService.remitReverse(userId, xpin).subscribe({
+          next: (res) => {
+            this.isLoading = false;
+            if ((res?.status || '').toLowerCase() === 'success') {
+              Swal.fire({
+                icon: 'success',
+                title: 'Reverted',
+                text: 'Remittance reverted successfully.'
+              });
+              // Reload the data to refresh the list
+              const agentId = this.filterForm.get('agentId')?.value;
+              const userId = sessionStorage.getItem('auth_userid');
+              if (agentId && userId) {
+                this.loadDisbursementData(agentId, { userId });
+              }
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Failed',
+                text: res?.errorMessage || 'Failed to revert remittance.'
+              });
+            }
+          },
+          error: (err) => {
+            this.isLoading = false;
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'API call failed. Please try again.'
+            });
+            console.error('RemitReverse error', err);
+          }
+        });
+      }
+    });
   }  
 }
