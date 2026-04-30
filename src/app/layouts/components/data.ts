@@ -96,8 +96,6 @@ export const menuItems: MenuItemType[] = [
         ]
     },
 
-
-
 ];
 
 export const horizontalMenuItems: MenuItemType[] = [
@@ -106,14 +104,14 @@ export const horizontalMenuItems: MenuItemType[] = [
             icon: 'tablerLayoutDashboard',
              url: '/dashboard',
     },
-    // {
-    //     label: 'Reports',
-    //     icon: 'tablerTableColumn',
-    //     isCollapsed: true,
-    //     children: [
-    //         {icon: 'tablerFileReport', label: 'Transaction Reports', url: '/reports'}
-    //     ]
-    // },
+    {
+        label: 'Reports',
+        icon: 'tablerTableColumn',
+        isCollapsed: true,
+        children: [
+            {icon: 'tablerFileReport', label: 'Transaction Reports', url: '/reports'}
+        ]
+    },
     {
         label: 'Basic Setup',
         icon: 'tablerTableColumn',

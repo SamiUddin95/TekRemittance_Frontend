@@ -89,6 +89,7 @@
                     }
                     <th class="fw-bold text-nowrap">Limit Status</th>
                     <th class="fw-bold text-nowrap">Mode of Transfer</th>
+                    <th class="fw-bold text-nowrap">Remarks</th>
                     <th class="text-center fw-bold">Actions</th>
                   </tr>
                 </thead>
@@ -124,6 +125,11 @@
                             <option value="RAAST">RAAST</option>
                           </select>
                         }
+                      </td>
+                      <td class="text-center">
+                        <span class="text-muted fst-italic" style="font-size: 0.875rem;">
+                          {{ getRemarks(r.id) || '-' }}
+                        </span>
                       </td>
                       <td class="text-center">
                         <div class="btn-group" role="group">

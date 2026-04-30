@@ -14,6 +14,8 @@ export interface DisbursementData {
     createdOn: string;
     status: string;
     limitType?: string;
+    remarks?: string;
+    modeOfTransaction?: string;
 }
 
 export interface DisbursementResponse {

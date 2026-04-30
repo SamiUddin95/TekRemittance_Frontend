@@ -85,6 +85,11 @@ export class DisbursementQueueListComponent implements OnInit {
     this.modeOfTransferByRowId[rowId] = next;
   }
 
+  getRemarks(rowId: string): string {
+    const dataRow = this.dataRows.find(r => r.id === rowId);
+    return dataRow?.obj?.remarks || dataRow?.obj?.Remarks || '';
+  }
+
   private loadAgents(): void {
     this.agentService.getAgents(1, 100).subscribe({
       next: (res) => {
@@ -183,11 +188,12 @@ private loadDisbursementData(
             return {
               id: item.id,
               status: item.status === 'P' ? 'Pending' : (item.status || ''),
-              obj: { AgentName: agentName, limitType: item.limitType, ...obj }
+              obj: { AgentName: agentName, limitType: item.limitType, remarks: item.remarks, ...obj }
             };
           });
 
           this.dataRows.forEach(r => {
+            debugger;
             if (!this.modeOfTransferByRowId[r.id]) {
               // Find the original item to get modeOfTransaction from item level
               const originalItem = response.items.find((item: DisbursementData) => item.id === r.id);
@@ -694,6 +700,47 @@ private loadDisbursementData(
 
   onModeOfTransferChange(event: any): void {
     this.selectedModeOfTransfer = event.target.value as ModeOfTransfer;
+    
+    // Clear existing selections
+    this.selectedRows.clear();
+    this.selectAllAcrossPages = false;
+    this.topSelectAllChecked = false;
+    this.tableSelectAllChecked = false;
+    
+    // If a mode is selected, auto-select rows with that mode
+    if (this.selectedModeOfTransfer) {
+      const matchingRows = this.dataRows.filter(r => {
+        const rowMode = this.getModeOfTransfer(r.id);
+        return rowMode === this.selectedModeOfTransfer;
+      });
+      
+      matchingRows.forEach(row => {
+        this.selectedRows.add(row.id);
+      });
+      
+      // Update checkbox states
+      const allCurrentPageSelected = this.selectedRows.size === this.dataRows.length && this.dataRows.length > 0;
+      this.tableSelectAllChecked = allCurrentPageSelected;
+      
+      // Show feedback to user
+      if (matchingRows.length > 0) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Auto-Selected',
+          html: `Automatically selected <strong>${matchingRows.length}</strong> records with <strong>${this.selectedModeOfTransfer}</strong> mode.`,
+          timer: 2000,
+          showConfirmButton: false
+        });
+      } else {
+        Swal.fire({
+          icon: 'info',
+          title: 'No Records Found',
+          html: `No records found with <strong>${this.selectedModeOfTransfer}</strong> mode on this page.`,
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+    }
   }
 
   canBulkApprove(): boolean {

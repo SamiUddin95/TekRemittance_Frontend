@@ -77,4 +77,15 @@ export class AmlScreeningService {
       message: 'AML screening rejected successfully'
     });
   }
+
+  revertScreening(xpin: string, remarks: string, userId: string): Observable<any> {
+    const url = `${environment.apiUrl}/Disbursement/RemitReverse`;
+    const body = {
+      userId: userId,
+      xpin: xpin,
+      remarks: remarks
+    };
+    
+    return this.http.post<any>(url, body);
+  }
 }

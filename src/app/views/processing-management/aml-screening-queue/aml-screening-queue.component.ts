@@ -8,6 +8,7 @@ import { GenericPaginationComponent } from '@/app/shared/generic-pagination/gene
 import { AgentService } from '@/app/views/acquisition-management/services/agent.service';
 import { AmlScreeningService, AmlScreeningData } from '../services/aml-screening.service';
 import { SkeletonLoaderComponent } from '@/app/shared/skeleton/skeleton-loader.component';
+import { AuthService } from '@/app/core/services/auth.service';
 
 interface AmlScreeningRow {
   id: string;
@@ -46,7 +47,7 @@ export class AmlScreeningQueueComponent implements OnInit {
   // agents dropdown
   agents: Array<{ id: string; name: string }> = [];
 
-  constructor(private fb: FormBuilder, private agentService: AgentService, private amlScreeningService: AmlScreeningService) {
+  constructor(private fb: FormBuilder, private agentService: AgentService, private amlScreeningService: AmlScreeningService, private auth: AuthService) {
     this.filterForm = this.fb.group({
       agentId: [''],
       xpin: [''],
@@ -345,5 +346,103 @@ private loadAmlScreeningData(agentId: string): void {
   onReject(id: string): void {
     const row = this.findRowById(id);
     if (row) this.reject(row);
+  }
+
+  onRevert(id: string): void {
+    const row = this.findRowById(id);
+    if (!row) return;
+
+    // Get XPIN from the data row
+    const dataRow = this.dataRows.find(r => r.id === id);
+    const xpin = dataRow?.obj?.xpin || dataRow?.obj?.XPIN || dataRow?.obj?.Xpin || id;
+
+    // Get userId from AuthService
+    const userId = this.auth.getUserId();
+
+    if (!userId) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'User not found',
+        text: 'Please login again to continue.',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+
+    // Show remarks input dialog
+    Swal.fire({
+      title: 'Revert AML Screening',
+      html: `
+        <div class="text-start">
+          <p><strong>XPIN:</strong> ${xpin}</p>
+          <p><strong>Current Status:</strong> <span class="badge bg-warning">${row.status}</span></p>
+          <hr>
+          <label for="remarks" class="form-label"><strong>Remarks for Revert:</strong></label>
+          <textarea id="remarks" class="form-control" rows="3" placeholder="Please enter remarks for reverting this AML screening..."></textarea>
+        </div>
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Revert!',
+      cancelButtonText: 'Cancel',
+      preConfirm: () => {
+        const remarks = (document.getElementById('remarks') as HTMLTextAreaElement).value;
+        if (!remarks || remarks.trim() === '') {
+          Swal.showValidationMessage('Please enter remarks for revert');
+          return false;
+        }
+        return remarks.trim();
+      }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        const remarks = result.value;
+        
+        this.isLoading = true;
+        this.amlScreeningService.revertScreening(xpin, remarks, userId).subscribe({
+          next: (response: any) => {
+            this.isLoading = false;
+            if (response?.isSuccess || response?.status === 'success') {
+              Swal.fire({
+                icon: 'success',
+                title: 'Screening Reverted',
+                html: `
+                  <div class="text-start">
+                    <p>AML screening has been successfully reverted.</p>
+                    <p><strong>XPIN:</strong> ${xpin}</p>
+                    <p><strong>Remarks:</strong> ${remarks}</p>
+                  </div>
+                `,
+                confirmButtonText: 'OK'
+              }).then(() => {
+                // Reload the data to refresh the list
+                const agentId = this.filterForm.get('agentId')?.value;
+                if (agentId) {
+                  this.loadAmlScreeningData(agentId);
+                }
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Revert Failed',
+                text: response?.message || response?.errorMessage || 'Failed to revert AML screening. Please try again.',
+                confirmButtonText: 'OK'
+              });
+            }
+          },
+          error: (error: any) => {
+            this.isLoading = false;
+            console.error('Revert error:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'API call failed. Please try again.',
+              confirmButtonText: 'OK'
+            });
+          }
+        });
+      }
+    });
   }
 }
