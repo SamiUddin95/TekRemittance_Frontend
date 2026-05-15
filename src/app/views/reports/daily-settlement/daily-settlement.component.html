@@ -1,0 +1,92 @@
+<div class="">
+    <app-page-title
+        title="Reports"
+        subTitle="Daily Settlement Report"
+    ></app-page-title>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light border-bottom">
+                    <div
+                        class="d-flex justify-content-between align-items-center"
+                        style="margin-top: -5px; margin-bottom: -5px;"
+                    >
+                        <div class="d-flex align-items-center">
+                            <ng-icon
+                                name="tablerFileReport"
+                                class="me-2 gradient-icon"
+                                size="20"
+                            ></ng-icon>
+                            <h4 class="card-title mb-0 text-dark">Daily Settlement Report</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <form [formGroup]="filterForm" class="row g-2 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Settlement Date</label>
+                            <input
+                                type="date"
+                                class="form-control"
+                                formControlName="settlementDate"
+                            />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Agent</label>
+                            <select class="form-select" formControlName="agentId">
+                                <option value="">-- All Agents --</option>
+                                @for (agent of agents; track agent.id) {
+                                    <option [value]="agent.id">{{ agent.name }}</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex gap-2">
+                            <button
+                                type="button"
+                                class="btn submit-button flex-fill"
+                                (click)="openReport()"
+                            >
+                                <ng-icon name="tablerPrinter" size="16" class="me-1"></ng-icon>
+                                View Report
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-dark"
+                                (click)="filterForm.reset()"
+                            >
+                                <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                                Clear
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (showReport) {
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card shadow-sm report-card">
+            <div class="card-header bg-light border-bottom">
+                <div class="d-flex justify-content-between align-items-center" style="margin-top: -5px; margin-bottom: -5px;">
+                    <div class="d-flex align-items-center">
+                        <ng-icon name="tablerFileReport" class="me-2 gradient-icon" size="20"></ng-icon>
+                        <h4 class="card-title mb-0 text-dark">Report Preview</h4>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="closeReport()">
+                        <ng-icon name="tablerX" size="14" class="me-1"></ng-icon>
+                        Close
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0 report-inline-body">
+                <app-ssrs-report-viewer [params]="reportParams" [reportPath]="'/report/Report%20Project1/DailySettlement'"></app-ssrs-report-viewer>
+            </div>
+        </div>
+    </div>
+</div>
+}

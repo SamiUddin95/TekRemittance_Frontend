@@ -127,6 +127,40 @@ getAssignedUsers(groupId: string): Observable<User[]> {
   );
 }
 
+getPermissions(pageNumber: number = 1, pageSize: number = 1000): Observable<any> {
+  const params = new HttpParams()
+    .set('pageNumber', pageNumber.toString())
+    .set('pageSize', pageSize.toString());
+  
+  return this.http.get<any>(`${environment.apiUrl}/Permissions`, { params }).pipe(
+    map(res => res?.data || {}),
+    catchError(this.handleError)
+  );
+}
+
+getGroupPermissions(groupId: string): Observable<string[]> {
+  return this.http.get<any>(`${this.apiUrl}/${groupId}/permissions`).pipe(
+    map(res => res?.data || []),
+    catchError(this.handleError)
+  );
+}
+
+assignPermissionsToGroup(groupId: string, permissionIds: string[]): Observable<any> {
+  return this.http.put<any>(`${this.apiUrl}/${groupId}/permissions`, permissionIds)
+    .pipe(
+      catchError(this.handleError)
+    );
+}
+
+deleteUserFromGroup(groupId: string, userId: string): Observable<any> {
+  return this.http.delete<any>(`${this.apiUrl}/${groupId}/userGroup`, {
+    body: userId
+  })
+    .pipe(
+      catchError(this.handleError)
+    );
+}
+
     handleError(error: any) {
     console.error('API Error:', error);
     let errorMessage = 'An error occurred';

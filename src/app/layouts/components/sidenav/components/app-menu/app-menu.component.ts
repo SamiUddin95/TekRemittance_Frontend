@@ -6,8 +6,9 @@ import {NgbCollapse} from '@ng-bootstrap/ng-bootstrap';
 import {NavigationEnd, Router, RouterLink} from '@angular/router';
 import {filter} from 'rxjs';
 import {scrollToElement} from '@/app/utils/layout-utils';
-import {menuItems} from '@layouts/components/data';
+import {getMenuItems} from '@layouts/components/data';
 import {LayoutStoreService} from '@core/services/layout-store.service';
+import {PermissionService} from '@/app/shared/services/permission.service';
 
 @Component({
     selector: 'app-menu',
@@ -18,6 +19,7 @@ export class AppMenuComponent implements OnInit {
 
     router = inject(Router)
     layout = inject(LayoutStoreService)
+    permissionService = inject(PermissionService)
 
     @ViewChild('MenuItemWithChildren', {static: true})
     menuItemWithChildren!: TemplateRef<{ item: MenuItemType }>;
@@ -25,9 +27,12 @@ export class AppMenuComponent implements OnInit {
     @ViewChild('MenuItem', {static: true})
     menuItem!: TemplateRef<{ item: MenuItemType }>;
 
-    menuItems = menuItems;
+    menuItems: MenuItemType[] = [];
 
     ngOnInit(): void {
+        this.menuItems = getMenuItems(this.permissionService);
+        console.log('Sidenav menu items:', this.menuItems);
+
         this.router.events
             .pipe(filter(event => event instanceof NavigationEnd))
             .subscribe(() => {

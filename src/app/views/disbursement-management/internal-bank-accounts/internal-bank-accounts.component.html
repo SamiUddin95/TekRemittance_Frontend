@@ -1,0 +1,359 @@
+<div class="">
+  <app-page-title title="Internal Bank Accounts" subTitle="Disbursement Management"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light border-bottom">
+          <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+            <div class="d-flex align-items-center">
+              <ng-icon name="tablerBuildingBank" class="me-2 gradient-icon" size="20"></ng-icon>
+              <h4 class="card-title mb-0 text-dark">Internal Bank Accounts</h4>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Filters -->
+          <div class="rounded mb-2">
+            <form [formGroup]="filterForm">
+              <div class="row g-3">
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Agent</label>
+                  <select class="form-select" formControlName="agentId">
+                    <option value="">All Agents</option>
+                    @for (a of agents; track a.id) {
+                      <option [value]="a.id">{{ a.name }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">XPin</label>
+                  <input type="text" class="form-control" formControlName="xpin" placeholder="XPin" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Account Number</label>
+                  <input type="text" class="form-control" formControlName="accountnumber" placeholder="Account Number" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Date</label>
+                  <input type="date" class="form-control" formControlName="date" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                  <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
+                    <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                    Search
+                  </button>
+                  <button type="button" class="btn btn-dark" (click)="onClearFilters()">
+                    <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          @if (isLoading) {
+            <app-skeleton-loader [isLoading]="true" variant="table" [rows]="10" [cols]="(tableHeaders?.length || 6) + 1" ariaLabel="Loading internal bank accounts list"></app-skeleton-loader>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped table-sm">
+                <thead class="table text-center">
+                  <tr>
+                    @for (h of tableHeaders; track h) {
+                      <th class="fw-bold text-nowrap">{{ h }}</th>
+                    }
+                    <th class="text-center fw-bold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="table-group-divider text-center">
+                  @for (r of dataRows; track r.id) {
+                    <tr>
+                      @for (h of tableHeaders; track h) {
+                        <td>{{ r.obj?.[h] ?? '-' }}</td>
+                      }
+                      <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-primary" title="GENERATE EPRC" (click)="onGenerateEprc(r.id)">
+                          <ng-icon name="tablerFileText" size="16"></ng-icon>
+                        </button>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td [attr.colspan]="(tableHeaders?.length || 1) + 1" class="text-center py-4">
+                        <div class="text-muted">
+                          <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                          <p class="mb-0">No records found</p>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <app-generic-pagination
+              [totalItems]="totalRecord"
+              [pageSize]="PaginationInfo.RowsPerPage"
+              [currentPage]="PaginationInfo.Page"
+              (pageChanged)="onPageChanged($event)">
+            </app-generic-pagination>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- e-PRC Certificate Preview Modal -->
+@if (eprcModalVisible && selectedEprcData) {
+  <div class="modal fade show" style="display:block; background: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header" style="background: #0f766e; color: #fff;">
+          <h5 class="modal-title fw-bold">
+            <ng-icon name="tablerFileText" size="20" class="me-2"></ng-icon>
+            Foreign Remittance Realization Certificate
+          </h5>
+          <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeEprcModal()"></button>
+        </div>
+        <div class="modal-body" style="background: #eef2f6;">
+          <div id="eprc-certificate-content" style="background: #fff; padding: 24px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <div class="eprc-wrapper">
+              <div class="eprc-bank-name">TekRemittance &mdash; Authorized Remittance Partner</div>
+              <div class="eprc-title">Foreign Remittance Realization Certificate</div>
+
+              <table class="eprc-table eprc-meta-table">
+                <tr>
+                  <td style="width: 55%;">
+                    <div class="eprc-tagline">Verified digital record of inward remittance</div>
+                  </td>
+                  <td style="width: 45%;">
+                    <div><strong>Certificate Ref:</strong> {{ selectedEprcData.eprcNo }}</div>
+                    <div><strong>Issued Date:</strong> {{ selectedEprcData.eprcDate }}</div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Recipient (Left) & Sender (Right) -->
+              <table class="eprc-table">
+                <tr class="eprc-section-header">
+                  <td colspan="2" style="width: 50%;">Recipient Particulars</td>
+                  <td colspan="2" style="width: 50%;">Sender Particulars</td>
+                </tr>
+                <tr>
+                  <td class="eprc-label">Full Name</td>
+                  <td>{{ selectedEprcData.beneficiaryName }}</td>
+                  <td class="eprc-label">Full Name</td>
+                  <td>{{ selectedEprcData.remitterName }}</td>
+                </tr>
+                <tr>
+                  <td class="eprc-label">ID Document Number</td>
+                  <td>{{ selectedEprcData.beneficiaryIdValue }}</td>
+                  <td class="eprc-label">ID Document Number</td>
+                  <td>{{ selectedEprcData.remitterIdValue }}</td>
+                </tr>
+                <tr>
+                  <td class="eprc-label">Account / IBAN Number</td>
+                  <td>{{ selectedEprcData.beneficiaryIban }}</td>
+                  <td class="eprc-label">Account / IBAN Number</td>
+                  <td>{{ selectedEprcData.remitterIban }}</td>
+                </tr>
+                <tr>
+                  <td class="eprc-label">Receiving Bank</td>
+                  <td>{{ selectedEprcData.beneficiaryBank }}</td>
+                  <td class="eprc-label">Originating Bank</td>
+                  <td>{{ selectedEprcData.remittingInstitution }}</td>
+                </tr>
+                <tr>
+                  <td colspan="2"></td>
+                  <td class="eprc-label">Country</td>
+                  <td>{{ selectedEprcData.remitterCountry }}</td>
+                </tr>
+                <tr>
+                  <td colspan="2"></td>
+                  <td class="eprc-label">Country Code</td>
+                  <td>{{ selectedEprcData.remitterCountryCode }}</td>
+                </tr>
+                <tr>
+                  <td colspan="4" class="eprc-statement">
+                    We hereby acknowledge the receipt of the following inward remittance credited to the recipient's account in line with the regulatory framework.
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Transaction Information -->
+              <table class="eprc-table">
+                <tr class="eprc-section-header">
+                  <td colspan="6">Transaction Information</td>
+                </tr>
+                <tr>
+                  <td class="eprc-label" colspan="2">Realization Date</td>
+                  <td colspan="4">{{ selectedEprcData.realizationDate }}</td>
+                </tr>
+                <tr>
+                  <td class="eprc-label" rowspan="3" style="vertical-align: middle;">Amount Breakdown</td>
+                  <td class="eprc-subhead">Foreign Currency Received</td>
+                  <td class="eprc-subhead">ESFCA Retained Amount</td>
+                  <td colspan="3" class="eprc-subhead">PKR Equivalent</td>
+                </tr>
+                <tr>
+                  <td rowspan="2" style="text-align: center; vertical-align: middle;">{{ selectedEprcData.totalProceedsFcy }}</td>
+                  <td rowspan="2" style="text-align: center; vertical-align: middle;">{{ selectedEprcData.fcyRetained }}</td>
+                  <td class="eprc-subhead">FCY Amount</td>
+                  <td class="eprc-subhead">Exchange Rate</td>
+                  <td class="eprc-subhead">PKR Amount</td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">{{ selectedEprcData.amountInFcy }}</td>
+                  <td style="text-align: center;">{{ selectedEprcData.rateOfConversion }}</td>
+                  <td style="text-align: center; font-weight: 600; color: #0f766e;">PKR {{ selectedEprcData.amountInPkr }}</td>
+                </tr>
+                <tr>
+                  <td class="eprc-label" colspan="2">Remittance Purpose</td>
+                  <td colspan="4">{{ selectedEprcData.purposeOfRemittance }}</td>
+                </tr>
+                <tr>
+                  <td class="eprc-label" colspan="2">Purpose Code</td>
+                  <td colspan="4">{{ selectedEprcData.purposeCode }}</td>
+                </tr>
+                <tr>
+                  <td class="eprc-label" colspan="2">Reference Number</td>
+                  <td colspan="4">{{ selectedEprcData.transactionRefNo }}</td>
+                </tr>
+                <tr>
+                  <td colspan="6" class="eprc-statement">
+                    <ol class="eprc-footer-list mb-0">
+                      <li>This transaction has been reported under Schedule S4 - J03 of the ITRS framework for the relevant reporting period.</li>
+                      <li>For verification or dispute, please reach out to the authorized officer at the receiving institution.</li>
+                    </ol>
+                  </td>
+                </tr>
+              </table>
+
+              <div class="eprc-note">Note: This is a system-generated digital document; no manual signature is required.</div>
+              <div class="eprc-note">
+                * Marked as Not Applicable when remittance is processed through Vostro / Nostro accounts or via Roshan Digital Account.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeEprcModal()">
+            <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+            Close
+          </button>
+          <button type="button" class="btn btn-primary" (click)="downloadEprc()">
+            <ng-icon name="tablerDownload" size="16" class="me-1"></ng-icon>
+            Download PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<style>
+  .eprc-wrapper {
+    max-width: 100%;
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  }
+  .eprc-bank-name {
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #0f766e;
+    margin-bottom: 6px;
+  }
+  .eprc-title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 16px;
+    background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  .eprc-tagline {
+    font-size: 11px;
+    color: #64748b;
+    font-style: italic;
+  }
+  table.eprc-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 12px;
+    color: #1f2937;
+    margin-bottom: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  table.eprc-table td,
+  table.eprc-table th {
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 8px 10px;
+    vertical-align: top;
+  }
+  table.eprc-table tr:last-child td {
+    border-bottom: none;
+  }
+  table.eprc-table td:last-child {
+    border-right: none;
+  }
+  table.eprc-meta-table {
+    border: none;
+    margin-bottom: 8px;
+  }
+  table.eprc-meta-table td {
+    border: none;
+    padding: 4px 8px;
+  }
+  .eprc-section-header td {
+    background: #0f766e;
+    color: #fff;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 8px 10px;
+  }
+  .eprc-label {
+    width: 25%;
+    font-weight: 600;
+    color: #475569;
+    background: #f8fafc;
+  }
+  .eprc-subhead {
+    background-color: #ecfdf5;
+    color: #065f46;
+    font-weight: 700;
+    text-align: center;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .eprc-statement {
+    font-size: 11px;
+    color: #475569;
+    background: #f8fafc;
+    font-style: italic;
+  }
+  .eprc-note {
+    font-size: 10px;
+    font-style: italic;
+    margin-top: 6px;
+    color: #64748b;
+  }
+  .eprc-footer-list {
+    padding-left: 18px;
+    margin: 0;
+  }
+  .eprc-footer-list li {
+    margin-bottom: 4px;
+  }
+</style>

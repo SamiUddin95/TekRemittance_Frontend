@@ -33,4 +33,8 @@ export interface Agent {
     paymentUrl?: string;
     unlockUrl?: string;
     approvalStatus?: boolean;
+    // XPIN Mapping fields
+    startIndex?: number;
+    length?: number;
+    xPinMapCode?: number;
 }

@@ -1,11 +1,12 @@
-import {Component, TemplateRef, ViewChild} from '@angular/core';
+import {Component, TemplateRef, ViewChild, inject, OnInit} from '@angular/core';
 import {MenuItemType} from '@/app/types/layout';
 import {CommonModule} from '@angular/common';
 import {NgIcon} from '@ng-icons/core';
 import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle} from '@ng-bootstrap/ng-bootstrap';
 import {NavigationEnd, Router, RouterLink} from '@angular/router';
-import {horizontalMenuItems} from '@layouts/components/data';
+import {getHorizontalMenuItems} from '@layouts/components/data';
 import {filter} from 'rxjs';
+import {PermissionService} from '@/app/shared/services/permission.service';
 
 @Component({
     selector: 'app-menu-navbar',
@@ -19,10 +20,10 @@ import {filter} from 'rxjs';
     ],
     templateUrl: './app-menu.component.html'
 })
-export class AppMenuComponent {
+export class AppMenuComponent implements OnInit {
 
-    constructor(public router: Router) {
-    }
+    router = inject(Router);
+    permissionService = inject(PermissionService);
 
     @ViewChild('MenuItemWithChildren', {static: true})
     menuItemWithChildren!: TemplateRef<{ item: MenuItemType, wrapperClass?: string, togglerClass?: string }>;
@@ -30,7 +31,12 @@ export class AppMenuComponent {
     @ViewChild('MenuItem', {static: true})
     menuItem!: TemplateRef<{ item: MenuItemType, linkClass?: string }>;
 
-    menuItems = horizontalMenuItems;
+    menuItems: MenuItemType[] = [];
+
+    ngOnInit(): void {
+        this.menuItems = getHorizontalMenuItems(this.permissionService);
+        console.log('Navbar menu items:', this.menuItems);
+    }
 
     hasSubMenu(item: MenuItemType): boolean {
         return !!item.children;
