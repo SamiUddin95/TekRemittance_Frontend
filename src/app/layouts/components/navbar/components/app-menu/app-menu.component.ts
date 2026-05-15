@@ -1,4 +1,4 @@
-import {Component, TemplateRef, ViewChild, inject, OnInit} from '@angular/core';
+import {Component, TemplateRef, ViewChild, inject, OnInit, OnDestroy} from '@angular/core';
 import {MenuItemType} from '@/app/types/layout';
 import {CommonModule} from '@angular/common';
 import {NgIcon} from '@ng-icons/core';
@@ -20,7 +20,7 @@ import {PermissionService} from '@/app/shared/services/permission.service';
     ],
     templateUrl: './app-menu.component.html'
 })
-export class AppMenuComponent implements OnInit {
+export class AppMenuComponent implements OnInit, OnDestroy {
 
     router = inject(Router);
     permissionService = inject(PermissionService);
@@ -32,10 +32,24 @@ export class AppMenuComponent implements OnInit {
     menuItem!: TemplateRef<{ item: MenuItemType, linkClass?: string }>;
 
     menuItems: MenuItemType[] = [];
+    private permissionSubscription: any;
 
     ngOnInit(): void {
+        this.loadMenuItems();
+
+        this.permissionSubscription = this.permissionService.getPermissions().subscribe(() => {
+            this.loadMenuItems();
+        });
+    }
+
+    private loadMenuItems(): void {
         this.menuItems = getHorizontalMenuItems(this.permissionService);
-        console.log('Navbar menu items:', this.menuItems);
+    }
+
+    ngOnDestroy(): void {
+        if (this.permissionSubscription) {
+            this.permissionSubscription.unsubscribe();
+        }
     }
 
     hasSubMenu(item: MenuItemType): boolean {

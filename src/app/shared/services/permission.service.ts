@@ -40,9 +40,7 @@ export class PermissionService {
   }
 
   hasPermission(permission: string): boolean {
-    const result = this.permissions.includes(permission);
-    console.log(`Checking permission "${permission}":`, result);
-    return result;
+    return this.permissions.includes(permission);
   }
 
   hasAnyPermission(permissions: string[]): boolean {

@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, inject, OnInit, TemplateRef, ViewChild, OnDestroy} from '@angular/core';
 import {MenuItemType} from '@/app/types/layout';
 import {CommonModule} from '@angular/common';
 import {NgIcon} from '@ng-icons/core';
@@ -15,7 +15,7 @@ import {PermissionService} from '@/app/shared/services/permission.service';
     imports: [NgIcon, NgbCollapse, RouterLink,CommonModule],
     templateUrl: './app-menu.component.html'
 })
-export class AppMenuComponent implements OnInit {
+export class AppMenuComponent implements OnInit, OnDestroy {
 
     router = inject(Router)
     layout = inject(LayoutStoreService)
@@ -28,10 +28,14 @@ export class AppMenuComponent implements OnInit {
     menuItem!: TemplateRef<{ item: MenuItemType }>;
 
     menuItems: MenuItemType[] = [];
+    private permissionSubscription: any;
 
     ngOnInit(): void {
-        this.menuItems = getMenuItems(this.permissionService);
-        console.log('Sidenav menu items:', this.menuItems);
+        this.loadMenuItems();
+
+        this.permissionSubscription = this.permissionService.getPermissions().subscribe(() => {
+            this.loadMenuItems();
+        });
 
         this.router.events
             .pipe(filter(event => event instanceof NavigationEnd))
@@ -42,6 +46,16 @@ export class AppMenuComponent implements OnInit {
 
         this.expandActivePaths(this.menuItems);
         setTimeout(() => this.scrollToActiveLink(), 100);
+    }
+
+    private loadMenuItems(): void {
+        this.menuItems = getMenuItems(this.permissionService);
+    }
+
+    ngOnDestroy(): void {
+        if (this.permissionSubscription) {
+            this.permissionSubscription.unsubscribe();
+        }
     }
 
     hasSubMenu(item: MenuItemType): boolean {
