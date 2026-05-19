@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import {
     FormBuilder,
     FormGroup,
+    FormsModule,
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
@@ -48,9 +49,11 @@ interface ModulePermissionRow {
         PageTitleComponent,
         NgIcon,
         ReactiveFormsModule,
+        FormsModule,
         NgbNavModule,
     ],
     templateUrl: './group-form.component.html',
+    styleUrls: ['./group-form.component.css'],
 })
 export class GroupFormComponent implements OnInit {
     Groupform!: FormGroup;
@@ -79,6 +82,8 @@ export class GroupFormComponent implements OnInit {
     isPermissionsTabDisabled = true;
     permissions: SecurityPermission[] = [];
     groupPermissionIds: string[] = [];
+    permissionSearch: string = '';
+    permissionModuleFilter: string = '';
 
     modulePermissions: ModulePermissionRow[] = [];
 
@@ -278,6 +283,50 @@ export class GroupFormComponent implements OnInit {
     toggleAllPermissions(): void {
         const allSelected = this.areAllPermissionsSelected();
         this.permissions.forEach(p => p.selected = !allSelected);
+    }
+
+    getSelectedPermissionsCount(): number {
+        return this.permissions.filter(p => p.selected).length;
+    }
+
+    getDistinctModules(): string[] {
+        const set = new Set<string>();
+        this.permissions.forEach(p => { if (p.module) set.add(p.module); });
+        return Array.from(set).sort();
+    }
+
+    getFilteredPermissions(): SecurityPermission[] {
+        const term = (this.permissionSearch || '').toLowerCase().trim();
+        const mod = (this.permissionModuleFilter || '').trim();
+        return this.permissions.filter(p => {
+            const matchesTerm = !term
+                || (p.name || '').toLowerCase().includes(term)
+                || (p.description || '').toLowerCase().includes(term)
+                || (p.module || '').toLowerCase().includes(term);
+            const matchesMod = !mod || (p.module || '') === mod;
+            return matchesTerm && matchesMod;
+        });
+    }
+
+    selectFilteredPermissions(select: boolean): void {
+        this.getFilteredPermissions().forEach(p => p.selected = select);
+    }
+
+    getModuleBadgeClass(module?: string): string {
+        if (!module) return 'tone-secondary';
+        const palette = [
+            'tone-primary',
+            'tone-success',
+            'tone-warning',
+            'tone-info',
+            'tone-danger',
+            'tone-purple',
+            'tone-pink',
+            'tone-secondary',
+        ];
+        let hash = 0;
+        for (let i = 0; i < module.length; i++) hash = (hash * 31 + module.charCodeAt(i)) | 0;
+        return palette[Math.abs(hash) % palette.length];
     }
 
     toggleModulePermission(

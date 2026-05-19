@@ -8,6 +8,7 @@ import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { Group } from '../models/group.model';
 import Swal from 'sweetalert2';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
+import { SkeletonLoaderComponent } from '@/app/shared/skeleton/skeleton-loader.component';
 
 interface SecurityGroup {
     id: string;
@@ -25,6 +26,7 @@ interface SecurityGroup {
         GenericPaginationComponent,
         NgIcon,
         NgbCollapseModule,
+        SkeletonLoaderComponent,
     ],
     templateUrl: './group-list.component.html',
 })

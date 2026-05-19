@@ -81,6 +81,7 @@ const menuItemsWithPermissions = [
             {icon: 'tablerChecklist', label: 'Authorization Queue', url: '/authorization-queue', permission: 'Disbursement.AuthorizationQueue'},
             {icon: 'tablerX', label: 'Rejected Queue', url: '/rejected-queue', permission: 'Disbursement.RejectedQueue'},
             {icon: 'tablerCircleCheck', label: 'Approved Queue', url: '/approved-queue', permission: 'Disbursement.ApprovedQueue'},
+            {icon: 'tablerSearch', label: 'COC Payout Inquiry', url: '/coc-payout-inquiry', permission: 'Disbursement.COCpayout'},
         ]
     },
     {
@@ -165,7 +166,8 @@ const horizontalMenuItemsWithPermissions = [
             {icon: 'tablerCircleCheck', label: 'Approved Queue', url: '/approved-queue', permission: 'Disbursement.ApprovedQueue'},
             {icon: 'tablerDownload', label: 'Pull Agents', url: '/fetch-accounts', permission: 'Disbursement.PullAgents'},
             {icon: 'tablerCash', label: 'COC Payout', url: '/coc-payout', permission: 'Disbursement.COCpayout'},
-            {icon: 'tablerBuildingBank', label: 'Internal Bank Accounts', url: '/internal-bank-accounts', permission: 'Disbursement.InternalBanksAccount'},
+            {icon: 'tablerSearch', label: 'COC Payout Inquiry', url: '/coc-payout-inquiry', permission: 'Disbursement.COCpayout'},
+            {icon: 'tablerBuildingBank', label: 'EPRC', url: '/internal-bank-accounts', permission: 'Disbursement.InternalBanksAccount'},
         ]
     },
     {
@@ -285,6 +287,7 @@ export const menuItems: MenuItemType[] = [
             {icon: 'tablerChecklist', label: 'Authorization Queue', url: '/authorization-queue'},
             {icon: 'tablerX', label: 'Rejected Queue', url: '/rejected-queue'},
             {icon: 'tablerCircleCheck', label: 'Approved Queue', url: '/approved-queue'},
+            {icon: 'tablerSearch', label: 'COC Payout Inquiry', url: '/coc-payout-inquiry'},
 
         ]
     },

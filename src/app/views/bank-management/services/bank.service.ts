@@ -88,7 +88,11 @@ export class BankService {
             updatedOn: nowIso
         };
         return this.http.post<any>(url, payload).pipe(
-            map((res) => this.mapDtoToBank(res?.data ?? res))
+            map((res) => this.mapDtoToBank(res?.data ?? res)),
+            catchError((err) => {
+                const msg = err?.error?.errorMessage || err?.error?.message || err?.message || 'Failed to create bank';
+                return throwError(() => new Error(msg));
+            })
         );
     }
 
@@ -111,7 +115,11 @@ export class BankService {
             updatedOn: nowIso
         };
         return this.http.put<any>(url, payload).pipe(
-            map((res) => this.mapDtoToBank(res?.data ?? res))
+            map((res) => this.mapDtoToBank(res?.data ?? res)),
+            catchError((err) => {
+                const msg = err?.error?.errorMessage || err?.error?.message || err?.message || 'Failed to update bank';
+                return throwError(() => new Error(msg));
+            })
         );
     }
 

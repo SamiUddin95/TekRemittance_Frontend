@@ -107,8 +107,8 @@
                             <tr>
                                 <th class="fw-bold">Acquisition Agent Code</th>
                                 <th class="fw-bold">Acquisition Agent Name</th>
-                                <th class="fw-bold">Active Status</th>
-                                <th class="fw-bold">Approval Status</th>
+                                <!-- <th class="fw-bold">Active Status</th>
+                                <th class="fw-bold">Approval Status</th> -->
                                 <th class="text-center fw-bold">Actions</th>
                             </tr>
                         </thead>
@@ -121,7 +121,7 @@
                                     }}</span>
                                 </td>
                                 <td>{{ agent.name }}</td>
-                                <td>
+                                <!-- <td>
                                     <span
                                         [class]="
                                             getStatusBadgeClass(agent.isActive)
@@ -137,7 +137,7 @@
                                         [checked]="agent.approvalStatus"
                                         disabled
                                     />
-                                </td>
+                                </td> -->
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
                                         <button

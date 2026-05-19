@@ -7,11 +7,12 @@ import { ReportsService } from './services/reports.service';
 import { PageTitleComponent } from '@app/components/page-title.component';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { tablerFileReport, tablerEye, tablerFileText, tablerFileSpreadsheet, tablerDownload, tablerSearch, tablerX } from '@ng-icons/tabler-icons';
+import { SkeletonLoaderComponent } from '@/app/shared/skeleton/skeleton-loader.component';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, PageTitleComponent, NgIconComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, PageTitleComponent, NgIconComponent, SkeletonLoaderComponent],
   templateUrl: './reports.component.html',
   providers: [ReportsService, provideIcons({ tablerFileReport, tablerEye, tablerFileText, tablerFileSpreadsheet, tablerDownload, tablerSearch, tablerX })]
 })

@@ -341,6 +341,56 @@ getDataByRepair(
   );
 }
 
+getCOCPayout(
+  agentId: string,
+  pageNumber: number = 1,
+  pageSize: number = 10,
+  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+): Observable<{
+  items: DisbursementData[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  statusCode: number;
+  status: string;
+}> {
+  let params = new HttpParams()
+    .set('pageNumber', pageNumber.toString())
+    .set('pageSize', pageSize.toString());
+
+  if (filters.xpin) params = params.set('xpin', filters.xpin);
+  if (filters.accountNumber) params = params.set('accountNumber', filters.accountNumber);
+  if (filters.date) params = params.set('date', filters.date);
+
+  const url = `${environment.apiUrl}/Disbursement/GetCOCPayout/${agentId}`;
+
+  return this.http.get<any>(url, { params }).pipe(
+    map((res) => {
+      const statusCode = res?.statusCode ?? 200;
+      const status = res?.status ?? 'success';
+      const payload = res?.data ?? res;
+      const itemsRaw = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
+      return {
+        items: itemsRaw,
+        totalCount: payload?.totalCount ?? itemsRaw.length,
+        pageNumber: payload?.pageNumber ?? pageNumber,
+        pageSize: payload?.pageSize ?? pageSize,
+        totalPages: payload?.totalPages ?? 1,
+        statusCode,
+        status,
+      };
+    })
+  );
+}
+
+// POST: /api/Disbursement/SetCOCPayoutInquiry?xpin=XXXX
+setCOCPayoutInquiry(xpin: string | number): Observable<any> {
+  const url = `${environment.apiUrl}/Disbursement/SetCOCPayoutInquiry`;
+  const params = new HttpParams().set('xpin', String(xpin ?? ''));
+  return this.http.post<any>(url, null, { params });
+}
+
 // POST: /api/Disbursement/RemitApproveBulk
 bulkApprove(request: { 
   xpins: string[], 

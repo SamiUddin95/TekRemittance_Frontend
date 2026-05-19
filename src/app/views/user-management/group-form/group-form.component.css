@@ -1,0 +1,321 @@
+/* ============================================================
+   Security Group Permission Tab Styles
+   ============================================================ */
+
+.permission-card {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.permission-card .card-header {
+  background: #ffffff;
+}
+
+/* ----- Header Row ----- */
+.permission-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.permission-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 250px;
+}
+
+.permission-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.12), rgba(13, 110, 253, 0.04));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.permission-title-text h6 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.permission-title-text small {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.permission-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #e7f5ee;
+  color: #15803d;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 20px;
+  border: 1px solid #bbf7d0;
+  white-space: nowrap;
+}
+
+.btn-save-permissions {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: #fff;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-save-permissions:hover {
+  background: #15803d;
+  border-color: #15803d;
+  color: #fff;
+}
+
+/* ----- Filter Row ----- */
+.permission-filter-row {
+  display: grid;
+  grid-template-columns: 1fr 220px auto;
+  gap: 10px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+@media (max-width: 992px) {
+  .permission-filter-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.permission-search {
+  position: relative;
+}
+
+.permission-search .input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.permission-search input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #f8fafc;
+  transition: all 0.15s ease;
+}
+
+.permission-search input:focus {
+  outline: none;
+  border-color: #0d6efd;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+.permission-module-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #f8fafc;
+  transition: all 0.15s ease;
+}
+
+.permission-module-select:focus {
+  outline: none;
+  border-color: #0d6efd;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+.permission-quick-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-quick-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-quick-action.select-all {
+  background: #eef2ff;
+  color: #4338ca;
+  border-color: #c7d2fe;
+}
+
+.btn-quick-action.select-all:hover {
+  background: #c7d2fe;
+}
+
+.btn-quick-action.clear {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+
+.btn-quick-action.clear:hover {
+  background: #e2e8f0;
+}
+
+/* ----- Table ----- */
+.permission-table-wrap {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.permission-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.permission-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  font-weight: 700;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.permission-table thead th.col-check {
+  width: 50px;
+  text-align: center;
+}
+
+.permission-table tbody tr {
+  transition: background-color 0.15s ease;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.permission-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.permission-table tbody tr.is-selected {
+  background-color: #eff6ff;
+}
+
+.permission-table tbody tr.is-selected:hover {
+  background-color: #dbeafe;
+}
+
+.permission-table tbody td {
+  padding: 11px 16px;
+  font-size: 13px;
+  vertical-align: middle;
+  color: #334155;
+}
+
+.permission-table tbody td.col-check {
+  text-align: center;
+  width: 50px;
+}
+
+.permission-table .perm-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.permission-table .perm-desc {
+  color: #64748b;
+}
+
+/* Module badges */
+.module-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+  letter-spacing: 0.3px;
+}
+
+.module-badge.tone-primary   { background: #dbeafe; color: #1d4ed8; }
+.module-badge.tone-success   { background: #dcfce7; color: #15803d; }
+.module-badge.tone-warning   { background: #fef3c7; color: #b45309; }
+.module-badge.tone-info      { background: #cffafe; color: #0e7490; }
+.module-badge.tone-danger    { background: #fee2e2; color: #b91c1c; }
+.module-badge.tone-purple    { background: #ede9fe; color: #6d28d9; }
+.module-badge.tone-pink      { background: #fce7f3; color: #be185d; }
+.module-badge.tone-secondary { background: #e2e8f0; color: #475569; }
+
+/* Empty state */
+.permission-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #94a3b8;
+}
+
+.permission-empty p {
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+
+/* Scrollbar */
+.permission-table-wrap::-webkit-scrollbar {
+  width: 8px;
+}
+
+.permission-table-wrap::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.permission-table-wrap::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.permission-table-wrap::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Checkbox style refinement */
+.permission-table .form-check-input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  border-color: #cbd5e1;
+}
+
+.permission-table .form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}

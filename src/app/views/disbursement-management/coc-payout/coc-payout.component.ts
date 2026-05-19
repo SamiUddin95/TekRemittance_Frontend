@@ -5,6 +5,7 @@ import { NgIcon } from '@ng-icons/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { AgentService } from '@/app/views/acquisition-management/services/agent.service';
+import { DisbursementService } from '@/app/views/disbursement-management/services/disbursement.service';
 import { CountupComponent } from '../../../shared/components/countup/countup.component';
 
 interface SearchResult {
@@ -46,7 +47,7 @@ export class CocPayoutComponent implements OnInit {
     beneficiaryCnic: '42201-8011566-8',
     name: 'Waji Khan',
     cnicPassport: '42289-8549975-8',
-    amount: '1000 USD',
+    amount: '1000 PKR',
     contactNo: '0335-8777985',
     accountNumber: '1234567890123',
     accountTitle: 'Waji Khan'
@@ -69,7 +70,7 @@ export class CocPayoutComponent implements OnInit {
 
   grandTotal = 0;
 
-  constructor(private fb: FormBuilder, private agentService: AgentService) {
+  constructor(private fb: FormBuilder, private agentService: AgentService, private disbursementService: DisbursementService) {
     this.searchForm = this.fb.group({
       // agentId: ['', Validators.required],
       inquiryPin: ['', Validators.required]
@@ -107,15 +108,36 @@ export class CocPayoutComponent implements OnInit {
       return;
     }
 
-    // Show the search results (static data for now)
-    this.showResults = true;
-    
-    Swal.fire({
-      icon: 'success',
-      title: 'Search Successful',
-      text: 'Transaction details loaded successfully',
-      timer: 1500,
-      showConfirmButton: false
+    const xpin = this.searchForm.value.inquiryPin;
+
+    this.disbursementService.setCOCPayoutInquiry(xpin).subscribe({
+      next: (res) => {
+        if (res?.statusCode === 200 || res?.status === 'success') {
+          this.showResults = true;
+          Swal.fire({
+            icon: 'success',
+            title: 'Search Successful',
+            text: res?.data || 'Transaction details loaded successfully',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Search Failed',
+            text: res?.errorMessage || 'Unable to fetch transaction details',
+            confirmButtonText: 'OK'
+          });
+        }
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err?.error?.errorMessage || err?.message || 'An error occurred while searching',
+          confirmButtonText: 'OK'
+        });
+      }
     });
   }
 

@@ -5,6 +5,7 @@ import { RejectedQueueListComponent } from './rejected-queue-list/rejected-queue
 import { ApprovedQueueListComponent } from './approved-queue-list/approved-queue-list.component';
 import { FetchAccountsComponent } from './fetch-accounts/fetch-accounts.component';
 import { CocPayoutComponent } from './coc-payout/coc-payout.component';
+import { CocPayoutInquiryComponent } from './coc-payout-inquiry/coc-payout-inquiry.component';
 import { InternalBankAccountsComponent } from './internal-bank-accounts/internal-bank-accounts.component';
 
 export const DISBURSEMENT_MANAGEMENT_ROUTES: Routes = [
@@ -37,6 +38,11 @@ export const DISBURSEMENT_MANAGEMENT_ROUTES: Routes = [
     path: 'coc-payout',
     component: CocPayoutComponent,
     data: { title: 'COC Payout' },
+  },
+  {
+    path: 'coc-payout-inquiry',
+    component: CocPayoutInquiryComponent,
+    data: { title: 'COC Payout Inquiry' },
   },
   {
     path: 'internal-bank-accounts',

@@ -1,66 +1,85 @@
-<div class="row mb-0">
-    <div class="col-12">
-        <div class="card" style="border: 1px solid #ddd; border-radius: 5px; background-color: #fff;">
-            <div class="card-header" style="background-color: #f8f9fa; border-bottom: 1px solid #ddd; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;">
-                <h3 class="card-title" style="font-size: 14px; font-weight: bold; color: #2c3e50; margin: 0;">TRANSACTION STATUS BY CHANNEL</h3>
-                <!-- Legend in header -->
-                <div class="d-flex">
-                    <div class="legend-item">
-                        <span class="legend-color" style="background-color: #4B8E8C;"></span>
-                        <span class="legend-icon">↓</span>
-                        <span class="legend-text">Incoming</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-color" style="background-color: #4A7EDB;"></span>
-                        <span class="legend-icon">↑</span>
-                        <span class="legend-text">Outgoing</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-color" style="background-color: #E1DEF1;"></span>
-                        <span class="legend-icon">⏸</span>
-                        <span class="legend-text">Pending</span>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body p-2">
-                <!-- Progress Bars -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div *ngFor="let channel of channels" class="mb-3">
-                            <div class="d-flex align-items-center">
-                                <small style="font-size: 14px; color: #555; font-weight: bold; width: 60px;">{{ channel.name }}</small>
-                                <div class="progress flex-grow-1" style="height: 22px; border-radius: 5px; background-color: #ecf0f1;">
-                                    <div class="progress-bar" [ngStyle]="{width: channel.incoming + '%', 'background-color': '#4B8E8C'}" style="border-radius: 3px 0 0 3px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
-                                        {{ channel.incoming > 10 ? channel.incoming + '%' : '' }}
-                                    </div>
-                                    <div class="progress-bar" [ngStyle]="{width: channel.outgoing + '%', 'background-color': '#4A7EDB'}" style="display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
-                                        {{ channel.outgoing > 10 ? channel.outgoing + '%' : '' }}
-                                    </div>
-                                    <div class="progress-bar" [ngStyle]="{width: channel.pending + '%', 'background-color': '#E1DEF1'}" style="border-radius: 0 3px 3px 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
-                                        {{ channel.pending > 10 ? channel.pending + '%' : '' }}
-                                    </div>
-                                </div>
-                                <!-- <small style="font-size: 12px; color: #555; font-weight: bold; width: 50px; text-align: right;">{{ channel.incoming + channel.outgoing + channel.pending }}%</small> -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Legend below progress bars -->
-                <div class="d-flex justify-content-center mt-1">
-                    <div class="d-flex align-items-center">
-                        <span class="legend-color-box" style="background-color: #4B8E8C; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px;"></span>
-                        <span class="legend-text" style="font-size: 11px; color: #555; font-weight: 500; margin-right: 10px;">Incoming</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <span class="legend-color-box" style="background-color: #4A7EDB; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px;"></span>
-                        <span class="legend-text" style="font-size: 11px; color: #555; font-weight: 500; margin-right: 10px;">Outgoing</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <span class="legend-color-box" style="background-color: #E1DEF1; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px;"></span>
-                        <span class="legend-text" style="font-size: 11px; color: #555; font-weight: 500; margin-right: 10px;">Pending</span>
-                    </div>
-                </div>
-            </div>
+<div class="status-card mb-3">
+  <div class="card status-card-modern">
+    <div class="card-header status-card-header">
+      <div class="header-content">
+        <ng-icon name="tablerChartBar" size="18" class="header-icon"></ng-icon>
+        <h3 class="card-title">Transaction Status by Channel</h3>
+      </div>
+      <div class="legend-container">
+        <div class="legend-item">
+          <span class="legend-dot incoming"></span>
+          <span class="legend-label">Incoming</span>
         </div>
+        <div class="legend-item">
+          <span class="legend-dot outgoing"></span>
+          <span class="legend-label">Outgoing</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot pending"></span>
+          <span class="legend-label">Pending</span>
+        </div>
+      </div>
     </div>
+    <div class="card-body status-card-body">
+      <div class="progress-list">
+        <div *ngFor="let channel of channels" class="progress-item">
+          <div class="channel-name">{{ channel.name }}</div>
+          <div class="progress-wrapper">
+            <div class="progress-bar-segment incoming" [style.width.%]="channel.incoming">
+              <span *ngIf="channel.incoming > 10">{{ channel.incoming }}%</span>
+            </div>
+            <div class="progress-bar-segment outgoing" [style.width.%]="channel.outgoing">
+              <span *ngIf="channel.outgoing > 10">{{ channel.outgoing }}%</span>
+            </div>
+            <div class="progress-bar-segment pending" [style.width.%]="channel.pending">
+              <span *ngIf="channel.pending > 10">{{ channel.pending }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="status-card">
+  <div class="card status-card-modern">
+    <div class="card-header status-card-header">
+      <div class="header-content">
+        <ng-icon name="tablerUsers" size="18" class="header-icon"></ng-icon>
+        <h3 class="card-title">Transaction Status by Agent</h3>
+      </div>
+      <div class="legend-container">
+        <div class="legend-item">
+          <span class="legend-dot incoming"></span>
+          <span class="legend-label">Incoming</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot outgoing"></span>
+          <span class="legend-label">Outgoing</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot pending"></span>
+          <span class="legend-label">Pending</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body status-card-body">
+      <div class="progress-list">
+        <div *ngFor="let agent of Agnets" class="progress-item">
+          <div class="channel-name">{{ agent.name }}</div>
+          <div class="progress-wrapper">
+            <div class="progress-bar-segment incoming" [style.width.%]="agent.incoming">
+              <span *ngIf="agent.incoming > 10">{{ agent.incoming }}%</span>
+            </div>
+            <div class="progress-bar-segment outgoing" [style.width.%]="agent.outgoing">
+              <span *ngIf="agent.outgoing > 10">{{ agent.outgoing }}%</span>
+            </div>
+            <div class="progress-bar-segment pending" [style.width.%]="agent.pending">
+              <span *ngIf="agent.pending > 10">{{ agent.pending }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

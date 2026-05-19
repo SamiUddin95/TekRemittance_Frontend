@@ -176,56 +176,86 @@
             </li>
 
             <li ngbNavItem="permissions">
-  <button ngbNavLink   [class.disabled]="isPermissionsTabDisabled">Security Group Permission</button>
+              <button ngbNavLink [class.disabled]="isPermissionsTabDisabled">Security Group Permission</button>
               <ng-template ngbNavContent>
                 <div class="mt-3">
-                  <div class="card shadow border-0">
-                    <div class="card-header bg-light border-bottom py-2">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                          <div class="rounded-circle d-flex me-2">
-                            <ng-icon name="tablerShield" size="16" class="text-primary"></ng-icon>
+                  <div class="card permission-card">
+
+                    <!-- Header: Title + Save -->
+                    <div class="card-header py-3 px-3">
+                      <div class="permission-header-top">
+                        <div class="permission-title-group">
+                          <div class="permission-icon-wrap">
+                            <ng-icon name="tablerShieldLock" size="22" class="text-primary"></ng-icon>
                           </div>
-                          <div>
-                            <h6 class="mb-0 text-dark">Permissions</h6>
-                            <small class="text-muted">Manage access permissions for this group</small>
+                          <div class="permission-title-text">
+                            <h6>Permissions</h6>
+                            <small>Manage access permissions for this group</small>
                           </div>
+                          <span class="permission-count-badge">
+                            <ng-icon name="tablerCircleCheck" size="14"></ng-icon>
+                            {{ getSelectedPermissionsCount() }} / {{ permissions.length }} selected
+                          </span>
                         </div>
-                        <button type="button" class="btn btn-primary btn-sm" (click)="savePermissions()">
-                          <ng-icon name="tablerDeviceFloppy" class="me-1" size="14"></ng-icon>
+                        <button type="button" class="btn btn-save-permissions" (click)="savePermissions()">
+                          <ng-icon name="tablerDeviceFloppy" size="16"></ng-icon>
                           Save Permissions
                         </button>
                       </div>
+
+                      <!-- Filter Row -->
+                      <div class="permission-filter-row">
+                        <div class="permission-search">
+                          <ng-icon name="tablerSearch" size="16" class="input-icon"></ng-icon>
+                          <input type="text" placeholder="Search permission, description or module..." [(ngModel)]="permissionSearch" [ngModelOptions]="{standalone: true}" />
+                        </div>
+                        <select class="permission-module-select" [(ngModel)]="permissionModuleFilter" [ngModelOptions]="{standalone: true}">
+                          <option value="">All Modules</option>
+                          <option *ngFor="let m of getDistinctModules()" [value]="m">{{ m }}</option>
+                        </select>
+                        <div class="permission-quick-actions">
+                          <button type="button" class="btn-quick-action select-all" (click)="selectFilteredPermissions(true)">
+                            <ng-icon name="tablerSquareCheck" size="14"></ng-icon>
+                            Select All
+                          </button>
+                          <button type="button" class="btn-quick-action clear" (click)="selectFilteredPermissions(false)">
+                            <ng-icon name="tablerSquareOff" size="14"></ng-icon>
+                            Clear
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    <div class="card-body p-0 bg-white">
-                      <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
-                        <table class="table table-sm mb-0 align-middle">
-                          <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+
+                    <!-- Table -->
+                    <div class="card-body p-0">
+                      <div class="permission-table-wrap">
+                        <table class="permission-table">
+                          <thead>
                             <tr>
-                              <th class="text-start ps-4" style="min-width: 50px;">
-                                <input type="checkbox" class="form-check-input" [checked]="areAllPermissionsSelected()" (change)="toggleAllPermissions()" />
+                              <th class="col-check">
+                                <input type="checkbox" class="form-check-input" [checked]="areAllPermissionsSelected()" (change)="toggleAllPermissions()" title="Toggle all" />
                               </th>
-                              <th class="text-start" style="min-width: 200px;">Permission Name</th>
-                              <th class="text-start">Description</th>
-                              <th class="text-start" style="min-width: 150px;">Module</th>
-                              <th class="text-start" style="min-width: 150px;">Category</th>
+                              <th>Permission Name</th>
+                              <th>Description</th>
+                              <th>Module</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr *ngFor="let p of permissions">
-                              <td class="text-center ps-4">
+                            <tr *ngFor="let p of getFilteredPermissions()" [class.is-selected]="p.selected">
+                              <td class="col-check">
                                 <input type="checkbox" class="form-check-input" [checked]="p.selected" (change)="togglePermission(p)" />
                               </td>
-                              <td class="text-start">{{ p.name }}</td>
-                              <td class="text-start">{{ p.description }}</td>
-                              <td class="text-start">{{ p.module }}</td>
-                              <td class="text-start">{{ p.category }}</td>
+                              <td class="perm-name">{{ p.name }}</td>
+                              <td class="perm-desc">{{ p.description }}</td>
+                              <td>
+                                <span class="module-badge" [ngClass]="getModuleBadgeClass(p.module)">{{ p.module }}</span>
+                              </td>
                             </tr>
-                            <tr *ngIf="permissions.length === 0">
-                              <td colspan="5" class="text-center py-3">
-                                <div class="text-muted">
-                                  <ng-icon name="tablerInbox" size="32" class="mb-2 d-block mx-auto"></ng-icon>
-                                  <p class="mb-0">No permissions found</p>
+                            <tr *ngIf="getFilteredPermissions().length === 0">
+                              <td colspan="4">
+                                <div class="permission-empty">
+                                  <ng-icon name="tablerInbox" size="36"></ng-icon>
+                                  <p>No permissions match your search</p>
                                 </div>
                               </td>
                             </tr>
@@ -233,6 +263,7 @@
                         </table>
                       </div>
                     </div>
+
                   </div>
                 </div>
               </ng-template>

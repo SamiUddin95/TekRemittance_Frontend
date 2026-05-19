@@ -21,7 +21,7 @@ export class RepairInstructionQueueComponent implements OnInit {
     const row = (history.state && history.state.row) ? history.state.row : null;
 
     this.form = this.fb.group({
-      rin: [{ value: row?.rin || '', disabled: true }],
+      Xpin: [{ value: row?.xpin || row?.rin || '', disabled: true }],
       agentName: [{ value: row?.agentName || '', disabled: true }],
       beneficiaryName: [row?.beneficiaryName || '', Validators.required],
       beneficiaryCnic: [''],

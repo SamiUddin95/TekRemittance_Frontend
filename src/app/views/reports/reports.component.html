@@ -89,10 +89,7 @@
                 </div>
 
                 @if (loading) {
-                <div class="text-center py-4">
-                    <div class="spinner-border spinner-border-sm me-2"></div>
-                    Loading transactions...
-                </div>
+                <app-skeleton-loader variant="table" [rows]="8" [cols]="6" ariaLabel="Loading transactions"></app-skeleton-loader>
                 } @else {
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-sm">
@@ -196,10 +193,7 @@
             <div class="modal-body p-0" style="height: 70vh;">
                 @if (pdfLoading) {
                 <div class="d-flex justify-content-center align-items-center h-100">
-                    <div class="text-center">
-                        <div class="spinner-border spinner-border-lg mb-3"></div>
-                        <p class="mb-0">Loading report...</p>
-                    </div>
+                    <app-skeleton-loader [isLoading]="true" ariaLabel="Loading report"></app-skeleton-loader>
                 </div>
                 } @else if (pdfUrl) {
                 <iframe [src]="pdfUrl" 

@@ -14,29 +14,40 @@
         </div>
         <div class="card-body">
           <!-- Filters -->
-          <div class="rounded mb-2">
-            <form [formGroup]="searchForm">
-              <div class="row g-3">
-                <div class="col-md-3">
-                  <label class="form-label fw-semibold">Inquiry x pin <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" formControlName="inquiryPin" placeholder="Enter Inquiry x pin" />
-                </div>
-                <div class="col-md-2 d-flex align-items-end gap-2">
-                  <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
+          <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+            <div class="row g-3 align-items-end">
+              <div class="col-lg-4 col-md-5">
+                <label class="form-label fw-semibold">
+                  <ng-icon name="tablerHash" class="me-1 gradient-icon" size="14"></ng-icon>
+                  Inquiry XPIN <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" formControlName="inquiryPin" placeholder="Enter Inquiry XPIN" />
+              </div>
+              <div class="col-lg-3 col-md-4">
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn submit-button flex-fill">
                     <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
                     Search
                   </button>
-                  <button type="button" class="btn btn-dark" (click)="onClear()">
-                    <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                  <button type="button" class="btn btn-outline-secondary" (click)="onClear()" title="Clear">
+                    <ng-icon name="tablerX" size="16"></ng-icon>
                     Clear
                   </button>
                 </div>
               </div>
-            </form>
-          </div>
+              @if (showResults) {
+                <div class="col-lg-5 col-md-3 d-flex justify-content-end">
+                  <button type="button" class="btn btn-info px-4" (click)="onPay()">
+                    <ng-icon name="tablerLockOpen" size="16" class="me-1"></ng-icon>
+                    Unlock
+                  </button>
+                </div>
+              }
+            </div>
+          </form>
 
           @if (!showResults) {
-            <div class="table-responsive">
+            <div class="table-responsive mt-3">
               <table class="table table-bordered table-striped table-sm">
                 <tbody>
                   <tr>
@@ -54,7 +65,7 @@
 
           @if (showResults) {
             <!-- Search Result and Cash Denominations -->
-            <div class="row g-3">
+            <div class="row g-3 mt-3">
               <!-- Search Result Section -->
               <div class="col-md-7">
                 <div class="card border shadow-sm">
@@ -163,7 +174,6 @@
             <div class="d-flex justify-content-center gap-3 mt-4">
               <button type="button" class="btn btn-outline-dark px-4" (click)="onCancel()">Cancel</button>
               <button type="button" class="btn btn-success px-4" (click)="onPay()">Pay</button>
-              <button type="button" class="btn btn-info px-4" (click)="onPay()">Unlock</button>
             </div>
           }
         </div>
