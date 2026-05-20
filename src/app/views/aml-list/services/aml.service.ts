@@ -3,13 +3,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Aml, AmlFilter, ApiResponse, AmlListResponse, CreateAmlRequest } from '../models/aml.model';
+import { environment } from '@/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AmlService {
-  private baseUrl = 'https://localhost:44367/api/BasicSetup';
-
+  //private baseUrl = 'https://localhost:44367/api/BasicSetup';
+ private baseUrl = `${environment.apiUrl}`;
   constructor(private http: HttpClient) { }
 
   // GET: /api/BasicSetup/AmlData?pageNumber=1&pageSize=10
