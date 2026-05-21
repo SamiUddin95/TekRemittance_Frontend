@@ -162,18 +162,13 @@
     <div class="form-group">
       <label class="form-label fw-semibold">
     <ng-icon name="tablerMail" class="me-1 gradient-icon" size="16"></ng-icon>
-    Email<span class="text-danger">*</span>
+    Email
       </label>
  <input type="email"
        id="email"
        class="form-control"
-       [class.is-invalid]="form.get('email')?.touched && getFieldError('email')"
        formControlName="email"
        placeholder="Enter email">
-
-        @if (form.get('email')?.touched && getFieldError('email')) {
-        <div class="invalid-feedback">{{ getFieldError('email') }}</div>
-        }
     </div>
   </div>
 

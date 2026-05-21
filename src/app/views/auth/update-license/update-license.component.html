@@ -1,0 +1,59 @@
+<div class="update-license-page d-flex align-items-center justify-content-center">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm rounded-4">
+          <div class="card-body p-4 p-md-5">
+            <div class="text-center mb-4">
+              <div class="icon-circle mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 8v13H3V8" />
+                  <path d="M1 3h22v5H1z" />
+                  <path d="M10 12h4" />
+                </svg>
+              </div>
+              <h3 class="fw-bold mb-1">Update License</h3>
+              <p class="text-muted mb-0">
+                Paste the encrypted license key you received via email below to activate your application.
+              </p>
+            </div>
+
+            <form (ngSubmit)="onSubmit()" #licenseForm="ngForm">
+              <div class="mb-3">
+                <label for="encryptedKey" class="form-label fw-semibold">
+                  Encrypted License Key <span class="text-danger">*</span>
+                </label>
+                <textarea
+                  id="encryptedKey"
+                  name="encryptedKey"
+                  class="form-control license-textarea"
+                  rows="6"
+                  placeholder="Paste your encrypted license key here..."
+                  [(ngModel)]="encryptedKey"
+                  [disabled]="isSubmitting"
+                  required></textarea>
+                <small class="text-muted">Make sure to paste the complete key without any extra spaces.</small>
+              </div>
+
+              <div class="d-flex gap-2 mt-4">
+                <button type="button" class="btn btn-outline-secondary flex-fill"
+                  (click)="onCancel()" [disabled]="isSubmitting">
+                  Cancel
+                </button>
+                <button type="submit" class="btn submit-button flex-fill" [disabled]="isSubmitting">
+                  @if (isSubmitting) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    Updating...
+                  } @else {
+                    Submit
+                  }
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

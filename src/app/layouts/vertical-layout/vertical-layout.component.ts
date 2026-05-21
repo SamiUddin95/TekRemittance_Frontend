@@ -4,11 +4,12 @@ import {LayoutStoreService} from '@core/services/layout-store.service';
 import {SidenavComponent} from '@layouts/components/sidenav/sidenav.component';
 import {TopbarComponent} from '@layouts/components/topbar/topbar.component';
 import {FooterComponent} from '@layouts/components/footer/footer.component';
+import {LicenseBannerComponent} from '@app/components/license-banner/license-banner.component';
 import {debounceTime, fromEvent, Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-vertical-layout',
-    imports: [RouterOutlet, SidenavComponent, TopbarComponent, FooterComponent],
+    imports: [RouterOutlet, SidenavComponent, TopbarComponent, FooterComponent, LicenseBannerComponent],
     templateUrl: './vertical-layout.component.html',
     styles: ``
 })

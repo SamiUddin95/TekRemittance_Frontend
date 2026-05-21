@@ -1,10 +1,11 @@
 import { credits, currentYear } from '@/app/constants';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '@core/services/auth.service';
 import { PopupService } from '@core/services/popup.service';
+import { LicenseService } from '../../../services/license.service';
 import Swal from 'sweetalert2';
 import { finalize } from 'rxjs';
 
@@ -16,18 +17,47 @@ import { finalize } from 'rxjs';
     templateUrl: './sign-in.component.html',
     styles: ``,
 })
-export class SignInComponent {
+export class SignInComponent implements OnInit {
     currentYear = currentYear
     credits = credits
 
     form!: FormGroup;
     isSubmitting = false;
+    showUpdateLicenseBtn = false;
+    licenseMessage = '';
 
-    constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private popup: PopupService) {
+    constructor(
+        private fb: FormBuilder,
+        private auth: AuthService,
+        private router: Router,
+        private popup: PopupService,
+        private licenseService: LicenseService
+    ) {
         this.form = this.fb.nonNullable.group({
             username: ['', [Validators.required]],
             password: ['', [Validators.required]]
         });
+    }
+
+    ngOnInit(): void {
+        this.licenseService.getLicenseStatus().subscribe({
+            next: (res) => {
+                const status = res?.data;
+                if (status) {
+                    if (status.isExpired) {
+                        this.router.navigate(['/update-license']);
+                    } else if (status.daysRemaining <= LicenseService.WARNING_THRESHOLD_DAYS) {
+                        this.showUpdateLicenseBtn = true;
+                        this.licenseMessage = this.licenseService.buildWarningMessage(status);
+                    }
+                }
+            },
+            error: () => {}
+        });
+    }
+
+    openUpdateLicense(): void {
+        this.router.navigate(['/update-license']);
     }
 
     signIn(){
@@ -39,6 +69,16 @@ export class SignInComponent {
             .subscribe({
                 next: (res) => {
                     if (res?.statusCode === 200 && res?.data) {
+                        this.licenseService.getLicenseStatus().subscribe({
+                            next: (licenseRes) => {
+                                const status = licenseRes?.data;
+                                if (status && this.licenseService.shouldShowWarning(status)) {
+                                    this.showUpdateLicenseBtn = true;
+                                    this.licenseMessage = this.licenseService.buildWarningMessage(status);
+                                }
+                            },
+                            error: () => {}
+                        });
                         this.popup.success('Login successful', 'You have successfully logged in.')
                         this.router.navigate(['/dashboard']);
                     }

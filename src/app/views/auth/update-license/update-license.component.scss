@@ -1,0 +1,24 @@
+.update-license-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 2rem 1rem;
+}
+
+.icon-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(234, 88, 12, 0.25);
+}
+
+.license-textarea {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  resize: vertical;
+  min-height: 140px;
+}

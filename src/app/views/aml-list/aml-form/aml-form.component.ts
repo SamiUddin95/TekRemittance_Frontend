@@ -42,7 +42,7 @@ export class AmlFormComponent implements OnInit {
     this.amlForm = this.fb.group({
       cnic: ['', [Validators.required, Validators.pattern('^[0-9]{13}$')]],
       accountName: ['', [Validators.required]],
-      address: ['', [Validators.required]]
+      address: ['']
     });
   }
 

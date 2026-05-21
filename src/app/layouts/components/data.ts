@@ -31,6 +31,7 @@ const menuItemsWithPermissions = [
             {icon: 'tablerCoin', label: 'Daily Settlement Report', url: '/daily-settlement-report', permission: 'Reports.DailySettlement'},
             {icon: 'tablerListDetails', label: 'Remittance Transaction Detail Report', url: '/remittance-transaction-detail-report', permission: 'Reports.RemittanceTransactionDetail'},
             {icon: 'tablerChartPie', label: 'Transaction Mode Analysis Report', url: '/transaction-mode-analysis-report', permission: 'Reports.TransactionModeAnalysis'},
+            {icon: 'tablerActivity', label: 'Remittance Status Tracking Report', url: '/remittance-status-tracking-report', permission: 'Reports.RemittanceStatusTracking'},
         ]
     },
     {
@@ -112,6 +113,7 @@ const horizontalMenuItemsWithPermissions = [
             {icon: 'tablerCoin', label: 'Daily Settlement Report', url: '/daily-settlement-report', permission: 'Reports.DailySettlement'},
             {icon: 'tablerListDetails', label: 'Remittance Transaction Detail Report', url: '/remittance-transaction-detail-report', permission: 'Reports.RemittanceTransactionDetail'},
             {icon: 'tablerChartPie', label: 'Transaction Mode Analysis Report', url: '/transaction-mode-analysis-report', permission: 'Reports.TransactionModeAnalysis'},
+            {icon: 'tablerActivity', label: 'Remittance Status Tracking Report', url: '/remittance-status-tracking-report', permission: 'Reports.RemittanceStatusTracking'},
         ]
     },
     {
@@ -235,6 +237,7 @@ export const menuItems: MenuItemType[] = [
             {icon: 'tablerCoin', label: 'Daily Settlement Report', url: '/daily-settlement-report'},
             {icon: 'tablerListDetails', label: 'Remittance Transaction Detail Report', url: '/remittance-transaction-detail-report'},
             {icon: 'tablerChartPie', label: 'Transaction Mode Analysis Report', url: '/transaction-mode-analysis-report'},
+            {icon: 'tablerActivity', label: 'Remittance Status Tracking Report', url: '/remittance-status-tracking-report'},
         ]
     },
     {
