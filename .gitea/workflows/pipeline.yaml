@@ -1,0 +1,106 @@
+name: TekRemittance Frontend CI/CD
+
+on:
+  push:
+    branches:
+      - deploy
+
+jobs:
+  build-and-deploy:
+    runs-on: windows
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps --no-audit --prefer-offline
+
+      - name: Build Angular app
+        run: npm run build -- --configuration production
+
+      - name: Stop IIS site & Wait for Locks to Clear
+        run: |
+          $ErrorActionPreference = "Stop"
+          Import-Module WebAdministration
+          Write-Host "Stopping IIS Site..."
+          Stop-Website -Name "TekRemit-fe-cicd" -ErrorAction SilentlyContinue
+          Write-Host "Waiting 5 seconds for IIS worker process to release files..."
+          Start-Sleep -Seconds 5
+
+      - name: Clear old build files
+        run: |
+          $ErrorActionPreference = "Stop"
+          Get-ChildItem -Path "D:\WebApps\TekRemit-fe-cicd" `
+            -Exclude "web.config" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+
+      - name: Copy new build to IIS
+        run: |
+          $ErrorActionPreference = "Stop"
+          $distPath = "dist/inspinia-ng/browser"
+          $distPathAlt = "dist/inspinia-ng"
+
+          if (Test-Path $distPath) {
+            Copy-Item -Path "$distPath\*" -Destination "D:\WebApps\TekRemit-fe-cicd\" -Recurse -Force
+            Write-Host "Build files copied from $distPath"
+          } elseif (Test-Path $distPathAlt) {
+            Copy-Item -Path "$distPathAlt\*" -Destination "D:\WebApps\TekRemit-fe-cicd\" -Recurse -Force
+            Write-Host "Build files copied from $distPathAlt"
+          } else {
+            Write-Error "Build output not found at $distPath or $distPathAlt"
+            exit 1
+          }
+
+      - name: Start IIS site
+        run: |
+          $ErrorActionPreference = "Stop"
+          Import-Module WebAdministration
+          Start-Website -Name "TekRemit-fe-cicd"
+          Start-Sleep -Seconds 3
+          $state = (Get-Website -Name "TekRemit-fe-cicd").State
+          if ($state -ne "Started") {
+            Write-Error "IIS site failed to start. State: $state"
+            exit 1
+          }
+          Write-Host "IIS site started successfully. State: $state"
+
+  notify-success:
+    runs-on: windows
+    needs: build-and-deploy
+    if: success()
+    steps:
+      - name: Send success email
+        uses: https://github.com/dawidd6/action-send-mail@v3
+        with:
+          server_address: mail.teknoloje.com
+          server_port: 587
+          secure: false
+          ignore_cert: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          to: teknoloje@teknoloje.com,syed.sami@teknoloje.com
+          from: "Gitea CI/CD <teknoloje@teknoloje.com>"
+          subject: "Deployed: TekRemittance Frontend"
+          body: |
+            TekRemittance Frontend deployed successfully to http://10.0.0.1:8096.
+            Commit: ${{ github.event.head_commit.message }}
+
+  notify-failure:
+    runs-on: windows
+    needs: build-and-deploy
+    if: failure()
+    steps:
+      - name: Send failure email
+        uses: https://github.com/dawidd6/action-send-mail@v3
+        with:
+          server_address: mail.teknoloje.com
+          server_port: 587
+          secure: false
+          ignore_cert: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          to: teknoloje@teknoloje.com,syed.sami@teknoloje.com
+          from: "Gitea CI/CD <teknoloje@teknoloje.com>"
+          subject: "FAILED: TekRemittance Frontend"
+          body: |
+            TekRemittance Frontend pipeline failed on the deploy branch.
+            Commit: ${{ github.event.head_commit.message }}
