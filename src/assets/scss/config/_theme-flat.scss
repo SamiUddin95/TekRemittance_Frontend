@@ -100,7 +100,7 @@ $theme-flat-colors: (
 
         // Image Menu
         &[data-menu-color="image"] {
-            --#{$prefix}sidenav-bg:                       #{linear-gradient(to bottom right, rgba(16,16,30,0.85), #183c52), url('../../images/sidenav-bg.jpg') center/cover no-repeat};
+            --#{$prefix}sidenav-bg:                       #{linear-gradient(to bottom right, rgba(16,16,30,0.85), #183c52), center/cover no-repeat};
             --#{$prefix}sidenav-border-color:             null;
             --#{$prefix}sidenav-item-color:             #799cb7;
             --#{$prefix}sidenav-item-hover-color:       #bccee4;

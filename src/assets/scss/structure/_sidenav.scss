@@ -174,7 +174,7 @@
     padding: 15px;
     display: none;
     color: $sidenav-item-color;
-    background: url(../../images/user-bg-pattern.svg);
+    // background: url(../../images/user-bg-pattern.svg);
     background-size: cover !important;
     margin: 0 10px 5px;
     border-radius: 5px;
@@ -185,9 +185,9 @@
         color: $sidenav-item-active-color;
     }
 
-    html[data-menu-color="dark"] & {
-        background: url(../../images/user-bg-pattern.png);
-    }
+    // html[data-menu-color="dark"] & {
+    //     background: url(../../images/user-bg-pattern.png);
+    // }
 }
 
 html[data-sidenav-user="true"] {

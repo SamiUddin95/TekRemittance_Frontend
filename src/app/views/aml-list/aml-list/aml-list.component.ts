@@ -8,6 +8,7 @@ import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loade
 import { Router } from '@angular/router';
 import { AmlService } from '../services/aml.service';
 import { Aml, AmlFilter } from '../models/aml.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-aml-list',
@@ -79,22 +80,46 @@ export class AmlListComponent implements OnInit {
   }
 
   deleteAml(aml: Aml): void {
-    if (confirm(`Are you sure you want to delete AML record for ${aml.accountName}?`)) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to delete AML record for ${aml.accountName}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
       this.isLoading = true;
       this.amlService.deleteAml(aml.id).subscribe({
         next: (response) => {
-          if (response.status === 'success') {
-            console.log('AML deleted successfully');
-            this.loadAmlList(); // Reload the list
-          }
           this.isLoading = false;
+          if ((response?.status || '').toLowerCase() === 'success') {
+            Swal.fire({
+              icon: 'success',
+              title: 'Deleted',
+              text: response?.data || 'Data deleted successfully'
+            });
+            this.loadAmlList();
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Failed',
+              text: response?.errorMessage || 'Failed to delete AML record.'
+            });
+          }
         },
         error: (error) => {
-          console.error('Error deleting AML:', error);
           this.isLoading = false;
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error?.error?.errorMessage || 'API call failed. Please try again.'
+          });
+          console.error('Error deleting AML:', error);
         }
       });
-    }
+    });
   }
 
   searchAml(): void {

@@ -1,1 +1,160 @@
-/* Component specific styles can be added here if needed */
+.dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+}
+
+.dashboard-content {
+  padding: 1.5rem;
+}
+
+/* Filter Section */
+.filter-section {
+  margin-bottom: 1.5rem;
+}
+
+.filter-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  transition: box-shadow 0.3s ease;
+}
+
+.filter-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.filter-card .card-body {
+  padding: 1.25rem;
+}
+
+.filter-section .form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.filter-section .form-label ng-icon {
+  color: #6366f1;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+.filter-section .form-label span {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.filter-section .form-select {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  color: #374151;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.filter-section .form-select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  outline: none;
+}
+
+/* Tab Navigation */
+.tab-navigation {
+  margin-bottom: 1.5rem;
+}
+
+.tab-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.custom-tabs {
+  border: none;
+  background: transparent;
+  padding: 0.5rem;
+  gap: 0.5rem;
+}
+
+.custom-tabs .nav-item {
+  margin-bottom: 0;
+}
+
+.custom-tabs .nav-link {
+  border: none;
+  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  background-color: transparent;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  flex-wrap: nowrap;
+}
+
+.custom-tabs .nav-link:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.custom-tabs .nav-link.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.custom-tabs .nav-link ::ng-deep ng-icon {
+  color: inherit;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.custom-tabs .nav-link ::ng-deep ng-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.custom-tabs .nav-link span {
+  flex-shrink: 0;
+}
+
+/* Widgets Container */
+.widgets-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 1rem;
+  }
+
+  .filter-section,
+  .tab-navigation {
+    margin-bottom: 1rem;
+  }
+
+  .filter-card .card-body {
+    padding: 1rem;
+  }
+
+  .custom-tabs .nav-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+

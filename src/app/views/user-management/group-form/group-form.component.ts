@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import {
     FormBuilder,
     FormGroup,
+    FormsModule,
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
@@ -12,17 +13,21 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { PageTitleComponent } from '@app/components/page-title.component';
 import { NgIcon } from '@ng-icons/core';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { horizontalMenuItems } from '../../../layouts/components/data';
+import { getHorizontalMenuItems } from '../../../layouts/components/data';
 import { UserService } from '../services/user.service';
 import Swal from 'sweetalert2';
 import { User } from '../models/user.model';
 import { Group } from './../models/group.model';
 import { debug } from 'console';
+import { PermissionService } from '@/app/shared/services/permission.service';
 
 interface SecurityPermission {
-    code: string;
+    id: string;
     name: string;
     description?: string;
+    category?: string;
+    module?: string;
+    isActive?: boolean;
     selected?: boolean;
 }
 
@@ -44,9 +49,11 @@ interface ModulePermissionRow {
         PageTitleComponent,
         NgIcon,
         ReactiveFormsModule,
+        FormsModule,
         NgbNavModule,
     ],
     templateUrl: './group-form.component.html',
+    styleUrls: ['./group-form.component.css'],
 })
 export class GroupFormComponent implements OnInit {
     Groupform!: FormGroup;
@@ -73,33 +80,10 @@ export class GroupFormComponent implements OnInit {
     totalRecord: number = 0;
     isUsersTabDisabled = true;
     isPermissionsTabDisabled = true;
-    permissions: SecurityPermission[] = [
-        {
-            code: 'VIEW_DASHBOARD',
-            name: 'View Dashboard',
-            description: 'Access to dashboard screens',
-        },
-        {
-            code: 'MANAGE_USERS',
-            name: 'Manage Users',
-            description: 'Create, edit and delete users',
-        },
-        {
-            code: 'APPROVE_USERS',
-            name: 'Approve Users',
-            description: 'Approve or reject users',
-        },
-        {
-            code: 'MANAGE_DISBURSEMENT',
-            name: 'Disbursement Management',
-            description: 'Access to disbursement queues',
-        },
-        {
-            code: 'MANAGE_PROCESSING',
-            name: 'Processing Management',
-            description: 'Access to file upload and processing',
-        },
-    ];
+    permissions: SecurityPermission[] = [];
+    groupPermissionIds: string[] = [];
+    permissionSearch: string = '';
+    permissionModuleFilter: string = '';
 
     modulePermissions: ModulePermissionRow[] = [];
 
@@ -109,7 +93,8 @@ export class GroupFormComponent implements OnInit {
         private route: ActivatedRoute,
         private userService: UserService,
         private GroupService: GroupService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private permissionService: PermissionService
     ) {}
 
     ngOnInit(): void {
@@ -121,6 +106,7 @@ export class GroupFormComponent implements OnInit {
         });
         this.buildModulePermissions();
         this.filteredUsers = this.allUsers;
+        this.loadPermissions();
 
         const stateId = history.state?.id
             ? String(history.state.id)
@@ -152,7 +138,7 @@ export class GroupFormComponent implements OnInit {
 
     private buildModulePermissions(): void {
         this.modulePermissions = [];
-        horizontalMenuItems.forEach((module: any) => {
+        getHorizontalMenuItems(this.permissionService).forEach((module: any) => {
             const hasChildren = !!module.children && module.children.length > 0;
             if (hasChildren) {
                 this.modulePermissions.push({
@@ -254,8 +240,93 @@ export class GroupFormComponent implements OnInit {
         });
     }
 
+    deleteUserFromGroup(user: User): void {
+        if (!this.editId || !user.id) {
+            Swal.fire('Error', 'Group ID or User ID missing!', 'error');
+            return;
+        }
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `Do you want to remove ${user.name} from this group?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, remove!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.isSubmitting = true;
+                this.GroupService.deleteUserFromGroup(this.editId!, user.id!).subscribe({
+                    next: () => {
+                        Swal.fire('Success', 'User removed successfully.', 'success');
+                        this.assignedUsers = this.assignedUsers.filter(u => u.id !== user.id);
+                        this.selectedUsers = this.selectedUsers.filter(u => u.id !== user.id);
+                        this.isSubmitting = false;
+                    },
+                    error: () => {
+                        Swal.fire('Error', 'Failed to remove user.', 'error');
+                        this.isSubmitting = false;
+                    }
+                });
+            }
+        });
+    }
+
     togglePermission(p: SecurityPermission): void {
         p.selected = !p.selected;
+    }
+
+    areAllPermissionsSelected(): boolean {
+        return this.permissions.length > 0 && this.permissions.every(p => p.selected);
+    }
+
+    toggleAllPermissions(): void {
+        const allSelected = this.areAllPermissionsSelected();
+        this.permissions.forEach(p => p.selected = !allSelected);
+    }
+
+    getSelectedPermissionsCount(): number {
+        return this.permissions.filter(p => p.selected).length;
+    }
+
+    getDistinctModules(): string[] {
+        const set = new Set<string>();
+        this.permissions.forEach(p => { if (p.module) set.add(p.module); });
+        return Array.from(set).sort();
+    }
+
+    getFilteredPermissions(): SecurityPermission[] {
+        const term = (this.permissionSearch || '').toLowerCase().trim();
+        const mod = (this.permissionModuleFilter || '').trim();
+        return this.permissions.filter(p => {
+            const matchesTerm = !term
+                || (p.name || '').toLowerCase().includes(term)
+                || (p.description || '').toLowerCase().includes(term)
+                || (p.module || '').toLowerCase().includes(term);
+            const matchesMod = !mod || (p.module || '') === mod;
+            return matchesTerm && matchesMod;
+        });
+    }
+
+    selectFilteredPermissions(select: boolean): void {
+        this.getFilteredPermissions().forEach(p => p.selected = select);
+    }
+
+    getModuleBadgeClass(module?: string): string {
+        if (!module) return 'tone-secondary';
+        const palette = [
+            'tone-primary',
+            'tone-success',
+            'tone-warning',
+            'tone-info',
+            'tone-danger',
+            'tone-purple',
+            'tone-pink',
+            'tone-secondary',
+        ];
+        let hash = 0;
+        for (let i = 0; i < module.length; i++) hash = (hash * 31 + module.charCodeAt(i)) | 0;
+        return palette[Math.abs(hash) % palette.length];
     }
 
     toggleModulePermission(
@@ -428,6 +499,7 @@ export class GroupFormComponent implements OnInit {
                 this.isUsersTabDisabled = false;
                 this.isPermissionsTabDisabled = false;
                 this.loadAssignedUsers(groupId);
+                this.loadGroupPermissions(groupId);
                 if (this.isEditMode) this.activeTab = 'info';
                 this.isLoading = false;
             },
@@ -471,6 +543,64 @@ export class GroupFormComponent implements OnInit {
                 console.error('Error loading assigned users:', err);
                 this.isLoading = false;
             },
+        });
+    }
+
+    loadPermissions(): void {
+        this.GroupService.getPermissions(1, 1000).subscribe({
+            next: (res) => {
+                const items = res.items || [];
+                this.permissions = items.map((p: any) => ({
+                    id: p.id,
+                    name: p.name,
+                    description: p.description,
+                    category: p.category,
+                    module: p.module,
+                    isActive: p.isActive,
+                    selected: false
+                }));
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading permissions:', err);
+            }
+        });
+    }
+
+    loadGroupPermissions(groupId: string): void {
+        this.GroupService.getGroupPermissions(groupId).subscribe({
+            next: (permissionIds: string[]) => {
+                this.groupPermissionIds = permissionIds || [];
+                this.permissions.forEach(p => {
+                    p.selected = this.groupPermissionIds.includes(p.id);
+                });
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading group permissions:', err);
+            }
+        });
+    }
+
+    savePermissions(): void {
+        if (!this.editId) {
+            Swal.fire('Error', 'Group ID missing!', 'error');
+            return;
+        }
+        const selectedPermissionIds = this.permissions
+            .filter(p => p.selected)
+            .map(p => p.id);
+        
+        this.isSubmitting = true;
+        this.GroupService.assignPermissionsToGroup(this.editId, selectedPermissionIds).subscribe({
+            next: () => {
+                Swal.fire('Success', 'Permissions updated successfully.', 'success');
+                this.isSubmitting = false;
+            },
+            error: () => {
+                Swal.fire('Error', 'Failed to update permissions.', 'error');
+                this.isSubmitting = false;
+            }
         });
     }
 

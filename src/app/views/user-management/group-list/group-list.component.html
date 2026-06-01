@@ -17,7 +17,10 @@
         </div>
 
         <div class="card-body">
-          <div class="table-responsive" *ngIf="!isLoading; else loadingTpl">
+          @if (isLoading) {
+            <app-skeleton-loader variant="table" [rows]="8" [cols]="4" ariaLabel="Loading groups"></app-skeleton-loader>
+          }
+          <div class="table-responsive" *ngIf="!isLoading">
             <table class="table table-bordered table-striped table-sm">
               <thead class="table text-center">
                 <tr>
@@ -67,9 +70,6 @@
             (pageChanged)="onGroupPageChanged($event)">
           </app-generic-pagination>
 
-          <ng-template #loadingTpl>
-            <div class="p-4 text-center text-muted">Loading...</div>
-          </ng-template>
         </div>
       </div>
     </div>

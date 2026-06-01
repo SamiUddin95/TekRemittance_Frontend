@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, inject, OnInit, TemplateRef, ViewChild, OnDestroy} from '@angular/core';
 import {MenuItemType} from '@/app/types/layout';
 import {CommonModule} from '@angular/common';
 import {NgIcon} from '@ng-icons/core';
@@ -6,18 +6,20 @@ import {NgbCollapse} from '@ng-bootstrap/ng-bootstrap';
 import {NavigationEnd, Router, RouterLink} from '@angular/router';
 import {filter} from 'rxjs';
 import {scrollToElement} from '@/app/utils/layout-utils';
-import {menuItems} from '@layouts/components/data';
+import {getMenuItems} from '@layouts/components/data';
 import {LayoutStoreService} from '@core/services/layout-store.service';
+import {PermissionService} from '@/app/shared/services/permission.service';
 
 @Component({
     selector: 'app-menu',
     imports: [NgIcon, NgbCollapse, RouterLink,CommonModule],
     templateUrl: './app-menu.component.html'
 })
-export class AppMenuComponent implements OnInit {
+export class AppMenuComponent implements OnInit, OnDestroy {
 
     router = inject(Router)
     layout = inject(LayoutStoreService)
+    permissionService = inject(PermissionService)
 
     @ViewChild('MenuItemWithChildren', {static: true})
     menuItemWithChildren!: TemplateRef<{ item: MenuItemType }>;
@@ -25,9 +27,16 @@ export class AppMenuComponent implements OnInit {
     @ViewChild('MenuItem', {static: true})
     menuItem!: TemplateRef<{ item: MenuItemType }>;
 
-    menuItems = menuItems;
+    menuItems: MenuItemType[] = [];
+    private permissionSubscription: any;
 
     ngOnInit(): void {
+        this.loadMenuItems();
+
+        this.permissionSubscription = this.permissionService.getPermissions().subscribe(() => {
+            this.loadMenuItems();
+        });
+
         this.router.events
             .pipe(filter(event => event instanceof NavigationEnd))
             .subscribe(() => {
@@ -37,6 +46,16 @@ export class AppMenuComponent implements OnInit {
 
         this.expandActivePaths(this.menuItems);
         setTimeout(() => this.scrollToActiveLink(), 100);
+    }
+
+    private loadMenuItems(): void {
+        this.menuItems = getMenuItems(this.permissionService);
+    }
+
+    ngOnDestroy(): void {
+        if (this.permissionSubscription) {
+            this.permissionSubscription.unsubscribe();
+        }
     }
 
     hasSubMenu(item: MenuItemType): boolean {

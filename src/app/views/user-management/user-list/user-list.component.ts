@@ -9,11 +9,12 @@ import Swal from 'sweetalert2';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
+import { SkeletonLoaderComponent } from '@/app/shared/skeleton/skeleton-loader.component';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, NgbCollapseModule, ReactiveFormsModule, GenericPaginationComponent],
+  imports: [CommonModule, PageTitleComponent, NgIcon, NgbCollapseModule, ReactiveFormsModule, GenericPaginationComponent, SkeletonLoaderComponent],
   templateUrl: './user-list.component.html'
 })
 export class UserListComponent implements OnInit {

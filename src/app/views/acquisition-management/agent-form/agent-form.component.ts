@@ -38,6 +38,7 @@ export class AgentFormComponent implements OnInit {
         { title: 'Basic Information', subtitle: 'Agent basics', icon: 'tablerUserPlus' },
         { title: 'Location Details', subtitle: 'Address & area', icon: 'tablerMapPin' },
         { title: 'Operational Preferences', subtitle: 'Working options', icon: 'tablerSettings' },
+        { title: 'XPIN Mapping', subtitle: 'Position & map code', icon: 'tablerKey' },
         { title: 'Acquisition Modes', subtitle: 'Acquisition channels', icon: 'tablerPlugConnected' },
         { title: 'Disbursement Modes', subtitle: 'Payout methods', icon: 'tablerCurrencyDollar' },
         { title: 'Direct Integration', subtitle: 'URLs & toggles', icon: 'tablerLink' },
@@ -48,9 +49,10 @@ export class AgentFormComponent implements OnInit {
         0: ['code', 'name'],
         1: ['countryId', 'provinceId', 'cityId'],
         2: [],
-        3: [],
+        3: [], // XPIN Mapping (optional fields)
         4: [],
         5: [],
+        6: [],
     };
 
     constructor(
@@ -136,7 +138,11 @@ export class AgentFormComponent implements OnInit {
             directIntegration: [false],
             inquiryUrl: [''],
             paymentUrl: [''],
-            unlockUrl: ['']
+            unlockUrl: [''],
+            // XPIN Mapping
+            startIndex: [0, [Validators.min(0)]],
+            length: [0, [Validators.min(0)]],
+            xPinMapCode: [0, [Validators.min(0)]]
         });
     }
 
@@ -383,8 +389,8 @@ export class AgentFormComponent implements OnInit {
             return false;
         }
         
-        // Special validation for Direct Integration step
-        if (this.currentStep === 5) {
+        // Special validation for Direct Integration step (index shifted to 6 after XPIN Mapping insertion)
+        if (this.currentStep === 6) {
             const diCtrl = this.agentForm.get('directIntegration');
             if (diCtrl?.value) {
                 const inquiryCtrl = this.agentForm.get('inquiryUrl');
@@ -423,8 +429,8 @@ export class AgentFormComponent implements OnInit {
             }
         }
         
-        // Special validation for Direct Integration step
-        if (stepIndex === 5) {
+        // Special validation for Direct Integration step (index shifted to 6 after XPIN Mapping insertion)
+        if (stepIndex === 6) {
             const diCtrl = this.agentForm.get('directIntegration');
             if (diCtrl?.value) {
                 const inquiryCtrl = this.agentForm.get('inquiryUrl');

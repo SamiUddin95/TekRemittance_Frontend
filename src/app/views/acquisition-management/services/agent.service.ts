@@ -67,6 +67,10 @@ export class AgentService {
             paymentUrl: dto.paymentUrl ?? dto.paymentURL,
             unlockUrl: dto.unlockUrl ?? dto.unlockURL,
             approvalStatus: dto.approvalStatus,
+            // XPIN Mapping fields
+            startIndex: dto.startIndex ?? 0,
+            length: dto.length ?? 0,
+            xPinMapCode: dto.xPinMapCode ?? dto.xpinMapCode ?? 0,
         } as Agent;
     }
 
@@ -186,6 +190,10 @@ export class AgentService {
             inquiryURL: agent.inquiryUrl,
             paymentURL: agent.paymentUrl,
             unlockURL: agent.unlockUrl,
+            // XPIN Mapping fields
+            startIndex: Number((agent as any).startIndex ?? 0),
+            length: Number((agent as any).length ?? 0),
+            xPinMapCode: Number((agent as any).xPinMapCode ?? 0),
             createdBy: 'admin',
             createdOn: nowIso,
             updatedBy: 'system',
@@ -237,6 +245,10 @@ export class AgentService {
             inquiryURL: agent.inquiryUrl,
             paymentURL: agent.paymentUrl,
             unlockURL: agent.unlockUrl,
+            // XPIN Mapping fields
+            startIndex: Number((agent as any).startIndex ?? 0),
+            length: Number((agent as any).length ?? 0),
+            xPinMapCode: Number((agent as any).xPinMapCode ?? 0),
         };
     }
 }

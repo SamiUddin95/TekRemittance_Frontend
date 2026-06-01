@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '@/environments/environment';
 import { Observable, finalize, tap } from 'rxjs';
+import { PermissionService } from '@/app/shared/services/permission.service';
 
 export interface LoginPayload { loginName: string; password: string; }
 export interface LoginResponse { status: string; data: { token: string; [k: string]: any }; statusCode: number; errorMessage: string | null }
@@ -13,7 +14,7 @@ export class AuthService {
   private readonly NAME_KEY = 'auth_name';
   private readonly USERID_KEY = 'auth_userid';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private permissionService: PermissionService) {}
 
   login(body: LoginPayload): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${environment.apiUrl}/Auth/login`, body).pipe(
@@ -25,6 +26,7 @@ export class AuthService {
         if (name) this.setName(name);
         const userId = data?.['userid'] || data?.['userId'] || data?.['id'];
         if (userId) this.setUserId(String(userId));
+        this.permissionService.refreshPermissions();
       })
     );
   }
@@ -36,6 +38,7 @@ export class AuthService {
           this.clearToken();
           this.clearName();
           this.clearUserId();
+          this.permissionService.refreshPermissions();
           this.router.navigate(['/sign-in']);
         })
       );
@@ -43,6 +46,7 @@ export class AuthService {
       this.clearToken();
       this.clearName();
       this.clearUserId();
+      this.permissionService.refreshPermissions();
       this.router.navigate(['/sign-in']);
       return null;
     }

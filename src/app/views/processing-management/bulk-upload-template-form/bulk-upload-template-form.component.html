@@ -1,392 +1,348 @@
 <div class="">
   <app-page-title title="Add File Upload Template"
     subTitle="Fields marked with an asterisk (*) are required."></app-page-title>
+
   <div class="row">
     <div class="col-12">
       <div class="card shadow-sm">
+        <!-- Card header -->
         <div class="card-header bg-light border-bottom">
           <div class="d-flex align-items-center">
             <ng-icon name="tablerBuildingBank" class="me-2 gradient-icon" size="20"></ng-icon>
             <h4 class="card-title mb-0 text-dark">File Template</h4>
           </div>
         </div>
+
+        <!-- Tabs -->
         <div class="px-4 pt-3">
           <ul class="nav nav-tabs">
             <li class="nav-item">
               <button class="nav-link" [class.active]="activeTab==='template'" (click)="switchTab('template')">
+                <ng-icon name="tablerFileText" size="14" class="me-1"></ng-icon>
                 File Template
               </button>
             </li>
             <li class="nav-item">
               <button class="nav-link" [class.active]="activeTab==='fields'" [class.disabled]="!templateSaved"
                 [attr.aria-disabled]="!templateSaved" (click)="switchTab('fields')">
+                <ng-icon name="tablerForms" size="14" class="me-1"></ng-icon>
                 Fields
               </button>
             </li>
           </ul>
         </div>
+
         <div class="card-body">
+          <!-- ============================ TEMPLATE TAB ============================ -->
           @if (activeTab === 'template') {
-          @if (errorMessage) {
-          <div class="alert alert-danger d-flex align-items-center" role="alert">
-            <ng-icon name="tablerAlertCircle" class="me-2" size="18"></ng-icon>
-            <div>{{ errorMessage }}</div>
-          </div>
-          }
-          <form [formGroup]="form" (ngSubmit)="save()" class="row g-4">
-            <div class="col-md-3">
-              <label class="form-label">Acquisition Agent <span class="text-danger">*</span></label>
-              <select class="form-select" formControlName="agentId" [class.is-invalid]="isFieldInvalid('agentId')">
-                <option value="">Select an agent</option>
-                <option *ngFor="let a of agents" [value]="a.id">{{ a.name }}</option>
-              </select>
-              <div class="invalid-feedback">
-                {{ getFieldError('agentId') }}
+            @if (errorMessage) {
+              <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <ng-icon name="tablerAlertCircle" class="me-2" size="18"></ng-icon>
+                <div>{{ errorMessage }}</div>
               </div>
-            </div>
+            }
 
-            <div class="col-md-3">
-              <label class="form-label">Name <span class="text-danger">*</span></label>
-              <div class="input-group">
-                <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerFileText"
-                    size="16"></ng-icon></span>
-                <input type="text" class="form-control" placeholder="Enter template name" formControlName="name"
-                  [class.is-invalid]="isFieldInvalid('name')" />
-              </div>
-              <small class="text-muted">A friendly name to identify this template.</small>
-              <div class="invalid-feedback">
-                {{ getFieldError('name') }}
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <label class="form-label">Sheet Name <span class="text-danger">*</span></label>
-              <div class="input-group">
-                <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerTable"
-                    size="16"></ng-icon></span>
-                <input type="text" class="form-control" placeholder="Enter sheet name" formControlName="sheetName"
-                  [disabled]="form.get('format')?.value === '.txt'" [class.is-invalid]="isFieldInvalid('sheetName')" />
-              </div>
-              <small class="text-muted">Required for Excel formats; disabled for .txt.</small>
-              <div class="invalid-feedback">
-                {{ getFieldError('sheetName') }}
-              </div>
-            </div>
-            <!-- <div class="col-md-3">
-                <label class="form-label">Delimiter</label>
-                <div class="input-group"
-                     [attr.aria-disabled]="!isDelimiterEnabled"
-                     [class.opacity-75]="!isDelimiterEnabled"
-                     [style.cursor]="!isDelimiterEnabled ? 'not-allowed' : null">
-                  <span class="input-group-text"><ng-icon class="me-1 gradient-icon" name="tablerSeparator" size="16"></ng-icon></span>
-                  <input type="text" class="form-control"
-                         placeholder="e.g., , (comma) or ; (semicolon)"
-                         formControlName="delimiterText"
-                         [disabled]="!isDelimiterEnabled"
-                         [readonly]="!isDelimiterEnabled"
-                         [attr.title]="!isDelimiterEnabled ? 'To enter Delimiter, you need to check Field Delimiter' : null" />
+            <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+              <!-- Row 1: Agent / Name / Sheet Name -->
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">Acquisition Agent <span class="text-danger">*</span></label>
+                  <select class="form-select" formControlName="agentId" [class.is-invalid]="isFieldInvalid('agentId')">
+                    <option value="">Select an agent</option>
+                    <option *ngFor="let a of agents" [value]="a.id">{{ a.name }}</option>
+                  </select>
+                  <div class="invalid-feedback">{{ getFieldError('agentId') }}</div>
                 </div>
-                <small class="text-muted">Enabled only when Field Delimiter is checked.</small>
-              </div> -->
 
-
-            <!-- @if (isDelimiterEnabled) {
-  <div class="col-md-3">
-    <label class="form-label">Delimiter</label>
-
-    <div class="input-group">
-      <span class="input-group-text">
-        <ng-icon class="me-1 gradient-icon" name="tablerSeparator" size="16"></ng-icon>
-      </span>
-
-      <input type="text"
-             class="form-control"
-             placeholder="e.g., , (comma) or ; (semicolon)"
-             formControlName="delimiterText" />
-    </div>
-
-    <small class="text-muted">Enabled only when Field Delimiter is checked.</small>
-  </div>
-} -->
-
-
-
-            <div class="d-flex flex-wrap align-items-center gap-3 py-2 px-3 ">
-              <div class="d-flex align-items-center me-2">
-                <label class="form-label mb-0 me-3">Format <span class="text-danger">*</span></label>
-                <div class="d-flex align-items-center gap-4">
-                  <div class="form-check mb-0">
-                    <input class="form-check-input" type="radio" id="fmtTxt" value=".txt" formControlName="format" />
-                    <label class="form-check-label" for="fmtTxt">.txt</label>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
+                  <div class="input-group has-validation">
+                    <span class="input-group-text">
+                      <ng-icon class="gradient-icon" name="tablerFileText" size="16"></ng-icon>
+                    </span>
+                    <input type="text" class="form-control" placeholder="Enter template name" formControlName="name"
+                      [class.is-invalid]="isFieldInvalid('name')" />
+                    <div class="invalid-feedback">{{ getFieldError('name') }}</div>
                   </div>
-                  <div class="form-check mb-0">
-                    <input class="form-check-input" type="radio" id="fmtXls" value=".xls" formControlName="format" />
-                    <label class="form-check-label" for="fmtXls">.xls</label>
+                  <small class="text-muted">A friendly name to identify this template.</small>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">Sheet Name <span class="text-danger">*</span></label>
+                  <div class="input-group has-validation">
+                    <span class="input-group-text">
+                      <ng-icon class="gradient-icon" name="tablerTable" size="16"></ng-icon>
+                    </span>
+                    <input type="text" class="form-control" placeholder="Enter sheet name" formControlName="sheetName"
+                      [attr.disabled]="form.get('format')?.value === '.txt' ? true : null"
+                      [class.is-invalid]="isFieldInvalid('sheetName')" />
+                    <div class="invalid-feedback">{{ getFieldError('sheetName') }}</div>
                   </div>
-                  <div class="form-check mb-0">
-                    <input class="form-check-input" type="radio" id="fmtXlsx" value=".xlsx" formControlName="format" />
-                    <label class="form-check-label" for="fmtXlsx">.xlsx</label>
+                  <small class="text-muted">Required for Excel formats; disabled for .txt.</small>
+                </div>
+              </div>
+
+              <!-- Row 2: Format selector -->
+              <div class="row g-3 mt-1">
+                <div class="col-12">
+                  <div class="p-3 rounded border bg-light-subtle">
+                    <label class="form-label fw-semibold mb-2">Format <span class="text-danger">*</span></label>
+                    <div class="d-flex flex-wrap align-items-center gap-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" id="fmtTxt" value=".txt" formControlName="format" />
+                        <label class="form-check-label" for="fmtTxt">.txt</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" id="fmtXls" value=".xls" formControlName="format" />
+                        <label class="form-check-label" for="fmtXls">.xls</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" id="fmtXlsx" value=".xlsx" formControlName="format" />
+                        <label class="form-check-label" for="fmtXlsx">.xlsx</label>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <!-- <div class="vr mx-2 d-none d-md-block" style="height:24px;"></div> -->
+              <!-- Row 3: Fix Length / Field Delimiter / Delimiter -->
+              <div class="row g-3 mt-1">
+                <div class="col-md-3">
+                  <div class="p-3 rounded border h-100 d-flex align-items-center">
+                    <div class="form-check mb-0">
+                      <input class="form-check-input" type="checkbox" id="fixLength" formControlName="fixLength" />
+                      <label class="form-check-label fw-semibold" for="fixLength">Fix Length</label>
+                    </div>
+                  </div>
+                </div>
 
-              <!-- <div class="form-check mb-0 me-2">
-                  <input class="form-check-input" type="checkbox" id="fixLength" formControlName="fixLength" />
-                  <label class="form-check-label" for="fixLength">Fix Length</label>
-                </div> -->
+                <div class="col-md-3">
+                  <div class="p-3 rounded border h-100 d-flex align-items-center">
+                    <div class="form-check mb-0">
+                      <input class="form-check-input" type="checkbox" id="fieldDelimiter" formControlName="fieldDelimiter" />
+                      <label class="form-check-label fw-semibold" for="fieldDelimiter">Field Delimiter</label>
+                    </div>
+                  </div>
+                </div>
 
-              <!-- <div class="vr mx-2 d-none d-md-block" style="height:24px;"></div> -->
+                @if (isDelimiterEnabled) {
+                  <div class="col-md-3">
+                    <label class="form-label fw-semibold">Delimiter</label>
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <ng-icon class="gradient-icon" name="tablerSeparator" size="16"></ng-icon>
+                      </span>
+                      <input type="text" class="form-control" placeholder="e.g., , (comma) or ; (semicolon)"
+                        formControlName="delimiterText" />
+                    </div>
+                    <small class="text-muted">Enabled only when Field Delimiter is checked.</small>
+                  </div>
+                }
+              </div>
 
-              <!-- <div class="form-check mb-0">
-                  <input class="form-check-input" type="checkbox" id="fieldDelimiter" formControlName="fieldDelimiter" />
-                  <label class="form-check-label" for="fieldDelimiter">Field Delimiter</label>
-                </div> -->
-
-
-
-              <div class="col-6 d-flex justify-content-end gap-2">
+              <!-- Action buttons -->
+              <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
                 <button type="button" class="btn btn-dark" (click)="onCancel()" [disabled]="isSubmitting">
                   <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
                   Back to List
                 </button>
-                <button type="submit" class="btn submit-button">
+                <button type="submit" class="btn submit-button" [disabled]="isSubmitting">
                   @if (isSubmitting) {
-                  <span class="spinner-border  spinner-border-sm me-1" role="status"></span>
-                  Saving...
+                    <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                    Saving...
                   } @else {
-                  <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
-                  Save
+                    <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                    Save
                   }
                 </button>
               </div>
+            </form>
+          }
 
-            </div>
-            <div class="row px-3 py-2 align-items-center">
-
-              <div class="col-md-2">
-
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="fixLength" formControlName="fixLength" />
-                  <label class="form-check-label" for="fixLength">Fix Length</label>
-                </div>
+          <!-- ============================ FIELDS TAB ============================ -->
+          @else {
+            <!-- Header bar with Add button -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h6 class="mb-0 fw-semibold text-dark">
+                  <ng-icon name="tablerListDetails" size="18" class="me-1 gradient-icon"></ng-icon>
+                  Configured Fields
+                </h6>
+                <small class="text-muted">Define each column's order, type, and rules.</small>
               </div>
-
-              <div class="col-md-2">
-                <div class="form-check">
-                   <input class="form-check-input" type="checkbox" id="fieldDelimiter" formControlName="fieldDelimiter" />
-                  <label class="form-check-label" for="fieldDelimiter">Field Delimiter</label>
-                </div>
-              </div>
-              @if (isDelimiterEnabled) {
-              <div class="col-md-3">
-                <label class="form-label">Delimiter</label>
-
-                <div class="input-group">
-                  <span class="input-group-text">
-                    <ng-icon class="me-1 gradient-icon" name="tablerSeparator" size="16"></ng-icon>
-                  </span>
-
-                  <input type="text" class="form-control" placeholder="e.g., , (comma) or ; (semicolon)"
-                    formControlName="delimiterText" />
-                </div>
-
-                <small class="text-muted">Enabled only when Field Delimiter is checked.</small>
-              </div>
-              }
-
-            </div>
-
-
-            <!-- <div class="col-3"> -->
-            <!-- <div class="row g-3 align-items-center"> -->
-
-            <!-- </div> -->
-            <!-- </div> -->
-
-
-
-            <!-- <div class="col-12 d-flex justify-content-end gap-2 mt-1"> -->
-            <!-- <div class="d-flex justify-content-end gap-2">
-                  <button type="button" class="btn btn-dark" (click)="onCancel()" [disabled]="isSubmitting">
-                    <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
-                    Cancel
-                  </button>
-                  <button type="submit" class="btn submit-button">
-                    @if (isSubmitting) {
-                      <span class="spinner-border  spinner-border-sm me-1" role="status"></span>
-                      Saving...
-                    } @else {
-                      <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
-                      Save
-                    }
-                  </button>
-                </div> -->
-            <!-- </div> -->
-          </form>
-          } @else {
-          <div class="row g-4">
-            <div class="d-flex justify-content-between align-items-center">
-              <button type="button" class="btn btn-light" (click)="toggleAddField()">
-                {{ showAddFieldForm ? 'Cancel' : 'Add' }}
+              <button type="button"
+                [class]="showAddFieldForm ? 'btn btn-outline-secondary' : 'btn submit-button'"
+                (click)="toggleAddField()">
+                @if (showAddFieldForm) {
+                  <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                  Cancel
+                } @else {
+                  <ng-icon name="tablerPlus" size="16" class="me-1"></ng-icon>
+                  Add Field
+                }
               </button>
             </div>
+
+            <!-- Add/Edit field form -->
             @if (showAddFieldForm) {
-            <div class="card shadow-sm mt-2">
-              <div class="card-header bg-light text-white">
-                <div class="d-flex align-items-center">
-                  <ng-icon name="tablerForms" class="me-2 gradient-icon" size="20"></ng-icon>
-                  <h6 class="card-title mb-0 text-dark">Add New Field</h6>
+              <div class="card border shadow-sm mb-3">
+                <div class="card-header bg-light">
+                  <div class="d-flex align-items-center">
+                    <ng-icon name="tablerForms" class="me-2 gradient-icon" size="18"></ng-icon>
+                    <h6 class="card-title mb-0 text-dark">
+                      {{ editingFieldId ? 'Edit Field' : 'Add New Field' }}
+                    </h6>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <form [formGroup]="fieldForm" (ngSubmit)="saveField()" class="row g-3" novalidate>
+                    <!-- Template Name (read-only) -->
+                    <div class="col-md-4">
+                      <label class="form-label fw-semibold">Template Name</label>
+                      <input type="text" class="form-control" [value]="form.get('name')?.value" readonly />
+                      <input type="hidden" formControlName="fieldTemplateName" />
+                    </div>
+
+                    <!-- Field Order (when not Fix Length) -->
+                    @if (!isFixLength) {
+                      <div class="col-md-2">
+                        <label class="form-label fw-semibold">Field Order <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" placeholder="e.g., 1"
+                          formControlName="fieldOrder"
+                          [class.is-invalid]="isFieldFormInvalid('fieldOrder')" />
+                        <div class="invalid-feedback">{{ getFieldFormError('fieldOrder') }}</div>
+                      </div>
+                    }
+
+                    <!-- Start Point + Length (when Fix Length) -->
+                    @if (isFixLength) {
+                      <div class="col-md-2">
+                        <label class="form-label fw-semibold">Start Point <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" placeholder="e.g., 1"
+                          formControlName="startIndex"
+                          [class.is-invalid]="isFieldFormInvalid('startIndex')" />
+                        <div class="invalid-feedback">{{ getFieldFormError('startIndex') }}</div>
+                      </div>
+                      <div class="col-md-2">
+                        <label class="form-label fw-semibold">Length <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" placeholder="e.g., 10"
+                          formControlName="length"
+                          [class.is-invalid]="isFieldFormInvalid('length')" />
+                        <div class="invalid-feedback">{{ getFieldFormError('length') }}</div>
+                      </div>
+                    }
+
+                    <!-- Field Name -->
+                    <div class="col-md-3">
+                      <label class="form-label fw-semibold">Field Name <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" placeholder="e.g., Pr1_PrincipalBankCode"
+                        formControlName="fieldName"
+                        [class.is-invalid]="isFieldFormInvalid('fieldName')" />
+                      <div class="invalid-feedback">{{ getFieldFormError('fieldName') }}</div>
+                    </div>
+
+                    <!-- Field Type -->
+                    <div class="col-md-3">
+                      <label class="form-label fw-semibold">Field Type <span class="text-danger">*</span></label>
+                      <select class="form-select" formControlName="fieldType"
+                        [class.is-invalid]="isFieldFormInvalid('fieldType')">
+                        <option value="">Select a type</option>
+                        <option value="TextBox">String</option>
+                        <option value="Number">Number</option>
+                        <option value="Date">Date</option>
+                        <option value="Decimal">Decimal</option>
+                      </select>
+                      <div class="invalid-feedback">{{ getFieldFormError('fieldType') }}</div>
+                    </div>
+
+                    <!-- Field Length (only for TextBox / String type, when not Fix Length) -->
+                    @if (fieldForm.get('fieldType')?.value === 'TextBox' && !isFixLength) {
+                      <div class="col-md-2">
+                        <label class="form-label fw-semibold">Field Length <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" placeholder="e.g., 50"
+                          formControlName="length" min="1"
+                          [class.is-invalid]="isFieldFormInvalid('length')" />
+                        <div class="invalid-feedback">{{ getFieldFormError('length') }}</div>
+                      </div>
+                    }
+
+                    <!-- Toggles -->
+                    <div class="col-12">
+                      <div class="d-flex flex-wrap gap-4 p-3 rounded border bg-light-subtle">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="fldRequired" formControlName="required" />
+                          <label class="form-check-label fw-semibold" for="fldRequired">Required</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="fldEnable" formControlName="enable" />
+                          <label class="form-check-label fw-semibold" for="fldEnable">Enable</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+                      <button type="button" class="btn btn-outline-secondary" (click)="toggleAddField()">
+                        <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                        Cancel
+                      </button>
+                      <button type="submit" class="btn submit-button">
+                        <ng-icon name="tablerDeviceFloppy" size="16" class="me-1"></ng-icon>
+                        {{ editingFieldId ? 'Update' : 'Save' }}
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
-              <div class="card-body">
-                <form [formGroup]="fieldForm" (ngSubmit)="saveField()" class="row g-3">
-                  <div class="col-md-4">
-                    <label class="form-label">Template Name</label>
-                    <input type="text" class="form-control" [value]="form.get('name')?.value" readonly>
-                    <input type="hidden" formControlName="fieldTemplateName" [class.is-invalid]="isFieldFormInvalid('fieldTemplateName')"  [value]="form.get('name')?.value">
-                <div class="invalid-feedback">
-  {{ getFieldFormError('fieldTemplateName') }}
-</div>
-                  </div>
-                  <!-- @if (!isFixLength) {
-                  <div class="col-md-2">
-                    <label class="form-label">Field Order <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" placeholder="e.g., 1" formControlName="fieldOrder"  [class.is-invalid]="isFieldFormInvalid('fieldOrder')" />
-                  </div>
-                  <div class="invalid-feedback">
-  {{ getFieldFormError('fieldOrder') }}
-</div> -->@if (!isFixLength) {
-  <div class="col-md-2">
-    <div class="form-group">
-      <label class="form-label fw-semibold">
-        Field Order <span class="text-danger">*</span>
-      </label>
-
-      <input type="number"
-             class="form-control"
-             placeholder="e.g., 1"
-             formControlName="fieldOrder"
-             [class.is-invalid]="isFieldFormInvalid('fieldOrder')" />
-
-      @if (getFieldFormError('fieldOrder')) {
-        <div class="invalid-feedback">
-          <i class="fas fa-exclamation-circle me-1"></i>
-          {{ getFieldFormError('fieldOrder') }}
-        </div>
-      }
-    </div>
-  </div>
-
-
-                  }
-                  @if (isFixLength) {
-                  <div class="col-md-2">
-                    <label class="form-label">Start Point <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" placeholder="e.g., 1" formControlName="startIndex"  [class.is-invalid]="isFieldFormInvalid('startIndex')" />
-                  </div>
-                  <div class="invalid-feedback">
-  {{ getFieldFormError('startIndex') }}
-    @if (getFieldFormError('startIndex')) {
-        <div class="invalid-feedback">
-          <i class="fas fa-exclamation-circle me-1"></i>
-          {{ getFieldFormError('startIndex') }}
-        </div>
-      }
-</div>
-
-                  <div class="col-md-2">
-                    <label class="form-label">Length<span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" placeholder="e.g., 10" formControlName="length"  [class.is-invalid]="isFieldFormInvalid('length')"  />
-                  </div>
-                  <div class="invalid-feedback">
-  {{ getFieldFormError('length') }}
-</div>
-                  }
-
-                  <div class="col-md-3">
-                    <label class="form-label">Field Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" placeholder="e.g., Pr1_PrincipalBankCode"
-                      formControlName="fieldName"  [class.is-invalid]="isFieldFormInvalid('fieldName')"/>
-                  </div>
-                  <div class="invalid-feedback">
-  {{ getFieldFormError('fieldName') }}
-</div>
-                  <div class="col-md-3">
-                    <label class="form-label">Field Type <span class="text-danger">*</span></label>
-                    <select class="form-select" formControlName="fieldType"[class.is-invalid]="isFieldFormInvalid('fieldType')">
-                      <option value="">Select a type</option>
-                      <option value="TextBox">String</option>
-                      <option value="Number">Number</option>
-                      <option value="Date">Date</option>
-                      <option value="Decimal">Decimal</option>
-                    </select>
-                  </div>
-                  <div class="invalid-feedback">
-  {{ getFieldFormError('fieldType') }}
-</div>
-                  @if (fieldForm.get('fieldType')?.value === 'TextBox') {
-                  <div class="col-md-2">
-                    <label class="form-label">Field Length <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" placeholder="e.g., 50" formControlName="length" min="1" />
-                  </div>
-                  }
-                  <div class="col-12 d-flex gap-4">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="fldRequired" formControlName="required" />
-                      <label class="form-check-label" for="fldRequired">Required</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="fldEnable" formControlName="enable" />
-                      <label class="form-check-label" for="fldEnable">Enable</label>
-                    </div>
-                  </div>
-                  <div class="col-12 d-flex justify-content-end gap-2 mt-1">
-                    <button type="button" class="btn btn-dark" (click)="toggleAddField()">Cancel</button>
-                    <button type="submit" class="btn submit-button">Save</button>
-                  </div>
-                </form>
-              </div>
-            </div>
             }
 
+            <!-- Fields table -->
             <div class="table-responsive">
-              <table class="table table-bordered table-striped table-sm">
-                <thead class="table text-center">
+              <table class="table table-bordered table-striped table-sm align-middle">
+                <thead class="table-light text-center">
                   <tr>
-                    <th class="fw-bold">Field Order</th>
-                    <th class="fw-bold">Field Name</th>
-                    <th class="fw-bold">Field Type</th>
-                    <th class="fw-bold">Required</th>
-                    <th class="fw-bold">Enable</th>
-                    <th class="text-center fw-bold">Actions</th>
+                    <th class="fw-bold text-nowrap">Field Order</th>
+                    <th class="fw-bold text-nowrap">Field Name</th>
+                    <th class="fw-bold text-nowrap">Field Type</th>
+                    <th class="fw-bold text-nowrap">Required</th>
+                    <th class="fw-bold text-nowrap">Enable</th>
+                    <th class="fw-bold text-center">Actions</th>
                   </tr>
                 </thead>
-                <tbody class="table-group-divider text-center">
+                <tbody class="text-center">
                   @for (f of fields; track f.fieldName) {
-                  <tr>
-                    <td>{{ f.order }}</td>
-                    <td>{{ f.fieldName }}</td>
-                    <td>{{ f.fieldType }}</td>
-                    <td><input class="form-check-input" type="checkbox" [checked]="f.required" disabled /></td>
-                    <td><input class="form-check-input" type="checkbox" [checked]="f.enable" disabled /></td>
-                    <td class="text-center">
-                      <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm btn-outline-primary" title="Edit"
-                          (click)="onEditField(f)"><ng-icon name="tablerEdit" size="16"></ng-icon></button>
-                        <button type="button" class="btn btn-sm btn-outline-danger" title="Delete"
-                          (click)="onDeleteField(f)"><ng-icon name="tablerTrash" size="16"></ng-icon></button>
-                      </div>
-                    </td>
-                  </tr>
+                    <tr>
+                      <td>{{ f.order }}</td>
+                      <td class="text-start">{{ f.fieldName }}</td>
+                      <td>{{ f.fieldType }}</td>
+                      <td><input class="form-check-input" type="checkbox" [checked]="f.required" disabled /></td>
+                      <td><input class="form-check-input" type="checkbox" [checked]="f.enable" disabled /></td>
+                      <td class="text-center">
+                        <div class="btn-group" role="group">
+                          <button type="button" class="btn btn-sm btn-outline-primary" title="Edit"
+                            (click)="onEditField(f)">
+                            <ng-icon name="tablerEdit" size="16"></ng-icon>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-outline-danger" title="Delete"
+                            (click)="onDeleteField(f)">
+                            <ng-icon name="tablerTrash" size="16"></ng-icon>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="6" class="text-center py-4">
+                        <div class="text-muted">
+                          <ng-icon name="tablerInbox" size="36" class="mb-2 d-block mx-auto"></ng-icon>
+                          <p class="mb-0">No fields configured yet. Click <strong>Add Field</strong> to get started.</p>
+                        </div>
+                      </td>
+                    </tr>
                   }
                 </tbody>
               </table>
             </div>
-
-
-          </div>
           }
         </div>
       </div>

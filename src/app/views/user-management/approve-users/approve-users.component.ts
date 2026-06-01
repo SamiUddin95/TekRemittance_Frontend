@@ -8,11 +8,12 @@ import { User } from '../models/user.model';
 import { UserService } from '../services/user.service';
 import Swal from 'sweetalert2';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
+import { SkeletonLoaderComponent } from '@/app/shared/skeleton/skeleton-loader.component';
 
 @Component({
   selector: 'app-approve-users',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, NgbCollapseModule, ReactiveFormsModule, GenericPaginationComponent],
+  imports: [CommonModule, PageTitleComponent, NgIcon, NgbCollapseModule, ReactiveFormsModule, GenericPaginationComponent, SkeletonLoaderComponent],
   templateUrl: './approve-users.component.html'
 })
 export class ApproveUsersComponent implements OnInit {

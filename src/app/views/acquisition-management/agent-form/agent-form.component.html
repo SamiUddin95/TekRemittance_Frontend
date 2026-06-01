@@ -137,17 +137,6 @@
                             </div> }
                           </div>
                         </div>
-                        <div class="form-group">
-                            <label for="name" class="form-label fw-semibold">
-                              <ng-icon name="tablerUser" class="me-1 gradient-icon" size="16"></ng-icon>
-                              XPIN map code <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" id="name" class="form-control form-control"
-                              [class.is-invalid]="isFieldInvalid('name')" formControlName="name"
-                              placeholder="Enter agent name" maxlength="100">
-                            @if (isFieldInvalid('name')) { <div class="invalid-feedback">{{ getFieldError('name') }}
-                            </div> }
-                          </div>
                       </div>
                       <div class="wizard-actions d-flex justify-content-between mt-3">
                         <span></span>
@@ -274,12 +263,71 @@
                           </div>
                         </div>
                       </div>
+
                       <div class="wizard-actions d-flex justify-content-between mt-3">
                         <button type="button" class="btn btn-dark" (click)="previousStep()">← Back</button>
                         <button type="button" class="btn submit-button" (click)="nextStep()">Next</button>
                       </div>
                       }
                       @case (3) {
+                      <div class="step-header">
+                        <div class="d-flex align-items-center">
+                          <div>
+                            <h4 class="mb-0">XPIN Mapping</h4>
+                            <small class="text-muted">Configure the position and code mapping for XPIN extraction.</small>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="d-flex flex-wrap justify-content-start align-items-end gap-5 mt-3">
+                        <div class="d-flex flex-column" style="min-width: 220px;">
+                          <label class="form-label fw-semibold d-flex align-items-center mb-2">
+                            <ng-icon name="tablerArrowBarToRight" class="me-1 gradient-icon" size="16"></ng-icon>
+                            <span>Start Index</span>
+                          </label>
+                          <div class="input-group">
+                            <input type="number" class="form-control"
+                              [class.is-invalid]="isFieldInvalid('startIndex')" formControlName="startIndex"
+                              placeholder="e.g., 0" min="0" />
+                          </div>
+                          @if (isFieldInvalid('startIndex')) {
+                            <small class="text-danger mt-1">{{ getFieldError('startIndex') }}</small>
+                          }
+                        </div>
+                        <div class="d-flex flex-column" style="min-width: 220px;">
+                          <label class="form-label fw-semibold d-flex align-items-center mb-2">
+                            <ng-icon name="tablerRuler" class="me-1 gradient-icon" size="16"></ng-icon>
+                            <span>Length</span>
+                          </label>
+                          <div class="input-group">
+                            <input type="number" class="form-control"
+                              [class.is-invalid]="isFieldInvalid('length')" formControlName="length"
+                              placeholder="e.g., 0" min="0" />
+                          </div>
+                          @if (isFieldInvalid('length')) {
+                            <small class="text-danger mt-1">{{ getFieldError('length') }}</small>
+                          }
+                        </div>
+                        <div class="d-flex flex-column" style="min-width: 220px;">
+                          <label class="form-label fw-semibold d-flex align-items-center mb-2">
+                            <ng-icon name="tablerHash" class="me-1 gradient-icon" size="16"></ng-icon>
+                            <span>XPIN Map Code</span>
+                          </label>
+                          <div class="input-group">
+                            <input type="number" class="form-control"
+                              [class.is-invalid]="isFieldInvalid('xPinMapCode')" formControlName="xPinMapCode"
+                              placeholder="e.g., 0" min="0" />
+                          </div>
+                          @if (isFieldInvalid('xPinMapCode')) {
+                            <small class="text-danger mt-1">{{ getFieldError('xPinMapCode') }}</small>
+                          }
+                        </div>
+                      </div>
+                      <div class="wizard-actions d-flex justify-content-between mt-3">
+                        <button type="button" class="btn btn-dark" (click)="previousStep()">← Back</button>
+                        <button type="button" class="btn submit-button" (click)="nextStep()">Next</button>
+                      </div>
+                      }
+                      @case (4) {
                       <div class="step-header">
                         <div class="d-flex align-items-center">
                           <!-- <ng-icon name="tablerPlugConnected" class="me-2 gradient-icon" size="18"></ng-icon> -->
@@ -321,7 +369,7 @@
                         <button type="button" class="btn submit-button" (click)="nextStep()">Next</button>
                       </div>
                       }
-                      @case (4) {
+                      @case (5) {
                       <div class="step-header">
                         <div class="d-flex align-items-center">
                           <!-- <ng-icon name="tablerCurrencyDollar" class="me-2 gradient-icon" size="18"></ng-icon> -->
@@ -350,7 +398,7 @@
                         <button type="button" class="btn submit-button" (click)="nextStep()">Next</button>
                       </div>
                       }
-                      @case (5) {
+                      @case (6) {
                       <div class="step-header">
                         <div class="d-flex align-items-center">
                           <!-- <ng-icon name="tablerLink" class="me-2 gradient-icon" size="18"></ng-icon> -->

@@ -107,7 +107,8 @@ export class BankFormComponent implements OnInit {
             },
             error: (error) => {
                 console.error('Error creating bank:', error);
-                Swal.fire('Error!', 'Failed to create bank.', 'error');
+                const errorMessage = error?.message || 'Failed to create bank.';
+                Swal.fire('Error!', errorMessage, 'error');
                 this.isSubmitting = false;
             }
         });
@@ -127,7 +128,8 @@ export class BankFormComponent implements OnInit {
             },
             error: (error) => {
                 console.error('Error updating bank:', error);
-                Swal.fire('Error!', 'Failed to update bank.', 'error');
+                const errorMessage = error?.message || 'Failed to update bank.';
+                Swal.fire('Error!', errorMessage, 'error');
                 this.isSubmitting = false;
             }
         });

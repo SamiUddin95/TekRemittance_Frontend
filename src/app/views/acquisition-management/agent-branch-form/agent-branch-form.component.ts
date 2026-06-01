@@ -72,7 +72,7 @@ export class AgentBranchFormComponent implements OnInit {
       phone1: [''],
       phone2: ['', [Validators.pattern('^[0-9-+()\s]*$'), Validators.maxLength(20)]],
       fax: ['', [Validators.maxLength(20)]],
-      email: ['', [Validators.required, emailValidator, Validators.maxLength(255)]],
+      email: [''],
 
       // Location Details
       address: ['', [Validators.maxLength(500)]],

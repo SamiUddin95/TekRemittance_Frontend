@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { tablerCalendar, tablerUser, tablerExchange, tablerListDetails, tablerLayoutGrid, tablerArrowDownRight, tablerArrowUpRight } from '@ng-icons/tabler-icons';
 import { TransactionStatusByChannelComponent } from '../transaction-status-by-channel/transaction-status-by-channel.component';
 import { IncomingOutgoingCardsComponent } from '../incoming-outgoing-cards/incoming-outgoing-cards.component';
 import { AgentBankPerformanceComponent } from '../agent-bank-performance/agent-bank-performance.component';
@@ -9,9 +11,10 @@ import { PageTitleComponent } from '../../../../components/page-title.component'
 @Component({
   selector: 'app-home-remittance-dashboard',
   standalone: true,
-  imports: [CommonModule, TransactionStatusByChannelComponent, IncomingOutgoingCardsComponent, AgentBankPerformanceComponent, EprcOverviewComponent, PageTitleComponent],
+  imports: [CommonModule, TransactionStatusByChannelComponent, IncomingOutgoingCardsComponent, AgentBankPerformanceComponent, EprcOverviewComponent, PageTitleComponent, NgIconComponent],
   templateUrl: './home-remittance-dashboard.component.html',
-  styleUrls: ['./home-remittance-dashboard.component.css']
+  styleUrls: ['./home-remittance-dashboard.component.css'],
+  providers: [provideIcons({ tablerCalendar, tablerUser, tablerExchange, tablerListDetails, tablerLayoutGrid, tablerArrowDownRight, tablerArrowUpRight })]
 })
 export class HomeRemittanceDashboardComponent implements OnInit {
   selectedTab: 'all' | 'incoming' | 'outgoing' = 'all';

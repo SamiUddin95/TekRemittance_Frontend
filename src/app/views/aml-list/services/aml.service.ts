@@ -3,13 +3,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Aml, AmlFilter, ApiResponse, AmlListResponse, CreateAmlRequest } from '../models/aml.model';
+import { environment } from '@/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AmlService {
-  private baseUrl = 'https://localhost:44367/api/BasicSetup';
-
+  //private baseUrl = 'https://localhost:44367/api/BasicSetup';
+ private baseUrl = `${environment.apiUrl}`;
   constructor(private http: HttpClient) { }
 
   // GET: /api/BasicSetup/AmlData?pageNumber=1&pageSize=10
@@ -25,12 +26,12 @@ export class AmlService {
       if (filters.address) params = params.set('address', filters.address);
     }
 
-    return this.http.get<ApiResponse<AmlListResponse>>(`${this.baseUrl}/AmlData`, { params });
+    return this.http.get<ApiResponse<AmlListResponse>>(`${this.baseUrl}/BasicSetup/AmlData`, { params });
   }
 
   // GET: /api/BasicSetup/AmlbyId/{id}
   getAmlById(id: string): Observable<ApiResponse<Aml>> {
-    return this.http.get<ApiResponse<Aml>>(`${this.baseUrl}/AmlbyId/${id}`);
+    return this.http.get<ApiResponse<Aml>>(`${this.baseUrl}/BasicSetup/AmlbyId/${id}`);
   }
 
   // POST: /api/BasicSetup/CreateAml
@@ -46,7 +47,7 @@ export class AmlService {
       updatedOn: new Date().toISOString()
     };
 
-    return this.http.post<ApiResponse<Aml>>(`${this.baseUrl}/CreateAml`, createRequest);
+    return this.http.post<ApiResponse<Aml>>(`${this.baseUrl}/BasicSetup/CreateAml`, createRequest);
   }
 
   // PUT: /api/BasicSetup/UpdateAml
@@ -57,12 +58,12 @@ export class AmlService {
       updatedOn: new Date().toISOString()
     };
 
-    return this.http.put<ApiResponse<Aml>>(`${this.baseUrl}/UpdateAml`, updateRequest);
+    return this.http.put<ApiResponse<Aml>>(`${this.baseUrl}/BasicSetup/UpdateAml`, updateRequest);
   }
 
-  // DELETE: /api/BasicSetup/AmlbyId/{id}
+  // DELETE: /api/BasicSetup/DeleteAml/{id}
   deleteAml(id: string): Observable<ApiResponse<any>> {
-    return this.http.delete<ApiResponse<any>>(`${this.baseUrl}/AmlbyId/${id}`);
+    return this.http.delete<ApiResponse<any>>(`${this.baseUrl}/BasicSetup/DeleteAml/${id}`);
   }
 
   // POST: /api/BasicSetup/UploadAmlFile
@@ -70,7 +71,7 @@ export class AmlService {
     const formData = new FormData();
     formData.append('file', file);
     
-    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/UploadAmlFile`, formData);
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/BasicSetup/UploadAmlFile`, formData);
   }
 
   // Helper method to generate UUID for new records

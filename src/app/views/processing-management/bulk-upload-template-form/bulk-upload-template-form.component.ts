@@ -46,6 +46,8 @@ export class BulkUploadTemplateFormComponent {
       delimiterText: ['']
     });
 
+    // Default: fixLength is false, so fieldOrder is required, startIndex/length are not.
+    // The fixLength valueChanges subscriber toggles validators when user switches mode.
     this.fieldForm = this.fb.nonNullable.group({
       fieldTemplateName: [''],
       fieldOrder: [null as unknown as number, [Validators.required]],
@@ -53,7 +55,7 @@ export class BulkUploadTemplateFormComponent {
       fieldType: ['', [Validators.required]],
       required: [false],
       enable: [false],
-      startIndex: [null as unknown as number,[Validators.required]],
+      startIndex: [null as unknown as number],
       length: [0],
     });
   }
@@ -327,7 +329,17 @@ getFieldFormError(fieldName: string): string {
 
   saveField(): void {
     this.markFormGroupTouched(this.fieldForm);
-    if (this.fieldForm.invalid || !this.templateId) return;
+    if (this.fieldForm.invalid) {
+      // Surface invalid controls so silent failures don't confuse the user
+      const invalidControls = Object.keys(this.fieldForm.controls)
+        .filter(k => this.fieldForm.get(k)?.invalid);
+      console.warn('[saveField] Form invalid. Invalid controls:', invalidControls, this.fieldForm.value);
+      return;
+    }
+    if (!this.templateId) {
+      console.warn('[saveField] templateId missing; cannot save field.');
+      return;
+    }
     const v = this.fieldForm.value as any;
     const toApiType = (uiType: string) => ({ 'TextBox': 'String' } as Record<string, string>)[uiType] ?? uiType;
     const base = {
@@ -340,7 +352,6 @@ getFieldFormError(fieldName: string): string {
       startIndex: Number(v.startIndex ?? 0),
       length: Number(v.length ?? 0),
     };
-    debugger;
     if (this.editingFieldId) {
       this.templateService.updateTemplateField({ id: this.editingFieldId, ...base }).subscribe({
         next: (updated) => {
