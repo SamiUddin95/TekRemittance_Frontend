@@ -1,44 +1,38 @@
 name: TekRemittance Frontend CI/CD
-
 on:
   push:
     branches:
       - deploy
-
 jobs:
   build-and-deploy:
     runs-on: windows
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Install dependencies
         run: npm install --legacy-peer-deps --no-audit --prefer-offline
-
       - name: Build Angular app
         run: npm run build -- --configuration production
-
       - name: Stop IIS site & Wait for Locks to Clear
         run: |
           $ErrorActionPreference = "Stop"
           Import-Module WebAdministration
-          Write-Host "Stopping IIS Site..."
           Stop-Website -Name "TekRemit-fe-cicd" -ErrorAction SilentlyContinue
-          Write-Host "Waiting 5 seconds for IIS worker process to release files..."
-          Start-Sleep -Seconds 5
-
+          Stop-WebAppPool -Name "TekRemit-fe-cicd_Pool" -ErrorAction SilentlyContinue
+          Start-Sleep -Seconds 3
+          $proc = Get-Process -Name "w3wp" -ErrorAction SilentlyContinue
+          if ($proc) { Stop-Process -Name "w3wp" -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 2 }
+          Write-Host "IIS stopped"
       - name: Clear old build files
         run: |
           $ErrorActionPreference = "Stop"
           Get-ChildItem -Path "D:\WebApps\TekRemit-fe-cicd" `
             -Exclude "web.config" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-
       - name: Copy new build to IIS
         run: |
           $ErrorActionPreference = "Stop"
           $distPath = "dist/inspinia-ng/browser"
           $distPathAlt = "dist/inspinia-ng"
-
           if (Test-Path $distPath) {
             Copy-Item -Path "$distPath\*" -Destination "D:\WebApps\TekRemit-fe-cicd\" -Recurse -Force
             Write-Host "Build files copied from $distPath"
@@ -49,11 +43,12 @@ jobs:
             Write-Error "Build output not found at $distPath or $distPathAlt"
             exit 1
           }
-
       - name: Start IIS site
         run: |
           $ErrorActionPreference = "Stop"
           Import-Module WebAdministration
+          Start-WebAppPool -Name "TekRemit-fe-cicd_Pool"
+          Start-Sleep -Seconds 2
           Start-Website -Name "TekRemit-fe-cicd"
           Start-Sleep -Seconds 3
           $state = (Get-Website -Name "TekRemit-fe-cicd").State
@@ -62,7 +57,6 @@ jobs:
             exit 1
           }
           Write-Host "IIS site started successfully. State: $state"
-
   notify-success:
     runs-on: windows
     needs: build-and-deploy
@@ -83,7 +77,6 @@ jobs:
           body: |
             TekRemittance Frontend deployed successfully to http://10.0.0.1:8096.
             Commit: ${{ github.event.head_commit.message }}
-
   notify-failure:
     runs-on: windows
     needs: build-and-deploy
