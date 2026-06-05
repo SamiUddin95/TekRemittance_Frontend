@@ -137,7 +137,7 @@
                             <ng-icon name="tablerEye" size="16"></ng-icon>
                           </button>
                           @if (r.obj?.limitType?.toString() === '1') {
-                            <button type="button" class="btn btn-sm btn-outline-success" title="Authorize" (click)="onAuthorize(r.id)">
+                            <button type="button" class="btn btn-sm btn-outline-success" title="Authorize" (click)="onDisburse(r.id)">
                               <ng-icon name="tablerCheck" size="16"></ng-icon>
                             </button>
                           } @else if (r.obj?.limitType?.toString() === '0') {
@@ -148,7 +148,7 @@
                             <button type="button" class="btn btn-sm btn-outline-warning" title="Disburse" (click)="onDisburse(r.id)">
                               <ng-icon name="tablerCash" size="16"></ng-icon>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-success" title="Authorize" (click)="onAuthorize(r.id)">
+                            <button type="button" class="btn btn-sm btn-outline-success" title="Authorize" (click)="onDisburse(r.id)">
                               <ng-icon name="tablerCheck" size="16"></ng-icon>
                             </button>
                           }

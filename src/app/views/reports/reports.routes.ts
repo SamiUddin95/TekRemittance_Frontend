@@ -4,6 +4,7 @@ import { DailyRemittanceComponent } from './daily-remittance/daily-remittance.co
 import { DailySettlementComponent } from './daily-settlement/daily-settlement.component';
 import { RemittanceTransactionDetailComponent } from './remittance-transaction-detail/remittance-transaction-detail.component';
 import { TransactionModeAnalysisComponent } from './transaction-mode-analysis/transaction-mode-analysis.component';
+import { RemittanceStatusTrackingComponent } from './remittance-status-tracking/remittance-status-tracking.component';
 
 export const routes: Routes = [
     {
@@ -30,5 +31,10 @@ export const routes: Routes = [
         path: 'transaction-mode-analysis-report',
         component: TransactionModeAnalysisComponent,
         title: 'Transaction Mode Analysis Report'
+    },
+    {
+        path: 'remittance-status-tracking-report',
+        component: RemittanceStatusTrackingComponent,
+        title: 'Remittance Status Tracking Report'
     }
 ];

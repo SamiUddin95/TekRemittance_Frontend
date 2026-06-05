@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { UpdateLicenseComponent } from './update-license/update-license.component';
 
 export const AUTH_ROUTES: Routes = [
       {
@@ -18,5 +19,10 @@ export const AUTH_ROUTES: Routes = [
             path: 'change-password',
             component: ChangePasswordComponent,
             data: { title: "Change Password" },
+        },
+        {
+            path: 'update-license',
+            component: UpdateLicenseComponent,
+            data: { title: "Update License" },
         },
 ];

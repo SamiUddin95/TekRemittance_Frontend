@@ -84,14 +84,26 @@
                                     </div>
 
                                     <div class="d-grid">
-                                        <button class="btn submit-button fw-semibold py-2" type="submit" [disabled]="isSubmitting">
+                                        <button type="submit" class="btn submit-button fw-semibold py-2">
                                             @if (isSubmitting) {
-                                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                                Signing in...
+                                                <span class="spinner-border spinner-border-sm me-2"></span>
+                                                Signing In...
                                             } @else {
                                                 Sign In
                                             }
                                         </button>
+                                        @if (showUpdateLicenseBtn) {
+                                            <div class="mt-3 p-3 bg-warning bg-opacity-10 border border-warning rounded">
+                                                <div class="d-flex align-items-center gap-2 mb-2">
+                                                    <ng-icon name="heroAlertTriangle" class="text-warning"></ng-icon>
+                                                    <span class="fw-semibold text-warning">License Warning</span>
+                                                </div>
+                                                <p class="mb-2 small text-dark">{{ licenseMessage }}</p>
+                                                <button type="button" class="btn btn-sm btn-warning" (click)="openUpdateLicense()">
+                                                    Update License
+                                                </button>
+                                            </div>
+                                        }
                                     </div>
                                 </form>
                             </div>

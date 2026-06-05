@@ -9,6 +9,7 @@ import { DisbursementService, DisbursementData } from '@/app/views/disbursement-
 import { Router } from '@angular/router';
 import { GenericPaginationComponent } from '@/app/shared/generic-pagination/generic-pagination/generic-pagination.component';
 import { SkeletonLoaderComponent } from '../../../shared/skeleton/skeleton-loader.component';
+import { AuthService } from '@/app/core/services/auth.service';
 
 interface RepairQueueRow {
   id: string;
@@ -45,7 +46,7 @@ export class RepairQueueListComponent implements OnInit {
   // agents dropdown
   agents: Array<{ id: string; name: string }> = [];
 
-  constructor(private fb: FormBuilder, private agentService: AgentService, private disbursementService: DisbursementService, private router: Router) {
+  constructor(private fb: FormBuilder, private agentService: AgentService, private disbursementService: DisbursementService, private router: Router, private auth: AuthService) {
     this.filterForm = this.fb.group({
       agentId: [''],
       xpin: [''],
@@ -241,11 +242,71 @@ private loadRepairData(agentId: string): void {
     // Implement view details logic here
   }
 
-  deleteItem(row: RepairQueueRow): void {
-    if (confirm(`Are you sure you want to reject RIN ${row.xpin}?`)) {
-      console.log('Reject clicked for RIN:', row.xpin);
-      // Implement delete logic here
+  reject(row: RepairQueueRow): void {
+    const userId = this.auth.getUserId();
+    const xpin = row?.xpin;
+
+    if (!userId) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'User not found',
+        text: 'Please login again to continue.'
+      });
+      return;
     }
+
+    if (!xpin) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing XPin',
+        text: 'XPin not available for this row.'
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to reject XPin ${xpin}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, reject it',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this.isLoading = true;
+      this.disbursementService.remitReject(userId, xpin).subscribe({
+        next: (res) => {
+          this.isLoading = false;
+          if ((res?.status || '').toLowerCase() === 'success') {
+            Swal.fire({
+              icon: 'success',
+              title: 'Rejected',
+              text: 'Remittance rejected successfully.'
+            });
+            const agentId = this.filterForm.get('agentId')?.value;
+            if (agentId) {
+              this.loadRepairData(agentId);
+            }
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Failed',
+              text: res?.errorMessage || 'Failed to reject remittance.'
+            });
+          }
+        },
+        error: (err) => {
+          this.isLoading = false;
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'API call failed. Please try again.'
+          });
+          console.error('RemitReject error', err);
+        }
+      });
+    });
   }
 
   // wrappers for dynamic table actions
@@ -260,6 +321,6 @@ private loadRepairData(agentId: string): void {
 
   onReject(id: string): void {
     const row = this.findRowById(id);
-    if (row) this.deleteItem(row);
+    if (row) this.reject(row);
   }
 }
