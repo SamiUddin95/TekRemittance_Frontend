@@ -102,4 +102,16 @@ export class UserListComponent implements OnInit {
     this.PaginationInfo.Page = page;
     this.loadUsers();
   }
+
+  getHubsNames(user: User): string {
+    const hubs = (user as any).hubs;
+    if (!hubs || !Array.isArray(hubs) || hubs.length === 0) return '-';
+    return hubs.map((h: any) => h.name).join(', ');
+  }
+
+  getBankBranchesNames(user: User): string {
+    const branches = (user as any).bankBranches;
+    if (!branches || !Array.isArray(branches) || branches.length === 0) return '-';
+    return branches.map((b: any) => b.name).join(', ');
+  }
 }

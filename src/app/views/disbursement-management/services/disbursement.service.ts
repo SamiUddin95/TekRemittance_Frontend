@@ -39,10 +39,10 @@ export class DisbursementService {
   agentId: string,
   pageNumber: number = 1,
   pageSize: number = 50,
-  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+  filters: { xpin?: string; accountNumber?: string; date?: string; search?: string } = {}
 ): Observable<any> {
   let url = `${environment.apiUrl}/Disbursement/GetDataByAgent?agentId=${agentId}`;
- 
+
   const userId = sessionStorage.getItem('auth_userid');
   if (userId) {
     url += `&userId=${userId}`;
@@ -50,12 +50,13 @@ export class DisbursementService {
   } else {
     console.warn('getDataByAgent: No userId found in session storage');
   }
- 
+
   url += `&pageNumber=${pageNumber}&pageSize=${pageSize}`;
 
   if (filters.xpin) url += `&xpin=${filters.xpin}`;
   if (filters.accountNumber) url += `&accountNumber=${filters.accountNumber}`;
   if (filters.date) url += `&date=${filters.date}`;
+  if (filters.search) url += `&search=${filters.search}`;
 
   console.log('Final getDataByAgent URL:', url);
 
@@ -75,10 +76,11 @@ export class DisbursementService {
   );
 }
 
-    remitReject(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
+    remitReject(userId: string, xpin: string | number, modeOfTransaction?: string, remarks?: string): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitReject`;
         const body: any = { userId, xpin: String(xpin ?? '') };
         if (modeOfTransaction) body.modeOfTransaction = modeOfTransaction;
+        if (remarks) body.remarks = remarks;
         return this.http.post<any>(url, body);
     }
 
@@ -103,10 +105,11 @@ export class DisbursementService {
         return this.http.post<any>(url, body);
     }
  
-    remitReverse(userId: string, xpin: string | number, modeOfTransaction?: string): Observable<any> {
+    remitReverse(userId: string, xpin: string | number, modeOfTransaction?: string, remarks?: string): Observable<any> {
         const url = `${environment.apiUrl}/Disbursement/RemitReverse`;
         const body: any = { userId, xpin: String(xpin ?? '') };
         if (modeOfTransaction) body.modeOfTransaction = modeOfTransaction;
+        if (remarks) body.remarks = remarks;
         return this.http.post<any>(url, body);
     }
     
@@ -124,7 +127,7 @@ getDataByAuthorize(
   agentId: string,
   pageNumber: number = 1,
   pageSize: number = 10,
-  filters: { xpin?: string; accountNumber?: string; date?: string; userId?: string } = {}
+  filters: { xpin?: string; accountNumber?: string; date?: string; userId?: string; search?: string } = {}
 ): Observable<{
   items: DisbursementData[];
   totalCount: number;
@@ -153,7 +156,10 @@ getDataByAuthorize(
     params = params.set('accountNumber', filters.accountNumber);
   }
   if (filters.date) {
-    params = params.set('date', filters.date); 
+    params = params.set('date', filters.date);
+  }
+  if (filters.search) {
+    params = params.set('search', filters.search);
   }
 
   const url = `${environment.apiUrl}/Disbursement/GetDataByAuthorize/${agentId}`;
@@ -183,7 +189,7 @@ getDataByReject(
   agentId: string,
   pageNumber: number = 1,
   pageSize: number = 10,
-  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+  filters: { xpin?: string; accountNumber?: string; date?: string; search?: string } = {}
 ): Observable<{
   items: DisbursementData[];
   totalCount: number;
@@ -204,7 +210,10 @@ getDataByReject(
     params = params.set('accountNumber', filters.accountNumber);
   }
   if (filters.date) {
-    params = params.set('date', filters.date); // agar backend mein 'edate' hai to 'edate' kar dena
+    params = params.set('date', filters.date);
+  }
+  if (filters.search) {
+    params = params.set('search', filters.search);
   }
 
   const url = `${environment.apiUrl}/Disbursement/GetDataByReject/${agentId}`;
@@ -235,7 +244,7 @@ getDataByApproved(
   agentId: string,
   pageNumber: number = 1,
   pageSize: number = 10,
-  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+  filters: { xpin?: string; accountNumber?: string; date?: string; search?: string } = {}
 ): Observable<{
   items: DisbursementData[];
   totalCount: number;
@@ -256,7 +265,10 @@ getDataByApproved(
     params = params.set('accountNumber', filters.accountNumber);
   }
   if (filters.date) {
-    params = params.set('date', filters.date); 
+    params = params.set('date', filters.date);
+  }
+  if (filters.search) {
+    params = params.set('search', filters.search);
   }
 
   const url = `${environment.apiUrl}/Disbursement/GetDataByApproved/${agentId}`;
@@ -287,7 +299,7 @@ getDataByRepair(
   agentId: string,
   pageNumber: number = 1,
   pageSize: number = 10,
-  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+  filters: { xpin?: string; accountNumber?: string; date?: string; search?: string } = {}
 ): Observable<{
   items: DisbursementData[];
   totalCount: number;
@@ -312,6 +324,9 @@ getDataByRepair(
 
   if (filters.date) {
     params = params.set('date', filters.date);
+  }
+  if (filters.search) {
+    params = params.set('search', filters.search);
   }
 
   const url = `${environment.apiUrl}/Disbursement/GetDataByRepair/${agentId}`;

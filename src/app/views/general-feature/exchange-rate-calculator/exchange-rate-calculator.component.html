@@ -1,0 +1,302 @@
+<div class="erc-wrapper">
+
+    <!-- HERO HEADER -->
+    <div class="erc-hero">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 position-relative">
+            <div class="d-flex align-items-center gap-3">
+                <div class="erc-hero-icon">
+                    <ng-icon name="tablerArrowsExchange" size="28"></ng-icon>
+                </div>
+                <div>
+                    <h3>Exchange Rate &amp; Rebate Calculator</h3>
+                    <p>Configure remittance parameters, agent rebates, and real-time market rates to calculate net payable amounts and profit margins instantly.</p>
+                </div>
+            </div>
+            <div class="erc-live-pill">
+                <span class="dot"></span>
+                Live Rates
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- LEFT COLUMN -->
+        <div class="col-lg-8">
+
+            <!-- Exchange Parameters -->
+            <div class="erc-card mb-4">
+                <div class="erc-card-head">
+                    <span class="erc-head-icon"><ng-icon name="tablerCurrencyDollar" size="18"></ng-icon></span>
+                    <span class="erc-head-title">Exchange Parameters</span>
+                </div>
+                <div class="erc-card-body">
+                    <form [formGroup]="calcForm">
+                        <div class="row g-3 align-items-end">
+
+                            <!-- From Currency -->
+                            <div class="col-md-5">
+                                <div class="erc-label">From Currency</div>
+                                <select class="form-select" formControlName="fromCurrency">
+                                    @for (c of currencies; track c.code) {
+                                        <option [value]="c.code">{{ c.flag }} {{ c.code }} – {{ c.name }}</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Swap -->
+                            <div class="col-md-2 d-flex justify-content-center align-items-end pb-1">
+                                <button type="button" class="erc-swap-btn" (click)="swapCurrencies()" title="Swap currencies">
+                                    <ng-icon name="tablerArrowsRightLeft" size="18"></ng-icon>
+                                </button>
+                            </div>
+
+                            <!-- To Currency -->
+                            <div class="col-md-5">
+                                <div class="erc-label">To Currency</div>
+                                <select class="form-select" formControlName="toCurrency">
+                                    @for (c of currencies; track c.code) {
+                                        <option [value]="c.code">{{ c.flag }} {{ c.code }} – {{ c.name }}</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Base Amount -->
+                            <div class="col-md-5">
+                                <div class="erc-label">Base Amount</div>
+                                <div class="input-group">
+                                    <span class="input-group-text">{{ getCurrencyFlag(calcForm.get('fromCurrency')?.value) }}</span>
+                                    <input type="number" class="form-control" formControlName="baseAmount" placeholder="1000" min="1">
+                                </div>
+                            </div>
+
+                            <!-- Live Exchange Rate -->
+                            <div class="col-md-7">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <div class="erc-label mb-0">Live Exchange Rate</div>
+                                    @if (!manualOverride) {
+                                        <span class="badge bg-success" style="font-size:9px;">LIVE &amp; ACTIVE</span>
+                                    } @else {
+                                        <span class="badge bg-warning text-dark" style="font-size:9px;">MANUAL OVERRIDE</span>
+                                    }
+                                </div>
+                                @if (!manualOverride) {
+                                    <div class="erc-rate-box">
+                                        @if (isLoadingRate) {
+                                            <span class="spinner-border spinner-border-sm text-primary"></span>
+                                            <span class="text-muted" style="font-size:14px; font-weight:600;">Fetching live rate…</span>
+                                        } @else {
+                                            <ng-icon name="tablerWorld" size="18" class="text-primary"></ng-icon>
+                                            <span>{{ liveRate ?? '---' }}</span>
+                                            <span class="text-muted ms-auto text-end" style="font-size:12px; font-weight:500; line-height:1.3;">
+                                                <span class="d-block">1 {{ calcForm.get('fromCurrency')?.value }} = {{ liveRate ?? '--' }} {{ calcForm.get('toCurrency')?.value }}</span>
+                                                @if (liveConvertedAmount != null) {
+                                                    <span class="d-block fw-bold text-dark">
+                                                        {{ calcForm.get('baseAmount')?.value | number:'1.0-2' }} {{ calcForm.get('fromCurrency')?.value }}
+                                                        = {{ liveConvertedAmount | number:'1.2-2' }} {{ calcForm.get('toCurrency')?.value }}
+                                                    </span>
+                                                }
+                                            </span>
+                                        }
+                                    </div>
+                                } @else {
+                                    <input type="number" class="form-control fw-bold" formControlName="manualRate" placeholder="Enter rate manually">
+                                }
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input" type="checkbox" id="manualOverride" [(ngModel)]="manualOverride" [ngModelOptions]="{standalone: true}">
+                                        <label class="form-check-label" for="manualOverride" style="font-size:12px;">Enable Manual Override</label>
+                                    </div>
+                                    @if (rateTimestamp && !manualOverride) {
+                                        <small class="text-muted" style="font-size:11px;">Updated {{ rateTimestamp | date:'HH:mm:ss' }}</small>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Rebate Configuration -->
+            <div class="erc-card mb-4">
+                <div class="erc-card-head">
+                    <span class="erc-head-icon"><ng-icon name="tablerPercentage" size="18"></ng-icon></span>
+                    <span class="erc-head-title">Rebate Configuration</span>
+                </div>
+                <div class="erc-card-body">
+                    <form [formGroup]="calcForm">
+                        <div class="row g-3 align-items-start">
+
+                            <!-- Agent -->
+                            <div class="col-md-5">
+                                <div class="erc-label">Select Agent</div>
+                                <select class="form-select" formControlName="agentId">
+                                    @for (agent of agents; track agent.id) {
+                                        <option [value]="agent.id">{{ agent.name }}</option>
+                                    }
+                                </select>
+                                @if (selectedAgent) {
+                                    <small class="mt-2 d-block text-muted">
+                                        Tier: <span [class]="tierChipClass">{{ selectedAgent.tier }}</span>
+                                    </small>
+                                }
+                            </div>
+
+                            <!-- Rebate Type -->
+                            <div class="col-md-4">
+                                <div class="erc-label">Rebate Type</div>
+                                <div class="erc-toggle">
+                                    <button type="button"
+                                        [class.active]="calcForm.get('rebateType')?.value === 'percent'"
+                                        (click)="calcForm.get('rebateType')?.setValue('percent')">
+                                        Percent
+                                    </button>
+                                    <button type="button"
+                                        [class.active]="calcForm.get('rebateType')?.value === 'fixed'"
+                                        (click)="calcForm.get('rebateType')?.setValue('fixed')">
+                                        Fixed
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Value -->
+                            <div class="col-md-3">
+                                <div class="erc-label">Value</div>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" formControlName="rebateValue" min="0" step="0.01">
+                                    <span class="input-group-text">
+                                        {{ calcForm.get('rebateType')?.value === 'percent' ? '%' : calcForm.get('toCurrency')?.value }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Summary -->
+        <div class="col-lg-4">
+            <div class="erc-summary mb-4">
+                <div class="erc-summary-head">
+                    <span class="title"><ng-icon name="tablerReportMoney" size="16" class="me-1"></ng-icon> Summary</span>
+                    <span class="rt-pill"><span class="dot"></span> Real-time</span>
+                </div>
+
+                @if (netPayable == null) {
+                    <div class="erc-empty">
+                        <div class="ring"><ng-icon name="tablerCalculator" size="30"></ng-icon></div>
+                        <p>Click Calculate to see results</p>
+                        <small>Fill in the parameters and calculate</small>
+                    </div>
+                } @else {
+                    <div class="erc-net">
+                        <div class="lbl">Net Payable Amount</div>
+                        <div class="amt">${{ netPayable | number:'1.2-2' }}</div>
+                    </div>
+                    <div class="erc-stat-row">
+                        <span class="k"><span class="ic green"><ng-icon name="tablerTrendingUp" size="14"></ng-icon></span> Converted Amount</span>
+                        <span class="v">{{ convertedAmount | number:'1.2-2' }} {{ calcForm.get('toCurrency')?.value }}</span>
+                    </div>
+                    <div class="erc-stat-row">
+                        <span class="k"><span class="ic amber"><ng-icon name="tablerPercentage" size="14"></ng-icon></span> Rebate Applied</span>
+                        <span class="v">{{ rebateApplied | number:'1.2-2' }} {{ calcForm.get('fromCurrency')?.value }}</span>
+                    </div>
+                    <div class="erc-stat-row" style="border-bottom:none;">
+                        <span class="k"><span class="ic blue"><ng-icon name="tablerChartBar" size="14"></ng-icon></span> Profit Margin</span>
+                        <span class="v">{{ profitMargin | number:'1.2-2' }}%</span>
+                    </div>
+                    <div class="erc-note">
+                        <ng-icon name="tablerInfoCircle" size="14"></ng-icon>
+                        <span>Quote calculated using current mid-market rate. Valid for 10:00 minutes.</span>
+                    </div>
+                }
+
+                <div class="erc-actions">
+                    <button type="button" class="btn-calc mb-2" (click)="onCalculate()" [disabled]="isCalculating || calcForm.invalid">
+                        @if (isCalculating) {
+                            <span class="spinner-border spinner-border-sm me-1"></span>
+                        } @else {
+                            <ng-icon name="tablerCalculator" size="16" class="me-1"></ng-icon>
+                        }
+                        Calculate Final Rate
+                    </button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-success btn-ghost flex-fill" (click)="onSaveQuote()" [disabled]="netPayable == null">
+                            <ng-icon name="tablerDeviceFloppy" size="14" class="me-1"></ng-icon>
+                            Save Quote
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-ghost flex-fill" (click)="onReset()">
+                            <ng-icon name="tablerRefresh" size="14" class="me-1"></ng-icon>
+                            Reset Form
+                        </button>
+                    </div>
+                </div>
+
+                <div class="erc-summary-footer">
+                    <div class="cell">
+                        <span class="l">API Latency</span>
+                        <span class="v green">{{ apiLatency }}ms</span>
+                    </div>
+                    <div class="cell">
+                        <span class="l">Daily Quotes</span>
+                        <span class="v">{{ dailyQuotes | number }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Quote History -->
+    <div class="erc-card erc-history">
+        <div class="erc-card-head">
+            <div class="d-flex align-items-center gap-2">
+                <span class="erc-head-icon"><ng-icon name="tablerHistory" size="18"></ng-icon></span>
+                <div>
+                    <div class="fw-bold" style="font-size:15px; color:#2e3a59;">Recent Quote History</div>
+                    <small class="text-muted">Log of the last calculated and saved quotes</small>
+                </div>
+            </div>
+            <button class="btn btn-outline-primary btn-pill">
+                <ng-icon name="tablerExternalLink" size="14" class="me-1"></ng-icon>
+                View All History
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th class="ps-3">Quote ID</th>
+                        <th>Currency Pair</th>
+                        <th>Exchange Rate</th>
+                        <th>Rebate Applied</th>
+                        <th>Final Amount</th>
+                        <th class="pe-3">Created Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (q of quoteHistory; track q.quoteId) {
+                    <tr>
+                        <td class="ps-3 qid">{{ q.quoteId }}</td>
+                        <td>
+                            <span class="fw-semibold">{{ q.currencyPair }}</span>
+                            <span class="spot ms-1">SPOT</span>
+                        </td>
+                        <td class="fw-semibold">{{ q.exchangeRate }}</td>
+                        <td><span class="rebate-chip">{{ q.rebateApplied }}</span></td>
+                        <td class="fw-bold">{{ q.finalAmount }}</td>
+                        <td class="text-muted pe-3">
+                            <ng-icon name="tablerClock" size="13" class="me-1"></ng-icon>
+                            {{ q.createdDate }}
+                        </td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">No quote history yet</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

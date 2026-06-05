@@ -50,7 +50,8 @@ export class RejectedQueueListComponent implements OnInit {
       agentId: [''],
       xpin: [''],
       accountnumber: [''],
-      date: ['']
+      date: [''],
+      search: ['']
     });
   }
 
@@ -92,7 +93,8 @@ onSearch(): void {
   const filters = {
     xpin: formValues.xpin?.trim() || undefined,
     accountNumber: formValues.accountnumber?.trim() || undefined,
-    date: formValues.date || undefined
+    date: formValues.date || undefined,
+    search: formValues.search?.trim() || undefined
   };
 
   console.log('Searching Rejected Data - Agent:', agentId, 'Filters:', filters);
@@ -107,7 +109,8 @@ onSearch(): void {
       agentId: '',
       xpin: '',
       accountnumber: '',
-      date: ''
+      date: '',
+      search: ''
     });
 
     // Reset pagination and table state
@@ -121,7 +124,7 @@ onSearch(): void {
 
   private loadRejectedData(
   agentId: string,
-  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+  filters: { xpin?: string; accountNumber?: string; date?: string; search?: string } = {}
 ): void {
   console.log('Loading rejected data for agent:', agentId, 'with filters:', filters);
   this.isLoading = true;
@@ -302,24 +305,33 @@ onSearch(): void {
       return;
     }
 
-    // Show confirmation dialog before proceeding
     Swal.fire({
-      title: 'Confirm Revert',
+      title: 'Revert Remittance',
       html: `Are you sure you want to revert this remittance?<br><br><strong>XPin:</strong> ${xpin}`,
-      icon: 'question',
+      icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, revert!'
+      confirmButtonText: 'Yes, revert!',
+      cancelButtonText: 'Cancel',
+      input: 'textarea',
+      inputLabel: 'Reason (optional)',
+      inputPlaceholder: 'Enter reason for revert...',
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          resolve(null);
+        });
+      }
     }).then((result) => {
       if (result.isConfirmed) {
+        const remarks = result.value || '';
         this.isLoading = true;
-        this.disbursementService.remitReverse(userId, xpin).subscribe({
+        this.disbursementService.remitReverse(userId, xpin, undefined, remarks).subscribe({
           next: (res) => {
             this.isLoading = false;
             const status = res?.status;
             const message = res?.errorMessage || (status === 'success' ? 'Remittance reverted successfully.' : 'Revert operation failed.');
-            
+
             if (status === 'success') {
               Swal.fire({
                 icon: 'success',
@@ -335,7 +347,7 @@ onSearch(): void {
                 confirmButtonText: 'OK'
               });
             }
-            
+
             // Reload the data to refresh the list regardless of success/failure
             const agentId = this.filterForm.get('agentId')?.value;
             if (agentId) {

@@ -51,7 +51,8 @@ export class RepairQueueListComponent implements OnInit {
       agentId: [''],
       xpin: [''],
       accountnumber: [''],
-      date: ['']
+      date: [''],
+      search: ['']
     });
   }
 
@@ -78,12 +79,19 @@ export class RepairQueueListComponent implements OnInit {
 
    onSearch(): void {
       console.log('Search button clicked');
-      const agentId = this.filterForm.get('agentId')?.value;
+      const formValues = this.filterForm.value;
+      const agentId = formValues.agentId?.trim();
       console.log('Selected agent ID:', agentId);
       
       if (agentId) {
-        this.PaginationInfo.Page = 1; 
-        this.loadRepairData(agentId);
+        this.PaginationInfo.Page = 1;
+        const filters = {
+          xpin: formValues.xpin?.trim() || undefined,
+          accountNumber: formValues.accountnumber?.trim() || undefined,
+          date: formValues.date || undefined,
+          search: formValues.search?.trim() || undefined
+        };
+        this.loadRepairData(agentId, filters);
       } else {
         console.log('No agent selected');
         Swal.fire({
@@ -101,7 +109,8 @@ export class RepairQueueListComponent implements OnInit {
       agentId: '',
       xpin: '',
       accountnumber: '',
-      date: ''
+      date: '',
+      search: ''
     });
 
     // Reset pagination and table state
@@ -113,7 +122,7 @@ export class RepairQueueListComponent implements OnInit {
   }
 
 
-private loadRepairData(agentId: string): void {
+private loadRepairData(agentId: string, filters?: { xpin?: string; accountNumber?: string; date?: string; search?: string }): void {
 
   this.isLoading = true;
 
@@ -121,16 +130,17 @@ private loadRepairData(agentId: string): void {
   const pageSize = this.PaginationInfo.RowsPerPage;
 
   // 🔹 Filters (same as AML)
-  const accountnumber = this.filterForm.get('accountnumber')?.value;
-  const xpin = this.filterForm.get('xpin')?.value;
-  const date = this.filterForm.get('date')?.value;
+  const accountnumber = filters?.accountNumber || this.filterForm.get('accountnumber')?.value;
+  const xpin = filters?.xpin || this.filterForm.get('xpin')?.value;
+  const date = filters?.date || this.filterForm.get('date')?.value;
+  const search = filters?.search || this.filterForm.get('search')?.value;
 
   this.disbursementService
     .getDataByRepair(
       agentId,
       pageNumber,
       pageSize,
-      { accountNumber: accountnumber, xpin: xpin, date: date }
+      { accountNumber: accountnumber, xpin: xpin, date: date, search: search }
     )
     .subscribe({
       next: (response) => {

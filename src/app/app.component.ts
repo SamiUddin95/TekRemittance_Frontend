@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
 
     ngOnInit(): void {
         // Force favicon to TEK-REMIT icon to avoid browser fallback to /favicon.ico (public)
-        this.faviconService.resetFavicon('/assets/images/favicon.icon');
+        this.faviconService.resetFavicon('');
         this.router.events
             .pipe(
                 filter(event => event instanceof NavigationEnd),

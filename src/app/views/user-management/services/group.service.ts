@@ -27,8 +27,8 @@ addGroup(group: any): Observable<any> {
   const body = {
     name: group.name,
     description: group.description,
-    isActive: group.isActive ,
-
+    isActive: group.isActive,
+    makerAndChecker: group.makerAndChecker ?? 'maker'
   };
 
   return this.http.post<any>(`${environment.apiUrl}/Groups`, body);
@@ -37,10 +37,11 @@ addGroup(group: any): Observable<any> {
 
 updateGroup(id: string, group: any): Observable<any> {
   const body = {
-    id:group.id,
+    id: group.id,
     name: group.name,
     description: group.description,
-    isActive: group.isActive ,
+    isActive: group.isActive,
+    makerAndChecker: group.makerAndChecker ?? 'maker'
   };
 
   return this.http.put<any>(`${environment.apiUrl}/Groups/${id}`, body);
@@ -68,7 +69,8 @@ getGroups(page: number = 1, pageSize: number = 10): Observable<PaginatedResponse
         description: String(it.description ?? ''),
         isActive: it.isActive,
         createdAt: String(it.createdOn ?? ''),
-        updatedAt: String(it.updatedOn ?? '')
+        updatedAt: String(it.updatedOn ?? ''),
+        makerAndChecker: String(it.makerAndChecker ?? 'maker')
       }));
 
       console.log('Mapped items (with boolean isActive):', items); // Mapped items check
@@ -99,7 +101,8 @@ getGroupById(id: string): Observable<Group> {
         description: String(d.description ?? ''),
         isActive: Boolean(d.isActive ?? true),
         createdAt: d.createdOn ? new Date(d.createdOn) : undefined,
-        updatedAt: d.updatedOn ? new Date(d.updatedOn) : undefined
+        updatedAt: d.updatedOn ? new Date(d.updatedOn) : undefined,
+        makerAndChecker: String(d.makerAndChecker ?? 'maker')
       };
     }),
     catchError(this.handleError)

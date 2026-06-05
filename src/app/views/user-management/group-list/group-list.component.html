@@ -26,6 +26,7 @@
                 <tr>
                   <th class="fw-bold">Group Name</th>
                   <th class="fw-bold">Description</th>
+                  <th class="fw-bold">Maker & Checker</th>
                   <th class="fw-bold">Status</th>
                   <th class="fw-bold text-center">Actions</th>
                 </tr>
@@ -34,6 +35,9 @@
                 <tr *ngFor="let g of groups">
                   <td class="text-break">{{ g.name }}</td>
                   <td class="text-break">{{ g.description }}</td>
+                  <td>
+                    <span class="badge bg-light text-dark border">{{ g.makerAndChecker ?? 'maker' }}</span>
+                  </td>
                   <td><span [class]="getStatusBadgeClass(g.isActive)">
                         {{ getStatusText(g.isActive) }}
                         </span>
@@ -52,7 +56,7 @@
                   </td>
                 </tr>
                 <tr *ngIf="groups.length === 0">
-                  <td colspan="4" class="text-center py-4">
+                  <td colspan="5" class="text-center py-4">
                     <div class="text-muted">
                       <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
                       <p class="mb-0">No groups found</p>

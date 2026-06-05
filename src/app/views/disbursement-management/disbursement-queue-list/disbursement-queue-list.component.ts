@@ -65,7 +65,8 @@ export class DisbursementQueueListComponent implements OnInit {
       agentId: [''],
       xpin: [''],
       accountnumber: [''],
-      date: ['']
+      date: [''],
+      search: ['']
     });
   }
 
@@ -88,6 +89,56 @@ export class DisbursementQueueListComponent implements OnInit {
   getRemarks(rowId: string): string {
     const dataRow = this.dataRows.find(r => r.id === rowId);
     return dataRow?.obj?.remarks || dataRow?.obj?.Remarks || '';
+  }
+
+  expandedRemarks: Set<string> = new Set();
+
+  getRemarksEntries(rowId: string): string[] {
+    const raw = this.getRemarks(rowId);
+    if (!raw) return [];
+
+    const tagPattern = /(?=\[(?:Reject|Reverse|Action|Repair|Approve|AML|Hold|COC))/i;
+    if (tagPattern.test(raw)) {
+      return raw
+        .split(tagPattern)
+        .map(s => s.trim().replace(/\]$/, '').trim())
+        .filter(s => s.length > 0);
+    }
+
+    if (raw.includes('] [')) {
+      return raw.split('] [').map((e, i) => {
+        let s = e.trim();
+        if (i > 0) s = '[' + s;
+        return s.replace(/\]$/, '').trim();
+      }).filter(s => s.length > 0);
+    }
+
+    if (raw.includes(';')) {
+      return raw.split(';').map(s => s.trim()).filter(s => s.length > 0);
+    }
+
+    return [raw.trim()];
+  }
+
+  getLatestRemark(rowId: string): string {
+    const entries = this.getRemarksEntries(rowId);
+    return entries.length ? entries[entries.length - 1] : '';
+  }
+
+  hasMoreRemarks(rowId: string): boolean {
+    return this.getRemarksEntries(rowId).length > 1;
+  }
+
+  isRemarksExpanded(rowId: string): boolean {
+    return this.expandedRemarks.has(rowId);
+  }
+
+  toggleRemarks(rowId: string): void {
+    if (this.expandedRemarks.has(rowId)) {
+      this.expandedRemarks.delete(rowId);
+    } else {
+      this.expandedRemarks.add(rowId);
+    }
   }
 
   private loadAgents(): void {
@@ -125,12 +176,13 @@ export class DisbursementQueueListComponent implements OnInit {
   const filters = {
     xpin: formValues.xpin?.trim() || undefined,
     accountNumber: formValues.accountnumber?.trim() || undefined,
-    date: formValues.date || undefined
+    date: formValues.date || undefined,
+    search: formValues.search?.trim() || undefined
   };
 
   console.log('Searching with Agent:', agentId, 'Filters:', filters);
 
-  this.PaginationInfo.Page = 1; 
+  this.PaginationInfo.Page = 1;
   this.loadDisbursementData(agentId, filters);
 }
 
@@ -139,7 +191,8 @@ export class DisbursementQueueListComponent implements OnInit {
       agentId: '',
       xpin: '',
       accountnumber: '',
-      date: ''
+      date: '',
+      search: ''
     });
 
     this.PaginationInfo.Page = 1;
@@ -150,7 +203,7 @@ export class DisbursementQueueListComponent implements OnInit {
   }
 private loadDisbursementData(
   agentId: string,
-  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+  filters: { xpin?: string; accountNumber?: string; date?: string; search?: string } = {}
 ): void {
   console.log('Loading data for agent:', agentId, 'with filters:', filters);
   this.isLoading = true;
@@ -365,36 +418,58 @@ private loadDisbursementData(
       return;
     }
 
-    this.isLoading = true;
-    this.disbursementService.remitReject(userId, xpin, modeOfTransaction).subscribe({
-      next: (res) => {
-        this.isLoading = false;
-        if ((res?.status || '').toLowerCase() === 'success') {
-          Swal.fire({
-            icon: 'success',
-            title: 'Rejected',
-            text: 'Remittance rejected successfully.'
-          }); 
-          const agentId = this.filterForm.get('agentId')?.value;
-          if (agentId) {
-            this.loadDisbursementData(agentId);
-          }
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Failed',
-            text: res?.errorMessage || 'Failed to reject remittance.'
-          });
-        }
-      },
-      error: (err) => {
-        this.isLoading = false;
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'API call failed. Please try again.'
+    Swal.fire({
+      title: 'Reject Remittance',
+      html: `Are you sure you want to reject this remittance?<br><br><strong>XPin:</strong> ${xpin}<br><strong>Mode:</strong> ${modeOfTransaction}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, reject!',
+      cancelButtonText: 'Cancel',
+      input: 'textarea',
+      inputLabel: 'Reason (optional)',
+      inputPlaceholder: 'Enter reason for rejection...',
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          resolve(null);
         });
-        console.error('RemitReject error', err);
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const remarks = result.value || '';
+        this.isLoading = true;
+        this.disbursementService.remitReject(userId, xpin, modeOfTransaction, remarks).subscribe({
+          next: (res) => {
+            this.isLoading = false;
+            if ((res?.status || '').toLowerCase() === 'success') {
+              Swal.fire({
+                icon: 'success',
+                title: 'Rejected',
+                text: 'Remittance rejected successfully.'
+              });
+              const agentId = this.filterForm.get('agentId')?.value;
+              if (agentId) {
+                this.loadDisbursementData(agentId);
+              }
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Failed',
+                text: res?.errorMessage || 'Failed to reject remittance.'
+              });
+            }
+          },
+          error: (err) => {
+            this.isLoading = false;
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'API call failed. Please try again.'
+            });
+            console.error('RemitReject error', err);
+          }
+        });
       }
     });
   }

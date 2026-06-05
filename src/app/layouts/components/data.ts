@@ -43,6 +43,8 @@ const menuItemsWithPermissions = [
             {icon: 'tablerMapPin', label: 'Province Management', url: '/province-management', permission: 'BasicSetUp.ProvinceManagement'},
             {icon: 'tablerBuilding', label: 'City Management', url: '/city-management', permission: 'BasicSetUp.CityManagement'},
             {icon: 'tablerBuildingBank', label: 'Bank Management', url: '/bank-management', permission: 'BasicSetUp.BankManagement'},
+            {icon: 'tablerBuildingWarehouse', label: 'Hub Management', url: '/hub-management', permission: 'BasicSetUp.HubManagement'},
+            {icon: 'tablerBuildingBank2', label: 'Branch Management', url: '/branch-management', permission: 'BasicSetUp.BranchManagement'},
             {icon: 'tablerShield', label: 'AML List', url: '/aml-list', permission: 'BasicSetUp.AMLList'},
         ]
     },
@@ -52,6 +54,7 @@ const menuItemsWithPermissions = [
         isCollapsed: true,
         children: [
             {icon: 'tablerFileDescription', label: 'Audit Logs', url: '/audit-logs', permission: 'GeneralFeatures.AuditLogs'},
+            {icon: 'tablerCalculator', label: 'Exchange Rate & Rebate Calculator', url: '/exchange-rate-calculator', permission: 'GeneralFeatures.ExchangeRateCalculator'},
         ]
     },
     {
@@ -125,6 +128,8 @@ const horizontalMenuItemsWithPermissions = [
             {icon: 'tablerMapPin', label: 'Province Management', url: '/province-management', permission: 'BasicSetUp.ProvinceManagement'},
             {icon: 'tablerBuilding', label: 'City Management', url: '/city-management', permission: 'BasicSetUp.CityManagement'},
             {icon: 'tablerBuildingBank', label: 'Bank Management', url: '/bank-management', permission: 'BasicSetUp.BankManagement'},
+            {icon: 'tablerBuildingWarehouse', label: 'Hub Management', url: '/hub-management', permission: 'BasicSetUp.HubManagement'},
+            {icon: 'tablerBuildingBank2', label: 'Branch Management', url: '/branch-management', permission: 'BasicSetUp.BranchManagement'},
             {icon: 'tablerShield', label: 'AML List', url: '/aml-list', permission: 'BasicSetUp.AMLList'},
         ]
     },
@@ -134,6 +139,7 @@ const horizontalMenuItemsWithPermissions = [
         isCollapsed: true,
         children: [
             {icon: 'tablerFileDescription', label: 'Audit Logs', url: '/audit-log', permission: 'GeneralFeatures.AuditLogs'},
+            {icon: 'tablerCalculator', label: 'Exchange Rate & Rebate Calculator', url: '/exchange-rate-calculator', permission: 'GeneralFeatures.ExchangeRateCalculator'},
         ]
     },
     {
@@ -249,6 +255,8 @@ export const menuItems: MenuItemType[] = [
             {icon: 'tablerMapPin', label: 'Province Management', url: '/province-management'},
             {icon: 'tablerBuilding', label: 'City Management', url: '/city-management'},
             {icon: 'tablerBuildingBank', label: 'Bank Management', url: '/bank-management'},
+            {icon: 'tablerBuildingWarehouse', label: 'Hub Management', url: '/hub-management'},
+            {icon: 'tablerBuildingBank2', label: 'Branch Management', url: '/branch-management'},
             {icon: 'tablerShield', label: 'AML List', url: '/aml-list'},
         ]
     },
@@ -258,6 +266,7 @@ export const menuItems: MenuItemType[] = [
         isCollapsed: true,
         children: [
               {icon: 'tablerFileDescription', label: 'Audit Logs', url: '/audit-logs'},
+              {icon: 'tablerCalculator', label: 'Exchange Rate & Rebate Calculator', url: '/exchange-rate-calculator'},
 
         ]
     },

@@ -39,6 +39,10 @@
                   <label class="form-label fw-semibold">Date </label>
                   <input type="date" class="form-control" formControlName="date" />
                 </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Global Search</label>
+                  <input type="text" class="form-control" formControlName="search" placeholder="Search..." />
+                </div>
                 <div class="col-md-2 d-flex align-items-end gap-2">
                   <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
                     <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>

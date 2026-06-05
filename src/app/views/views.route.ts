@@ -40,6 +40,14 @@ export const VIEWS_ROUTES: Routes = [
     },
     {
         path: '',
+        loadChildren: () => import('./hub-management/hub-management.routes').then((mod) => mod.HUB_MANAGEMENT_ROUTES)
+    },
+    {
+        path: '',
+        loadChildren: () => import('./branch-management/branch-management.routes').then((mod) => mod.BRANCH_MANAGEMENT_ROUTES)
+    },
+    {
+        path: '',
         loadChildren: () => import('./aml-list/aml-list.routes').then((mod) => mod.AML_ROUTES)
     },
     {
