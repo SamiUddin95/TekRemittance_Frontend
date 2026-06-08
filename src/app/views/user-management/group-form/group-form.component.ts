@@ -103,6 +103,7 @@ export class GroupFormComponent implements OnInit {
             description: ['', Validators.required],
             isActive: [true],
             userSearchText: [''],
+            makerAndChecker: ['maker']
         });
         this.buildModulePermissions();
         this.filteredUsers = this.allUsers;
@@ -431,6 +432,7 @@ export class GroupFormComponent implements OnInit {
             name: formValue.name,
             description: formValue.description,
             isActive: formValue.isActive,
+            makerAndChecker: formValue.makerAndChecker ?? 'maker',
             createdBy: formValue.loggedInUserName,
             updatedBy: formValue.loggedInUserName,
         };
@@ -495,6 +497,7 @@ export class GroupFormComponent implements OnInit {
                     name: Group.name,
                     description: Group.description,
                     isActive: Group.isActive,
+                    makerAndChecker: Group.makerAndChecker ?? 'maker'
                 });
                 this.isUsersTabDisabled = false;
                 this.isPermissionsTabDisabled = false;

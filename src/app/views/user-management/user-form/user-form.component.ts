@@ -7,6 +7,8 @@ import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
 import { UserService } from '../services/user.service';
 import { User } from '../models/user.model';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 function matchValidator(a: string, b: string, message = 'Passwords must match'): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {
@@ -38,17 +40,22 @@ export class UserFormComponent implements OnInit {
   isSubmitting = false;
   isLoading = false;
   showPasswordChange = false;
+  hubsDropdown: any[] = [];
+  bankBranchesDropdown: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private http: HttpClient
   ) {
     this.userForm = this.createForm();
   }
 
   ngOnInit(): void {
+    this.loadHubsDropdown();
+    this.loadBankBranchesDropdown();
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.isEditMode = true;
@@ -72,6 +79,8 @@ export class UserFormComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
       isActive: [true],
+      hubCode: [''],
+      branchCode: [''],
     });
     form.setValidators(matchValidator('password', 'confirmPassword'));
     return form;
@@ -92,6 +101,8 @@ export class UserFormComponent implements OnInit {
             limitType: user.limitType,
             loginName: user.loginName,
             isActive: user.isActive,
+            hubCode: (user as any).hubCode || '',
+            branchCode: (user as any).branchCode || '',
           });
         } else {
           Swal.fire('Error!', 'User not found.', 'error');
@@ -210,5 +221,27 @@ export class UserFormComponent implements OnInit {
     // Ensure form-level match validator stays applied
     this.userForm.setValidators(matchValidator('password', 'confirmPassword'));
     this.userForm.updateValueAndValidity();
+  }
+
+  loadHubsDropdown(): void {
+    this.http.get<any>(`${environment.apiUrl}/BasicSetup/hubs-dropdown`).subscribe({
+      next: (res) => {
+        this.hubsDropdown = res?.data || [];
+      },
+      error: (err) => {
+        console.error('Error loading hubs dropdown:', err);
+      }
+    });
+  }
+
+  loadBankBranchesDropdown(): void {
+    this.http.get<any>(`${environment.apiUrl}/BasicSetup/bankbranches-dropdown`).subscribe({
+      next: (res) => {
+        this.bankBranchesDropdown = res?.data || [];
+      },
+      error: (err) => {
+        console.error('Error loading bank branches dropdown:', err);
+      }
+    });
   }
 }

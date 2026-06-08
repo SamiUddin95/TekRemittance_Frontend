@@ -5,6 +5,7 @@ export interface Group {
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
-createdBy?: string;   // ADD THIS
+  createdBy?: string;
   updatedBy?: string;
+  makerAndChecker?: string;
 }

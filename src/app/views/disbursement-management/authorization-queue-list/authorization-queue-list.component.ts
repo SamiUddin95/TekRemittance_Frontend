@@ -52,7 +52,8 @@ export class AuthorizationQueueListComponent implements OnInit {
       agentId: [''],
       xpin: [''],
       accountnumber: [''],
-      date: ['']
+      date: [''],
+      search: ['']
     });
   }
 
@@ -93,7 +94,8 @@ export class AuthorizationQueueListComponent implements OnInit {
     xpin: formValues.xpin?.trim() || undefined,
     accountNumber: formValues.accountnumber?.trim() || undefined,
     date: formValues.date || undefined,
-    userId: userId // Add userId from session storage
+    userId: userId, // Add userId from session storage
+    search: formValues.search?.trim() || undefined
   };
 
   console.log('Searching for Agent:', agentId, 'with filters:', filters);
@@ -108,7 +110,8 @@ export class AuthorizationQueueListComponent implements OnInit {
       agentId: '',
       xpin: '',
       accountnumber: '',
-      date: ''
+      date: '',
+      search: ''
     });
 
     // Reset pagination and table state
@@ -122,7 +125,7 @@ export class AuthorizationQueueListComponent implements OnInit {
 
   private loadDisbursementData(
   agentId: string,
-  filters: { xpin?: string; accountNumber?: string; date?: string; userId?: string } = {}
+  filters: { xpin?: string; accountNumber?: string; date?: string; userId?: string; search?: string } = {}
 ): void {
   console.log('Loading data for agent:', agentId, 'with filters:', filters);
   this.isLoading = true;

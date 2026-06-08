@@ -59,6 +59,29 @@
                         </div>
                         </div>
                     </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Maker & Checker</label>
+                    <div class="col-sm-9">
+                      <div class="btn-group w-100" role="group">
+                        <button
+                          type="button"
+                          class="btn"
+                          [class.btn-primary]="Groupform.get('makerAndChecker')?.value === 'maker'"
+                          [class.btn-outline-primary]="Groupform.get('makerAndChecker')?.value !== 'maker'"
+                          (click)="Groupform.get('makerAndChecker')?.setValue('maker')">
+                          Maker
+                        </button>
+                        <button
+                          type="button"
+                          class="btn"
+                          [class.btn-primary]="Groupform.get('makerAndChecker')?.value === 'checker'"
+                          [class.btn-outline-primary]="Groupform.get('makerAndChecker')?.value !== 'checker'"
+                          (click)="Groupform.get('makerAndChecker')?.setValue('checker')">
+                          Checker
+                        </button>
+                      </div>
+                    </div>
+                  </div>
 
                 </form>
               </ng-template>

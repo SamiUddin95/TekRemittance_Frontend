@@ -44,6 +44,8 @@ export class UserService {
             isActive: r.isActive,
             isApproved: r.isApproved ?? false,
             isSupervise: r.isSupervise,
+            hubs: r.hubs || [],
+            bankBranches: r.bankBranches || [],
             createdAt: r.createdOn ? new Date(r.createdOn) : (r.createdAt ? new Date(r.createdAt) : undefined),
             updatedAt: r.updatedOn ? new Date(r.updatedOn) : (r.updatedAt ? new Date(r.updatedAt) : undefined),
           });
@@ -86,6 +88,8 @@ export class UserService {
             isActive: r.isActive,
             isApproved: r.isApproved ?? false,
             isSupervise: r.isSupervise,
+            hubs: r.hubs || [],
+            bankBranches: r.bankBranches || [],
             createdAt: r.createdOn ? new Date(r.createdOn) : (r.createdAt ? new Date(r.createdAt) : undefined),
             updatedAt: r.updatedOn ? new Date(r.updatedOn) : (r.updatedAt ? new Date(r.updatedAt) : undefined),
           });
@@ -116,6 +120,8 @@ export class UserService {
           isActive: r.isActive,
           isApproved: r.isApproved ?? false,
           isSupervise: r.isSupervise,
+          hubs: r.hubs || [],
+          bankBranches: r.bankBranches || [],
           createdAt: r.createdOn ? new Date(r.createdOn) : (r.createdAt ? new Date(r.createdAt) : undefined),
           updatedAt: r.updatedOn ? new Date(r.updatedOn) : (r.updatedAt ? new Date(r.updatedAt) : undefined),
         };
@@ -137,6 +143,8 @@ export class UserService {
         loginName: user.loginName,
         isActive: user.isActive,
         isSupervise: (user as any).isSupervise ?? false,
+        hubs: (user as any).hubs || [],
+        bankBranches: (user as any).bankBranches || [],
       },
       password: (user as any).password,
     };
@@ -161,6 +169,8 @@ export class UserService {
       loginName: user.loginName,
       isActive: user.isActive,
       isSupervise: (user as any).isSupervise ?? false,
+      hubs: (user as any).hubs || [],
+      bankBranches: (user as any).bankBranches || [],
     };
     if (user.password) {
       body.password = user.password;
@@ -177,6 +187,8 @@ export class UserService {
         isActive: r.isActive,
         isApproved: r.isApproved ?? false,
         isSupervise: r.isSupervise,
+        hubs: r.hubs || [],
+        bankBranches: r.bankBranches || [],
         createdAt: r.createdOn ? new Date(r.createdOn) : (r.createdAt ? new Date(r.createdAt) : undefined),
         updatedAt: r.updatedOn ? new Date(r.updatedOn) : (r.updatedAt ? new Date(r.updatedAt) : undefined),
       })

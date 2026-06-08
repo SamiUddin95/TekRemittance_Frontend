@@ -11,6 +11,8 @@ export interface User {
   isActive: boolean;
   isApproved?: boolean;
   isSupervise?: boolean;
+  hubs?: Array<{ code: string; name: string }>;
+  bankBranches?: Array<{ code: string; name: string }>;
   createdAt?: Date;
   updatedAt?: Date;
 }

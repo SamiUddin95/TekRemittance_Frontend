@@ -59,6 +59,10 @@
                   <label class="form-label fw-semibold">Date </label>
                   <input type="date" class="form-control" formControlName="date" />
                 </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Global Search</label>
+                  <input type="text" class="form-control" formControlName="search" placeholder="Search..." />
+                </div>
                
                 <div class="col-md-2 d-flex align-items-end gap-2">
                   <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
@@ -126,10 +130,34 @@
                           </select>
                         }
                       </td>
-                      <td class="text-center">
-                        <span class="text-muted fst-italic" style="font-size: 0.875rem;">
-                          {{ getRemarks(r.id) || '-' }}
-                        </span>
+                      <td style="max-width: 220px; min-width: 150px;">
+                        @if (getLatestRemark(r.id)) {
+                          <div class="remarks-cell">
+                            <div class="latest-remark text-muted fst-italic" style="font-size: 0.78rem; word-break: break-word; line-height: 1.35;">
+                              {{ getLatestRemark(r.id) }}
+                            </div>
+                            @if (hasMoreRemarks(r.id)) {
+                              @if (isRemarksExpanded(r.id)) {
+                                <div class="older-remarks mt-1">
+                                  @for (rem of getRemarksEntries(r.id).slice(0, getRemarksEntries(r.id).length - 1); track $index) {
+                                    <div class="border-top border-secondary-subtle pt-1 mt-1 text-secondary" style="font-size: 0.72rem; word-break: break-word; line-height: 1.3;">
+                                      {{ rem }}
+                                    </div>
+                                  }
+                                </div>
+                              }
+                              <button type="button" class="btn btn-link p-0 mt-1 d-block" style="font-size: 0.72rem; text-decoration: none; color: #e07b39;" (click)="toggleRemarks(r.id)">
+                                @if (isRemarksExpanded(r.id)) {
+                                  ▲ See less
+                                } @else {
+                                  ▼ See more ({{ getRemarksEntries(r.id).length - 1 }} more)
+                                }
+                              </button>
+                            }
+                          </div>
+                        } @else {
+                          <span class="text-muted">-</span>
+                        }
                       </td>
                       <td class="text-center">
                         <div class="btn-group" role="group">

@@ -1,0 +1,113 @@
+<div class="">
+    <div class="row">
+        <div class="col-12">
+            @if (isLoading) {
+                <app-skeleton-loader variant="form" ariaLabel="Loading form"></app-skeleton-loader>
+            } @else {
+                <app-page-title [title]="getPageTitle()" subTitle="Hub Management"></app-page-title>
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light text-dark">
+                        <div class="d-flex align-items-center ">
+                            <ng-icon name="tablerBuildingWarehouse" class="me-2 gradient-icon" size="20"></ng-icon>
+                            <h4 class="card-title mb-0 text-dark">Basic Information</h4>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <form [formGroup]="hubForm" (ngSubmit)="onSubmit()">
+                            <div class="row g-4">
+                                <!-- Code -->
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="code" class="form-label fw-semibold">
+                                            <ng-icon name="tablerCode" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Code <span class="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="code"
+                                            class="form-control"
+                                            [class.is-invalid]="isFieldInvalid('code')"
+                                            formControlName="code"
+                                            placeholder="e.g., 40"
+                                            maxlength="20">
+                                        @if (getFieldError('code')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('code') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Name -->
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label fw-semibold">
+                                            <ng-icon name="tablerBuildingWarehouse" class="me-1 gradient-icon" size="16"></ng-icon>
+                                            Name <span class="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="name"
+                                            class="form-control"
+                                            [class.is-invalid]="isFieldInvalid('name')"
+                                            formControlName="name"
+                                            placeholder="e.g., Karachi"
+                                            maxlength="100">
+                                        @if (getFieldError('name')) {
+                                            <div class="invalid-feedback">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                {{ getFieldError('name') }}
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Is Deleted -->
+                                <div class="col-lg-3 mt-5">
+                                    <div class="form-check form-switch">
+                                        <label for="isDeleted" class="form-label fw-semibold">
+                                            Is Active
+                                        </label>
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            id="isDeleted"
+                                            formControlName="isDeleted">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3 mt-5">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button
+                                            style="font-size: 12px;"
+                                            type="button"
+                                            class="btn btn-dark"
+                                            (click)="onCancel()"
+                                            [disabled]="isSubmitting">
+                                            <ng-icon name="tablerArrowLeft" class="me-1" size="16"></ng-icon>
+                                            Back to List
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            class="btn submit-button"
+                                            style="font-size: 12px;">
+                                            @if (isSubmitting) {
+                                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                                Saving...
+                                            } @else {
+                                                <ng-icon name="tablerDeviceFloppy" class="me-1" size="16"></ng-icon>
+                                                {{ isEditMode ? 'Update Hub' : 'Save Hub' }}
+                                            }
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -50,7 +50,8 @@ export class ApprovedQueueListComponent implements OnInit {
      agentId: [''],
       xpin: [''],
       accountnumber: [''],
-      date: ['']
+      date: [''],
+      search: ['']
     });
   }
 
@@ -92,7 +93,8 @@ export class ApprovedQueueListComponent implements OnInit {
   const filters = {
     xpin: formValues.xpin?.trim() || undefined,
     accountNumber: formValues.accountnumber?.trim() || undefined,
-    date: formValues.date || undefined
+    date: formValues.date || undefined,
+    search: formValues.search?.trim() || undefined
   };
 
   console.log('Searching Approved Data - Agent:', agentId, 'Filters:', filters);
@@ -107,7 +109,8 @@ export class ApprovedQueueListComponent implements OnInit {
       agentId: '',
       xpin: '',
       accountnumber: '',
-      date: ''
+      date: '',
+      search: ''
     });
 
     // Reset pagination and table state
@@ -120,7 +123,7 @@ export class ApprovedQueueListComponent implements OnInit {
 
 private loadApprovedData(
   agentId: string,
-  filters: { xpin?: string; accountNumber?: string; date?: string } = {}
+  filters: { xpin?: string; accountNumber?: string; date?: string; search?: string } = {}
 ): void {
   console.log('Loading approved data for agent:', agentId, 'with filters:', filters);
   this.isLoading = true;

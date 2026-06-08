@@ -1,0 +1,107 @@
+<div class="">
+    <app-page-title title="Branch Management" subTitle="Basic Setup"></app-page-title>
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light border-bottom">
+                    <div class="d-flex justify-content-between align-items-center col-12"
+                        style="margin-top: -5px; margin-bottom: -5px;">
+                        <div class="d-flex align-items-center">
+                            <ng-icon name="tablerBuildingBank" class="me-2 gradient-icon" size="20"></ng-icon>
+                            <h4 class="card-title mb-0 text-dark">Branches</h4>
+                        </div>
+                        <button type="button" class="btn submit-button" (click)="addNewBranch()">
+                            <ng-icon name="tablerPlus" class="me-1" size="16"></ng-icon>
+                            Add Branch
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="rounded mb-2">
+                        <form [formGroup]="filterForm">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Code</label>
+                                    <input type="text" class="form-control" formControlName="code" placeholder="All Codes" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Name</label>
+                                    <input type="text" class="form-control" formControlName="name" placeholder="All Names" />
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end gap-2">
+                                    <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
+                                        <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                                        Search
+                                    </button>
+                                    <button type="button" class="btn btn-dark" (click)="onClearFilters()">
+                                        <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    @if (isLoading) {
+                    <app-skeleton-loader variant="table" [rows]="8" [cols]="5" ariaLabel="Loading branches table"></app-skeleton-loader>
+                    } @else {
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead class="table text-center">
+                                <tr>
+                                    <th class="fw-bold">Code</th>
+                                    <th class="fw-bold">Name</th>
+                                    <th class="fw-bold">Hub ID</th>
+                                    <th class="fw-bold">Status</th>
+                                    <th class="text-center fw-bold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider text-center">
+                                @for (branch of branches; track branch.id) {
+                                <tr>
+                                    <td>
+                                        <span class="fw-medium">{{ branch.code }}</span>
+                                    </td>
+                                    <td>{{ branch.name }}</td>
+                                    <td>{{ branch.hubCode }}</td>
+                                    <td>
+                                        <span [class]="getStatusBadgeClass(branch.isActive)">
+                                            {{ getStatusText(branch.isActive) }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-primary"
+                                                (click)="editBranch(branch.id!)" title="Edit Branch">
+                                                <ng-icon name="tablerEdit" size="16"></ng-icon>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                (click)="deleteBranch(branch)" title="Delete Branch">
+                                                <ng-icon name="tablerTrash" size="16"></ng-icon>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                } @empty {
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                                            <p class="mb-0">No branches found</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <app-generic-pagination [totalItems]="totalRecord" [pageSize]="PaginationInfo.RowsPerPage"
+                        [currentPage]="PaginationInfo.Page" (pageChanged)="onBranchPageChanged($event)">
+                    </app-generic-pagination>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
