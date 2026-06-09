@@ -124,11 +124,11 @@ export class HubListComponent implements OnInit {
         this.loadHubs();
     }
 
-    getStatusBadgeClass(isDeleted: boolean): string {
-        return isDeleted ? 'badge bg-danger' : 'badge bg-success';
+    getStatusBadgeClass(isActive: boolean): string {
+        return isActive ? 'badge bg-success' : 'badge bg-danger';
     }
 
-    getStatusText(isDeleted: boolean): string {
-        return isDeleted ? 'Inactive' : 'Active';
+    getStatusText(isActive: boolean): string {
+        return isActive ? 'Active' : 'Inactive';
     }
 }

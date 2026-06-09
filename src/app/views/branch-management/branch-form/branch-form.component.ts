@@ -40,7 +40,8 @@ export class BranchFormComponent implements OnInit {
             if (params['id']) {
                 this.isEditMode = true;
                 this.branchId = Number(params['id']);
-                this.loadBranch();
+                // Wait a bit for hub dropdown to load before loading branch
+                setTimeout(() => this.loadBranch(), 100);
             }
         });
     }
@@ -76,10 +77,14 @@ export class BranchFormComponent implements OnInit {
             next: (branch) => {
                 if (branch) {
                     this.loadedBranch = branch;
+                    // Find the hub code from dropdown based on hubName
+                    const matchedHub = this.hubDropdown.find(h => h.name === branch.hubName);
+                    const hubCode = matchedHub ? matchedHub.code : 0;
+                    
                     this.branchForm.patchValue({
                         code: branch.code,
                         name: branch.name,
-                        hubCode: branch.hubCode,
+                        hubCode: hubCode,
                         isActive: branch.isActive
                     });
                 } else {

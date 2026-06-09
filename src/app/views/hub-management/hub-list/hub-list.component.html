@@ -62,8 +62,8 @@
                                     </td>
                                     <td>{{ hub.name }}</td>
                                     <td>
-                                        <span [class]="getStatusBadgeClass(hub.isDeleted)">
-                                            {{ getStatusText(hub.isDeleted) }}
+                                        <span [class]="getStatusBadgeClass(hub.isActive ?? false)">
+                                            {{ getStatusText(hub.isActive ?? false) }}
                                         </span>
                                     </td>
                                     <td class="text-center">

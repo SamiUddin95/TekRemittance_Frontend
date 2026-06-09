@@ -17,7 +17,7 @@ interface AccountRow {
   accountName: string;
   accountNumber: string;
   agentName: string;
-  active: boolean;
+  isActive: boolean;
   approve: boolean;
 }
 

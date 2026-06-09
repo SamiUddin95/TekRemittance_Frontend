@@ -2,7 +2,7 @@ export interface Hub {
     id?: number;
     code: string;
     name: string;
-    isDeleted: boolean;
+    isActive: boolean;
     createdBy?: string;
     updatedBy?: string;
     createdOn?: string;

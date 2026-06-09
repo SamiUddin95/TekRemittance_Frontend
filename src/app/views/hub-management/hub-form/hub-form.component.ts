@@ -46,7 +46,7 @@ export class HubFormComponent implements OnInit {
         return this.fb.group({
             code: ['', [Validators.required, Validators.maxLength(20)]],
             name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-            isDeleted: [false]
+            isActive: [true]
         });
     }
 
@@ -61,7 +61,7 @@ export class HubFormComponent implements OnInit {
                     this.hubForm.patchValue({
                         code: hub.code,
                         name: hub.name,
-                        isDeleted: hub.isDeleted
+                        isActive: hub.isActive
                     });
                 } else {
                     Swal.fire('Error!', 'Hub not found.', 'error');

@@ -154,14 +154,17 @@ onSearch(): void {
           if (!headersArr.includes('AgentName')) {
             headersArr.unshift('AgentName');
           }
+          if (!headersArr.includes('Remarks')) {
+            headersArr.push('Remarks');
+          }
           this.tableHeaders = headersArr;
 
-          // Data rows with AgentName
+          // Data rows with AgentName and Remarks
           this.dataRows = response.items.map((item: DisbursementData, idx: number) => {
             const obj = parsedObjects[idx] || {};
             const agentName = (this.agents.find(a => a.id?.toLowerCase() === item.agentId?.toLowerCase())?.name)
               || `Agent-${(item.agentId || '').substring(0, 8)}`;
-            return { id: item.id, obj: { AgentName: agentName, ...obj } };
+            return { id: item.id, obj: { AgentName: agentName, Remarks: item.remarks ?? '-', ...obj } };
           });
 
           this.totalRecord = response.totalCount;

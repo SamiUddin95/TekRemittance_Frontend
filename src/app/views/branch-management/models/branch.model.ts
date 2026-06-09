@@ -4,6 +4,7 @@ export interface Branch {
     name: string;
     isActive: boolean;
     hubCode: number;
+    hubName?: string;
     isDeleted: boolean;
     createdBy?: string;
     updatedBy?: string;

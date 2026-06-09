@@ -50,7 +50,7 @@
                                 <tr>
                                     <th class="fw-bold">Code</th>
                                     <th class="fw-bold">Name</th>
-                                    <th class="fw-bold">Hub ID</th>
+                                    <th class="fw-bold">Hub Name</th>
                                     <th class="fw-bold">Status</th>
                                     <th class="text-center fw-bold">Actions</th>
                                 </tr>
@@ -62,7 +62,7 @@
                                         <span class="fw-medium">{{ branch.code }}</span>
                                     </td>
                                     <td>{{ branch.name }}</td>
-                                    <td>{{ branch.hubCode }}</td>
+                                    <td>{{ branch.hubName ?? '-' }}</td>
                                     <td>
                                         <span [class]="getStatusBadgeClass(branch.isActive)">
                                             {{ getStatusText(branch.isActive) }}

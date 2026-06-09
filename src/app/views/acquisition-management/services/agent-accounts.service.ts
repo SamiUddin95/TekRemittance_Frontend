@@ -35,8 +35,10 @@ getAccounts(pageNumber: number, pageSize: number, filters: any): Observable<any>
   if (filters.agentName)
     url += `&agentName=${filters.agentName}`;
 
-  if (filters.status)
-    url += `&status=${filters.status}`;
+  if (filters.status !== '' && filters.status !== null && filters.status !== undefined) {
+    const statusValue = filters.status === 'true' ? 'Active' : 'Inactive';
+    url += `&status=${statusValue}`;
+  }
     return this.http.get<any>(url).pipe(
       map((res) => {
         const d = res?.data ?? res ?? {};

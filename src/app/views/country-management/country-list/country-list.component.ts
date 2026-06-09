@@ -74,7 +74,7 @@ private mapDtoToCountry(dto: any): Country {
             if(response.statusCode === 200 && response.items) {
                 this.allCountries = response.items.map((item: any) => this.mapDtoToCountry(item));
                 this.totalRecord = response.totalCount;
-                this.countries = this.allCountries.filter(c => c.isActive);
+                this.countries = this.allCountries;
             }
             this.isLoading = false;
         },
