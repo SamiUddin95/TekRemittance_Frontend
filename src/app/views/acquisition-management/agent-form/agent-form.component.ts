@@ -142,7 +142,8 @@ export class AgentFormComponent implements OnInit {
             // XPIN Mapping
             startIndex: [0, [Validators.min(0)]],
             length: [0, [Validators.min(0)]],
-            xPinMapCode: [0, [Validators.min(0)]]
+            xPinMapCode: [0, [Validators.min(0)]],
+            rebateSharing: [null]
         });
     }
 

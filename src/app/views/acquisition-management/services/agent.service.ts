@@ -71,6 +71,7 @@ export class AgentService {
             startIndex: dto.startIndex ?? 0,
             length: dto.length ?? 0,
             xPinMapCode: dto.xPinMapCode ?? dto.xpinMapCode ?? 0,
+            rebateSharing: dto.rebateSharing ?? null,
         } as Agent;
     }
 
@@ -194,6 +195,7 @@ export class AgentService {
             startIndex: Number((agent as any).startIndex ?? 0),
             length: Number((agent as any).length ?? 0),
             xPinMapCode: Number((agent as any).xPinMapCode ?? 0),
+            rebateSharing: agent.rebateSharing ?? null,
             createdBy: 'admin',
             createdOn: nowIso,
             updatedBy: 'system',
@@ -249,6 +251,7 @@ export class AgentService {
             startIndex: Number((agent as any).startIndex ?? 0),
             length: Number((agent as any).length ?? 0),
             xPinMapCode: Number((agent as any).xPinMapCode ?? 0),
+            rebateSharing: agent.rebateSharing ?? null,
         };
     }
 }

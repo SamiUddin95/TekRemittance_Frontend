@@ -37,4 +37,5 @@ export interface Agent {
     startIndex?: number;
     length?: number;
     xPinMapCode?: number;
+    rebateSharing?: number | null; 
 }

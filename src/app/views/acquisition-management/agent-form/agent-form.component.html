@@ -230,6 +230,16 @@
                             Cut off time start must be less than cut off time end.
                           </small>
                         </div>
+                        <div class="d-flex flex-column" style="min-width: 220px;">
+                          <label class="form-label fw-semibold d-flex align-items-center mb-2">
+                            <ng-icon name="tablerCash" class="me-1 gradient-icon" size="16"></ng-icon>
+                            <span>Rebate Sharing</span>
+                          </label>
+                          <div class="input-group">
+                            <input class="form-control" type="number" formControlName="rebateSharing"
+                              placeholder="Enter rebate sharing" />
+                          </div>
+                        </div>
                         <div class="d-flex flex-column">
                           <label class="form-label fw-semibold d-flex align-items-center mb-2">
                             <ng-icon name="tablerHash" class="me-1 gradient-icon" size="16"></ng-icon>
@@ -237,11 +247,13 @@
                           </label>
                           <div class="d-flex gap-4 flex-wrap">
                             <div class="form-check">
-                              <input class="form-check-input" type="checkbox" formControlName="brnByApplication" id="brnByApplication">
+                              <input class="form-check-input" type="checkbox" formControlName="brnByApplication"
+                                id="brnByApplication">
                               <label for="brnByApplication" class="form-check-label">by Application</label>
                             </div>
                             <div class="form-check">
-                              <input class="form-check-input" type="checkbox" formControlName="brnByAgent" id="brnByAgent">
+                              <input class="form-check-input" type="checkbox" formControlName="brnByAgent"
+                                id="brnByAgent">
                               <label for="brnByAgent" class="form-check-label">by Agent</label>
                             </div>
                           </div>
@@ -253,11 +265,13 @@
                           </label>
                           <div class="d-flex gap-4 flex-wrap">
                             <div class="form-check">
-                              <input class="form-check-input" type="checkbox" formControlName="autoProcess" id="autoProcess">
+                              <input class="form-check-input" type="checkbox" formControlName="autoProcess"
+                                id="autoProcess">
                               <label for="autoProcess" class="form-check-label">Auto Process</label>
                             </div>
                             <div class="form-check">
-                              <input class="form-check-input" type="checkbox" formControlName="manualProcess" id="manualProcess">
+                              <input class="form-check-input" type="checkbox" formControlName="manualProcess"
+                                id="manualProcess">
                               <label for="manualProcess" class="form-check-label">Manual Process</label>
                             </div>
                           </div>
@@ -274,7 +288,8 @@
                         <div class="d-flex align-items-center">
                           <div>
                             <h4 class="mb-0">XPIN Mapping</h4>
-                            <small class="text-muted">Configure the position and code mapping for XPIN extraction.</small>
+                            <small class="text-muted">Configure the position and code mapping for XPIN
+                              extraction.</small>
                           </div>
                         </div>
                       </div>
@@ -285,12 +300,11 @@
                             <span>Start Index</span>
                           </label>
                           <div class="input-group">
-                            <input type="number" class="form-control"
-                              [class.is-invalid]="isFieldInvalid('startIndex')" formControlName="startIndex"
-                              placeholder="e.g., 0" min="0" />
+                            <input type="number" class="form-control" [class.is-invalid]="isFieldInvalid('startIndex')"
+                              formControlName="startIndex" placeholder="e.g., 0" min="0" />
                           </div>
                           @if (isFieldInvalid('startIndex')) {
-                            <small class="text-danger mt-1">{{ getFieldError('startIndex') }}</small>
+                          <small class="text-danger mt-1">{{ getFieldError('startIndex') }}</small>
                           }
                         </div>
                         <div class="d-flex flex-column" style="min-width: 220px;">
@@ -299,12 +313,11 @@
                             <span>Length</span>
                           </label>
                           <div class="input-group">
-                            <input type="number" class="form-control"
-                              [class.is-invalid]="isFieldInvalid('length')" formControlName="length"
-                              placeholder="e.g., 0" min="0" />
+                            <input type="number" class="form-control" [class.is-invalid]="isFieldInvalid('length')"
+                              formControlName="length" placeholder="e.g., 0" min="0" />
                           </div>
                           @if (isFieldInvalid('length')) {
-                            <small class="text-danger mt-1">{{ getFieldError('length') }}</small>
+                          <small class="text-danger mt-1">{{ getFieldError('length') }}</small>
                           }
                         </div>
                         <div class="d-flex flex-column" style="min-width: 220px;">
@@ -313,12 +326,11 @@
                             <span>XPIN Map Code</span>
                           </label>
                           <div class="input-group">
-                            <input type="number" class="form-control"
-                              [class.is-invalid]="isFieldInvalid('xPinMapCode')" formControlName="xPinMapCode"
-                              placeholder="e.g., 0" min="0" />
+                            <input type="number" class="form-control" [class.is-invalid]="isFieldInvalid('xPinMapCode')"
+                              formControlName="xPinMapCode" placeholder="e.g., 0" min="0" />
                           </div>
                           @if (isFieldInvalid('xPinMapCode')) {
-                            <small class="text-danger mt-1">{{ getFieldError('xPinMapCode') }}</small>
+                          <small class="text-danger mt-1">{{ getFieldError('xPinMapCode') }}</small>
                           }
                         </div>
                       </div>
