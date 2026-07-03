@@ -30,6 +30,9 @@ if (filters.templatename?.trim()) {
 if (filters.filename?.trim()) {
   params = params.set('filename', filters.filename.trim());
 }
+if (filters.processedDate?.trim()) {
+    params = params.set('processedDate', filters.processedDate.trim());
+  }
 
     return this.http.get<any>(url, { params }).pipe(
       map((res) => {

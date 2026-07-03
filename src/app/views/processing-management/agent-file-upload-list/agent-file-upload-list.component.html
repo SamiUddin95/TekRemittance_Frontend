@@ -1,10 +1,11 @@
 <div class="">
- <app-page-title title="File Upload" subTitle="Processing Management"></app-page-title>
+  <app-page-title title="File Upload" subTitle="Processing Management"></app-page-title>
   <div class="row">
     <div class="col-12">
       <div class="card shadow-sm">
         <div class="card-header bg-light border-bottom">
-          <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+          <div class="d-flex justify-content-between align-items-center col-12"
+            style="margin-top: -5px; margin-bottom: -5px;">
             <div class="d-flex align-items-center">
               <ng-icon name="tablerTable" class="me-2 gradient-icon" size="20"></ng-icon>
               <h4 class="card-title mb-0 text-dark">Existing Files</h4>
@@ -17,99 +18,100 @@
         </div>
 
         <div class="card-body">
-            <div class="rounded mb-2">
-                        <form [formGroup]="agentaccountFilterForm">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label class="form-label fw-semibold">Template Name</label>
-                                    <input type="text" class="form-control" formControlName="templatename" placeholder="Templates Name" />
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-label fw-semibold">File Name</label>
-                                    <input type="text" class="form-control" formControlName="filename" placeholder="Files Names" />
-                                </div>
-                                
-                                <div class="col-md-2 d-flex align-items-end gap-2">
-                                    <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
-                                        <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
-                                        Search
-                                    </button>
-                                    <button type="button" class="btn btn-dark" (click)="onClearFilters()">
-                                        <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
-                                        Clear
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+          <div class="rounded mb-2">
+            <form [formGroup]="agentaccountFilterForm">
+              <div class="row">
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Template Name</label>
+                  <input type="text" class="form-control" formControlName="templatename" placeholder="Templates Name" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">File Name</label>
+                  <input type="text" class="form-control" formControlName="filename" placeholder="Files Names" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Process Date</label>
+                  <input type="date" class="form-control" formControlName="processedDate" />
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                  <button type="button" class="btn submit-button flex-fill" (click)="onSearch()">
+                    <ng-icon name="tablerSearch" size="16" class="me-1"></ng-icon>
+                    Search
+                  </button>
+                  <button type="button" class="btn btn-dark" (click)="onClearFilters()">
+                    <ng-icon name="tablerX" size="16" class="me-1"></ng-icon>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
           @if (isLoading) {
-            <app-skeleton-loader variant="table" [rows]="8" [cols]="7" ariaLabel="Loading files table"></app-skeleton-loader>
+          <app-skeleton-loader variant="table" [rows]="8" [cols]="7"
+            ariaLabel="Loading files table"></app-skeleton-loader>
           } @else {
-            <div class="table-responsive">
-              <table class="table table-bordered table-striped table-sm">
-                <thead class="table text-center">
-                  <tr>
-                    <th class="fw-bold">Template Name</th>
-                    <th class="fw-bold">File Name</th>
-                    <th class="fw-bold">Status</th>
-                    <th class="fw-bold">Error message</th>
-                    <th class="fw-bold">Data Count</th>
-                    <th class="fw-bold">Process At</th>
-                    <th class="text-center fw-bold">Actions</th>
-                  </tr>
-                </thead>
-                <tbody class="table-group-divider text-center">
-                  @for (row of rows; track row.id) {
-                    <tr>
-                      <td>{{ row.templateName  }}</td>
-                      <td class="text-break">{{ row.fileName }}</td>
-                      <td>
-                        <span class="badge" 
-                              [ngClass]="{
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped table-sm">
+              <thead class="table text-center">
+                <tr>
+                  <th class="fw-bold">Template Name</th>
+                  <th class="fw-bold">File Name</th>
+                  <th class="fw-bold">Status</th>
+                  <th class="fw-bold">Error message</th>
+                  <th class="fw-bold">Data Count</th>
+                  <th class="fw-bold">Process At</th>
+                  <th class="text-center fw-bold">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="table-group-divider text-center">
+                @for (row of rows; track row.id) {
+                <tr>
+                  <td>{{ row.templateName }}</td>
+                  <td class="text-break">{{ row.fileName }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="{
                                 'bg-success': row.status?.toLowerCase() === 'parsed',
                                 'bg-warning': row.status?.toLowerCase() === 'pending',
                                 'bg-danger': row.status?.toLowerCase() === 'failed' || row.status?.toLowerCase() === 'error',
                                 'bg-info': row.status?.toLowerCase() === 'processing',
                                 'bg-secondary': !row.status
                               }">
-                          {{ row.status || 'N/A' }}
-                        </span>
-                      </td>
-                      <td class="text-break" [class.text-danger]="row.errorMessage">
-                        {{ row.errorMessage || '-' }}
-                      </td>
-                      <td>{{ row.rowCount }}</td>
-                      <td>{{ row.processAt | date:'medium' }}</td>
-                      <td class="text-center">
-                        <div class="btn-group" role="group">
-                          <button type="button" class="btn btn-sm btn-outline-primary" title="View" (click)="view(row)">
-                            <ng-icon name="tablerEye" size="16"></ng-icon>
-                          </button>
-                          <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" (click)="delete(row)">
-                            <ng-icon name="tablerTrash" size="16"></ng-icon>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  } @empty {
-                    <tr>
-                      <td colspan="7" class="text-center py-4">
-                        <div class="text-muted">
-                          <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
-                          <p class="mb-0">No files found</p>
-                        </div>
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-            <app-generic-pagination
-              [totalItems]="totalRecord"
-              [pageSize]="PaginationInfo.RowsPerPage"
-              [currentPage]="PaginationInfo.Page"
-              (pageChanged)="onPageChanged($event)">
-            </app-generic-pagination>
+                      {{ row.status || 'N/A' }}
+                    </span>
+                  </td>
+                  <td class="text-break" [class.text-danger]="row.errorMessage">
+                    {{ row.errorMessage || '-' }}
+                  </td>
+                  <td>{{ row.rowCount }}</td>
+                  <td>{{ row.processAt | date:'medium' }}</td>
+                  <td class="text-center">
+                    <div class="btn-group" role="group">
+                      <button type="button" class="btn btn-sm btn-outline-primary" title="View" (click)="view(row)">
+                        <ng-icon name="tablerEye" size="16"></ng-icon>
+                      </button>
+                      <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" (click)="delete(row)">
+                        <ng-icon name="tablerTrash" size="16"></ng-icon>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                } @empty {
+                <tr>
+                  <td colspan="7" class="text-center py-4">
+                    <div class="text-muted">
+                      <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                      <p class="mb-0">No files found</p>
+                    </div>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <app-generic-pagination [totalItems]="totalRecord" [pageSize]="PaginationInfo.RowsPerPage"
+            [currentPage]="PaginationInfo.Page" (pageChanged)="onPageChanged($event)">
+          </app-generic-pagination>
           }
         </div>
       </div>
@@ -119,54 +121,51 @@
 
 <!-- Preview Modal -->
 @if (previewVisible) {
-  <div class="modal fade show" style="display:block; background: rgba(0,0,0,0.4);">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Remittance File Preview</h5>
-          <button type="button" class="btn-close" aria-label="Close" (click)="closePreview()"></button>
+<div class="modal fade show" style="display:block; background: rgba(0,0,0,0.4);">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Remittance File Preview</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closePreview()"></button>
+      </div>
+      <div class="modal-body">
+        @if (previewLoading) {
+        <app-skeleton-loader variant="table" [rows]="6" [cols]="previewHeaders?.length || 6"
+          ariaLabel="Loading preview"></app-skeleton-loader>
+        } @else {
+        @if (previewTableRows.length === 0) {
+        <div class="text-muted">No preview rows available.</div>
+        } @else {
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped table-sm">
+            <thead class="table text-center">
+              <tr>
+                @for (h of previewHeaders; track h) {
+                <th class="fw-bold text-nowrap">{{ h }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody class="table-group-divider text-center">
+              @for (r of previewTableRows; track $index) {
+              <tr>
+                @for (c of r; track $index) {
+                <td>{{ c }}</td>
+                }
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
-        <div class="modal-body">
-          @if (previewLoading) {
-            <app-skeleton-loader variant="table" [rows]="6" [cols]="previewHeaders?.length || 6" ariaLabel="Loading preview"></app-skeleton-loader>
-          } @else {
-            @if (previewTableRows.length === 0) {
-              <div class="text-muted">No preview rows available.</div>
-            } @else {
-              <div class="table-responsive">
-                <table class="table table-bordered table-striped table-sm">
-                  <thead class="table text-center">
-                    <tr>
-                      @for (h of previewHeaders; track h) {
-                        <th class="fw-bold text-nowrap">{{ h }}</th>
-                      }
-                    </tr>
-                  </thead>
-                  <tbody class="table-group-divider text-center">
-                    @for (r of previewTableRows; track $index) {
-                      <tr>
-                        @for (c of r; track $index) {
-                          <td>{{ c }}</td>
-                        }
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-              <app-generic-pagination
-                [totalItems]="previewTotalCount"
-                [pageSize]="previewPageSize"
-                [currentPage]="previewPage"
-                (pageChanged)="onPreviewPageChanged($event)">
-              </app-generic-pagination>
-            }
-          }
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closePreview()">Close</button>
-        </div>
+        <app-generic-pagination [totalItems]="previewTotalCount" [pageSize]="previewPageSize"
+          [currentPage]="previewPage" (pageChanged)="onPreviewPageChanged($event)">
+        </app-generic-pagination>
+        }
+        }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closePreview()">Close</button>
       </div>
     </div>
   </div>
+</div>
 }
-

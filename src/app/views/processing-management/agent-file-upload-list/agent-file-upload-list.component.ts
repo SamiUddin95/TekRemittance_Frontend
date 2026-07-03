@@ -54,7 +54,8 @@ export class AgentFileUploadListComponent implements OnInit {
   constructor(private router: Router, private service: AgentFileUploadService,private fb: FormBuilder) {
 this.agentaccountFilterForm = this.fb.group({
   templatename: [''],
-  filename: ['']
+  filename: [''],
+  processedDate: [new Date().toISOString().split('T')[0]] 
 });
 
   }
@@ -65,12 +66,15 @@ this.agentaccountFilterForm = this.fb.group({
   onClearFilters(): void {
      this.agentaccountFilterForm.reset({
             templatename: '',
-            filename: ''
+            filename: '',
+            processedDate: ''
         });
+          this.PaginationInfo.Page = 1;
         this.loadFiles();
   }
 
   onSearch(): void {
+    this.PaginationInfo.Page = 1;
     this.loadFiles();
   }
 
