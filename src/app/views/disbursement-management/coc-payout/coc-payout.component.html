@@ -5,7 +5,8 @@
     <div class="col-12">
       <div class="card shadow-sm">
         <div class="card-header bg-light border-bottom">
-          <div class="d-flex justify-content-between align-items-center col-12" style="margin-top: -5px; margin-bottom: -5px;">
+          <div class="d-flex justify-content-between align-items-center col-12"
+            style="margin-top: -5px; margin-bottom: -5px;">
             <div class="d-flex align-items-center">
               <ng-icon name="tablerCash" class="me-2 gradient-icon" size="20"></ng-icon>
               <h4 class="card-title mb-0 text-dark">COC Payout</h4>
@@ -36,145 +37,198 @@
                 </div>
               </div>
               @if (showResults) {
-                <div class="col-lg-5 col-md-3 d-flex justify-content-end">
-                  <button type="button" class="btn btn-info px-4" (click)="onPay()">
-                    <ng-icon name="tablerLockOpen" size="16" class="me-1"></ng-icon>
-                    Unlock
-                  </button>
-                </div>
+              <div class="col-lg-5 col-md-3 d-flex justify-content-end">
+                <button type="button" class="btn btn-info px-4" (click)="onPay()">
+                  <ng-icon name="tablerLockOpen" size="16" class="me-1"></ng-icon>
+                  Unlock
+                </button>
+              </div>
               }
             </div>
           </form>
 
           @if (!showResults) {
-            <div class="table-responsive mt-3">
-              <table class="table table-bordered table-striped table-sm">
-                <tbody>
-                  <tr>
-                    <td class="text-center py-4">
-                      <div class="text-muted">
-                        <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
-                        <p class="mb-0">No records found</p>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          <div class="table-responsive mt-3">
+            <table class="table table-bordered table-striped table-sm">
+              <tbody>
+                <tr>
+                  <td class="text-center py-4">
+                    <div class="text-muted">
+                      <ng-icon name="tablerInbox" size="48" class="mb-2 d-block mx-auto"></ng-icon>
+                      <p class="mb-0">No records found</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           }
 
           @if (showResults) {
-            <!-- Search Result and Cash Denominations -->
-            <div class="row g-3 mt-3">
-              <!-- Search Result Section -->
-              <div class="col-md-7">
-                <div class="card border shadow-sm">
-                  <div class="card-header bg-light">
-                    <h6 class="mb-0">Search Result</h6>
+          <!-- Search Result and Cash Denominations -->
+          <div class="row g-3 mt-3">
+            <!-- Search Result Section -->
+            <div class="col-md-7">
+              <div class="card border shadow-sm">
+                <div class="card-header bg-light">
+                  <h6 class="mb-0">Search Result</h6>
+                </div>
+                <div class="card-body">
+                  <!-- Transaction -->
+                  <div class="mb-3">
+                    <div class="fw-semibold border-start border-3 ps-2 mb-2">Transaction</div>
+                    <div class="row g-2 small">
+                      <div class="col-6 text-muted">Tracking Number:</div>
+                      <div class="col-6 fw-semibold">{{ searchResult.trackingNumber }}</div>
+                      <div class="col-6 text-muted">XPIN:</div>
+                      <div class="col-6 fw-semibold">{{ searchResult.rin }}</div>
+                      <div class="col-6 text-muted">Amount:</div>
+                      <div class="col-6 fw-semibold text-success">{{ searchResult.amount }}</div>
+                    </div>
                   </div>
-                  <div class="card-body">
-                    <!-- Transaction -->
-                    <div class="mb-3">
-                      <div class="fw-semibold border-start border-3 ps-2 mb-2">Transaction</div>
-                      <div class="row g-2 small">
-                        <div class="col-6 text-muted">Tracking Number:</div>
-                        <div class="col-6 fw-semibold">{{ searchResult.trackingNumber }}</div>
-                        <div class="col-6 text-muted">XPIN:</div>
-                        <div class="col-6 fw-semibold">{{ searchResult.rin }}</div>
-                        <div class="col-6 text-muted">Amount:</div>
-                        <div class="col-6 fw-semibold text-success">{{ searchResult.amount }}</div>
-                      </div>
-                    </div>
 
-                    <!-- Remitter -->
-                    <div class="mb-3">
-                      <div class="fw-semibold border-start border-3 ps-2 mb-2">Remitter</div>
-                      <div class="row g-2 small">
-                        <div class="col-6 text-muted">Name:</div>
-                        <div class="col-6 fw-semibold">{{ searchResult.name }}</div>
-                        <div class="col-6 text-muted">CNIC/Passport:</div>
-                        <div class="col-6 fw-semibold">{{ searchResult.cnicPassport }}</div>
-                        <div class="col-6 text-muted">Contact No:</div>
-                        <div class="col-6 fw-semibold">{{ searchResult.contactNo }}</div>
-                      </div>
+                  <!-- Remitter -->
+                  <div class="mb-3">
+                    <div class="fw-semibold border-start border-3 ps-2 mb-2">Remitter</div>
+                    <div class="row g-2 small">
+                      <div class="col-6 text-muted">Name:</div>
+                      <div class="col-6 fw-semibold">{{ searchResult.name }}</div>
+                      <div class="col-6 text-muted">CNIC/Passport:</div>
+                      <div class="col-6 fw-semibold">{{ searchResult.cnicPassport }}</div>
+                      <div class="col-6 text-muted">Contact No:</div>
+                      <div class="col-6 fw-semibold">{{ searchResult.contactNo }}</div>
                     </div>
+                  </div>
 
-                    <!-- Beneficiary -->
-                    <div class="mb-3">
-                      <div class="fw-semibold border-start border-3 ps-2 mb-2">Beneficiary</div>
-                      <div class="row g-2 small">
-                        <div class="col-6 text-muted">Beneficiary Name:</div>
-                        <div class="col-6 fw-semibold">{{ searchResult.beneficiaryName }}</div>
-                        <div class="col-6 text-muted">Beneficiary CNIC:</div>
-                        <div class="col-6 fw-semibold">{{ searchResult.beneficiaryCnic }}</div>
-                      </div>
+                  <!-- Beneficiary -->
+                  <div class="mb-3">
+                    <div class="fw-semibold border-start border-3 ps-2 mb-2">Beneficiary</div>
+                    <div class="row g-2 small">
+                      <div class="col-6 text-muted">Beneficiary Name:</div>
+                      <div class="col-6 fw-semibold">{{ searchResult.beneficiaryName }}</div>
+                      <div class="col-6 text-muted">Beneficiary CNIC:</div>
+                      <div class="col-6 fw-semibold">{{ searchResult.beneficiaryCnic }}</div>
                     </div>
+                  </div>
 
-                    <!-- Additional Information -->
-                    <div class="mb-3">
-                      <div class="fw-semibold border-start border-3 ps-2 mb-2">Additional Information</div>
-                      <div class="row g-2 small">
-                        <div class="col-6 text-muted">Account Number:</div>
-                        <div class="col-6 fw-semibold">{{ searchResult.accountNumber }}</div>
-                        <div class="col-6 text-muted">Account Title:</div>
-                        <div class="col-6 fw-semibold">{{ searchResult.accountTitle }}</div>
-                      </div>
+                  <!-- Additional Information -->
+                  <div class="mb-3">
+                    <div class="fw-semibold border-start border-3 ps-2 mb-2">Additional Information</div>
+                    <div class="row g-2 small">
+                      <div class="col-6 text-muted">Account Number:</div>
+                      <div class="col-6 fw-semibold">{{ searchResult.accountNumber }}</div>
+                      <div class="col-6 text-muted">Account Title:</div>
+                      <div class="col-6 fw-semibold">{{ searchResult.accountTitle }}</div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Cash Denominations Section -->
-              <div class="col-md-5">
-                <div class="card border shadow-sm">
-                  <div class="card-header bg-light">
-                    <h6 class="mb-0">Cash Denominations</h6>
+
+              <!-- Additional Fields Section -->
+              <div class="card border shadow-sm mt-3">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                  <h6 class="mb-0">Additional Fields</h6>
+                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="onAddField()">
+                    <ng-icon name="tablerPlus" size="14" class="me-1"></ng-icon>
+                    Add Field
+                  </button>
+                </div>
+                <div class="card-body">
+
+                  <!-- Existing static fields -->
+                  <div class="row g-2 small mb-2">
+                    <div class="col-6 text-muted">Name:</div>
+                    <div class="col-6 fw-semibold">{{ searchResult.name }}</div>
+                    <div class="col-6 text-muted">Date Of Birth:</div>
+                    <div class="col-6 fw-semibold">{{ searchResult.dateOfBirth }}</div>
+                    <div class="col-6 text-muted">CNIC:</div>
+                    <div class="col-6 fw-semibold">{{ searchResult.cnic }}</div>
+                    <div class="col-6 text-muted">Address:</div>
+                    <div class="col-6 fw-semibold">{{ searchResult.address }}</div>
                   </div>
-                  <div class="card-body">
-                    <form [formGroup]="denominationsForm">
-                      <div class="table-responsive small">
-                        <table class="table align-middle mb-2">
-                          <tbody>
-                            @for (denom of denominations; track denom.value) {
-                            <tr>
-                              <td class="text-end bg-light fw-semibold px-2 py-1" style="width: 18%;">
-                                {{ denom.value }}
-                              </td>
-                              <td class="text-center" style="width: 6%;">x</td>
-                              <td style="width: 28%;">
-                                <input type="number" class="form-control form-control-sm text-center"
-                                  [formControlName]="'qty_' + denom.value" (input)="calculateDenomination(denom.value)"
-                                  min="0" />
-                              </td>
-                              <td class="text-center" style="width: 6%;">=</td>
-                              <td class="text-center bg-light fw-semibold rounded-2 px-2 py-1" style="width: 20%;">
-                                {{ denom.total }}
-                              </td>
-                            </tr>
-                            }
-                            <tr class="bg-body-secondary fw-semibold">
-                              <td class="text-end" colspan="4">Total</td>
-                              <td class="text-end">{{ grandTotal }}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </form>
-                    <div class="text-end mt-2">
-                      <button type="button" class="btn submit-button flex-fill" (click)="onClearDenominations()">
-                        Clear
+
+                  <!-- Dynamically added fields, appear below static fields -->
+                  @if (additionalFields.length > 0) {
+                  <hr class="my-2" />
+                  }
+                  @for (field of additionalFields; track field.id; let i = $index) {
+                  <div class="row g-2 small align-items-center mb-1">
+                    <div class="col-6">
+                      <input type="text" class="form-control form-control-sm border-0 bg-transparent text-muted px-0"
+                        placeholder="Field Name" [(ngModel)]="field.label" [ngModelOptions]="{standalone: true}" />
+                    </div>
+                    <div class="col-5">
+                      <input type="text" class="form-control form-control-sm border-0 bg-transparent fw-semibold px-0"
+                        placeholder="Value" [(ngModel)]="field.value" [ngModelOptions]="{standalone: true}" />
+                    </div>
+                    <div class="col-1 text-end">
+                      <button type="button" class="btn btn-sm btn-link text-danger p-0" (click)="onRemoveField(i)"
+                        aria-label="Remove field">
+                        <ng-icon name="tablerX" size="14"></ng-icon>
                       </button>
                     </div>
                   </div>
+                  }
+
+                  @if (additionalFields.length === 0) {
+                  <!-- <div class="text-muted small text-center py-2">No additional fields added yet.</div> -->
+                  }
                 </div>
               </div>
             </div>
 
-            <!-- Bottom Action Buttons -->
-            <div class="d-flex justify-content-center gap-3 mt-4">
-              <button type="button" class="btn btn-outline-dark px-4" (click)="onCancel()">Cancel</button>
-              <button type="button" class="btn btn-success px-4" (click)="onPay()">Pay</button>
+            <!-- Cash Denominations Section -->
+            <div class="col-md-5">
+              <div class="card border shadow-sm">
+                <div class="card-header bg-light">
+                  <h6 class="mb-0">Cash Denominations</h6>
+                </div>
+                <div class="card-body">
+                  <form [formGroup]="denominationsForm">
+                    <div class="table-responsive small">
+                      <table class="table align-middle mb-2">
+                        <tbody>
+                          @for (denom of denominations; track denom.value) {
+                          <tr>
+                            <td class="text-end bg-light fw-semibold px-2 py-1" style="width: 18%;">
+                              {{ denom.value }}
+                            </td>
+                            <td class="text-center" style="width: 6%;">x</td>
+                            <td style="width: 28%;">
+                              <input type="number" class="form-control form-control-sm text-center"
+                                [formControlName]="'qty_' + denom.value" (input)="calculateDenomination(denom.value)"
+                                min="0" />
+                            </td>
+                            <td class="text-center" style="width: 6%;">=</td>
+                            <td class="text-center bg-light fw-semibold rounded-2 px-2 py-1" style="width: 20%;">
+                              {{ denom.total }}
+                            </td>
+                          </tr>
+                          }
+                          <tr class="bg-body-secondary fw-semibold">
+                            <td class="text-end" colspan="4">Total</td>
+                            <td class="text-end">{{ grandTotal }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </form>
+                  <div class="text-end mt-2">
+                    <button type="button" class="btn submit-button flex-fill" (click)="onClearDenominations()">
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
+
+          <!-- Bottom Action Buttons -->
+          <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="btn btn-outline-dark px-4" (click)="onCancel()">Cancel</button>
+            <button type="button" class="btn btn-success px-4" (click)="onPay()">Pay</button>
+          </div>
           }
         </div>
       </div>

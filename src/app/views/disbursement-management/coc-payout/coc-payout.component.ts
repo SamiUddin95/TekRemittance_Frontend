@@ -7,6 +7,8 @@ import Swal from 'sweetalert2';
 import { AgentService } from '@/app/views/acquisition-management/services/agent.service';
 import { DisbursementService } from '@/app/views/disbursement-management/services/disbursement.service';
 import { CountupComponent } from '../../../shared/components/countup/countup.component';
+import { FormsModule } from '@angular/forms';
+
 
 interface SearchResult {
   trackingNumber: string;
@@ -19,6 +21,15 @@ interface SearchResult {
   contactNo: string;
   accountNumber: string;
   accountTitle?: string;
+  cnic?: string;
+  address?: string;
+  dateOfBirth?: string;
+
+}
+interface AdditionalField {
+  id: number;
+  label: string;
+  value: string;
 }
 
 interface Denomination {
@@ -30,10 +41,20 @@ interface Denomination {
 @Component({
   selector: 'app-coc-payout',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgIcon, ReactiveFormsModule, CountupComponent],
+  imports: [CommonModule, PageTitleComponent, NgIcon, ReactiveFormsModule, CountupComponent,FormsModule],
   templateUrl: './coc-payout.component.html'
 })
 export class CocPayoutComponent implements OnInit {
+  additionalFields: AdditionalField[] = [];
+  private fieldCounter = 0;
+
+  onAddField(): void {
+    this.additionalFields.push({ id: this.fieldCounter++, label: '', value: '' });
+  }
+
+  onRemoveField(index: number): void {
+    this.additionalFields.splice(index, 1);
+  }
   searchForm: FormGroup;
   denominationsForm: FormGroup;
   showResults = false;
@@ -50,7 +71,11 @@ export class CocPayoutComponent implements OnInit {
     amount: '1000 PKR',
     contactNo: '0335-8777985',
     accountNumber: '1234567890123',
-    accountTitle: 'Waji Khan'
+    accountTitle: 'Waji Khan',
+    cnic: '42289-8549975-8',
+    address: '123 Street, City, Country',
+    dateOfBirth: '1990-01-01'
+    
     
   };
 
@@ -69,6 +94,7 @@ export class CocPayoutComponent implements OnInit {
   ];
 
   grandTotal = 0;
+
 
   constructor(private fb: FormBuilder, private agentService: AgentService, private disbursementService: DisbursementService) {
     this.searchForm = this.fb.group({
